@@ -213,7 +213,7 @@
         /* ============ 3x3 GRID ============ */
         .grid {
             display:grid; grid-template-columns:repeat(3,1fr);
-            gap:6px; row-gap:2px; width:100%; max-width:240px;
+            gap:6px; row-gap:1px; width:100%; max-width:240px;
         }
         .card {
             position:relative; border-radius:14px;
@@ -240,7 +240,7 @@
         .card .label {
             font-size:0.73rem; font-weight:600;
             color: var(--text); position:relative; z-index:1;
-            letter-spacing:0.3px; padding-top:6px;
+            letter-spacing:0.3px; padding-top:3px;
         }
         .card:hover { transform: translateY(-4px); }
         .card:active { transform:scale(0.95); transition:all 0.06s ease; }
