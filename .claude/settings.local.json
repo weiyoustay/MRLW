@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(python3)",
+      "Bash(python3 build_jiaolv2.py)",
+      "Read(//c/c/Users/MR刘大维/Desktop/副本网页/**)",
+      "Bash(rm build_jiaolv2.py 前途未卜_extracted.txt)",
+      "Bash(rm -f build_jiaolv2.py 前途未卜_extracted.txt)",
+      "Bash(grep -c \"split.*\\\\\\\\\\\\\\\\n\\\\\\\\\\\\\\\\n\" jiaolv2.html)",
+      "Bash(python3 build_all_jiaolv.py)",
+      "Bash(python3 build_all.py)",
+      "Bash(grep -v \"~\\\\\\\\$\")",
+      "Bash(rm -f build_all.py _gaze_items.json)",
+      "Bash(grep -v \"\\\\.png\\\\|\\\\.webp\\\\|~\\\\$\")",
+      "Bash(python3 build_jiaolv8.py)",
+      "Bash(cd \"/c/Users/MR刘大维/Desktop/副本网页\")",
+      "Bash(sed -i 's/var\\(--vibrant-blue\\), var\\(--spring-bud\\), var\\(--vibrant-blue\\)/#5588FF, var\\(--spring-bud\\), #5588FF/' gift.html)",
+      "Bash(sed -i '/margin-bottom: 10px;$/s/$/\\\\n\\\\t            text-shadow: 0 0 30px rgba\\(183,247,0,0.35\\), 0 0 60px rgba\\(85,136,255,0.25\\);/' gift.html)",
+      "Bash(python3 update_poster.py)",
+      "Bash(python3 update_poster2.py)",
+      "Bash(python3 update_poster1.py)",
+      "Bash(python3 up1.py)",
+      "Bash(python3 up3.py)",
+      "Bash(python3 up4.py)",
+      "Bash(python3 -c \"from docx import Document; print\\('python-docx available'\\)\")",
+      "Bash(pip3 install *)",
+      "Bash(python -c \"from docx import Document; print\\('ok'\\)\")",
+      "Bash(python extract_docs.py)",
+      "Bash(python update_days.py)",
+      "Bash(python fix_days.py)",
+      "Bash(python restore_script.py)",
+      "Bash(python)",
+      "Bash(python update_tips.py)",
+      "Bash(python upgrade_tips.py)",
+      "Bash(git --version)",
+      "Bash(gh --version)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}

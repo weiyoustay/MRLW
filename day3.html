@@ -1,0 +1,797 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第3天｜重塑身份 - 7天重塑人生</title>
+<link rel="preload" as="image" href="yeshu.webp" fetchpriority="high">
+<meta name="view-transition" content="same-origin">
+    <style>
+        :root {
+            --bg:#0a0a14;
+            --text:#ffffff;
+            --text-secondary:rgba(255,255,255,0.8);
+            --vibrant-blue: #0436FE;
+            --spring-bud: #B7F700;
+            --transition:0.4s ease;
+        }
+        * {
+            margin:0; padding:0; box-sizing:border-box;
+            -webkit-font-smoothing:antialiased;
+        }
+        html, body {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a14;
+        }
+        body {
+            /* 文字阴影增强背景图上的可读性 */
+            text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--text);
+            /* background-attachment: fixed; removed for mobile performance */
+        }
+        .page-bg {
+            position: fixed; inset:0; z-index:-2;
+            background: rgba(10,10,20,0.3);
+        }
+        #particleCanvas {
+            position:fixed; inset:0; z-index:-1;
+            pointer-events:none;
+        }
+        .scroll {
+            position:fixed; inset:0;
+            overflow-y:auto; overflow-x:hidden;
+            padding: 20px;
+        }
+        .container {
+            max-width: 720px;
+            margin: 60px auto;
+            position:relative; z-index:1;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .tag {
+            color: var(--spring-bud);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        @keyframes letterBounce {
+            0% { transform: translateY(0) skew(-8deg); }
+            50% { transform: translateY(-6px) skew(-8deg); }
+            100% { transform: translateY(0) skew(-8deg); }
+        }
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            font-weight: 900;
+            margin-bottom: 12px;
+            display: inline-block;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        h1 span {
+            display: inline-block;
+            background: linear-gradient(90deg, #B7F700, #428DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transform: skew(-8deg);
+            animation: letterBounce 2.8s ease-in-out infinite alternate;
+        }
+        h1 span:nth-child(1) { animation-delay: 0s; }
+        h1 span:nth-child(2) { animation-delay: 0.15s; }
+        h1 span:nth-child(3) { animation-delay: 0.3s; }
+        h1 span:nth-child(4) { animation-delay: 0.45s; }
+        .personal-tag {
+            color: var(--spring-bud);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            opacity: 0.85;
+        }
+        .day-progress {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .audio-tip {
+            text-align: center;
+            color: var(--spring-bud);
+            font-size: 1rem;
+            margin: 20px 0 30px;
+            opacity: 0.9;
+        }
+        .player {
+            background: transparent;
+            padding: 0;
+            margin: 0 0 30px 0;
+            border: none;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .play-btn {
+            width: 38px;
+            height: 38px;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: var(--text);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+            margin-top: -1px;
+        }
+        .play-btn:hover {
+            color: var(--spring-bud);
+            transform: scale(1.08);
+        }
+        .progress-bar {
+            flex:1;
+            height:6px;
+            background: rgba(255,255,255,0.1);
+            border-radius:99px;
+            overflow:hidden;
+            cursor:pointer;
+            position: relative;
+        }
+        .progress {
+            height:100%;
+            background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+            width:0%;
+            transition: width 0.05s linear;
+            position: absolute;
+            left:0; top:0;
+        }
+        .time-group {
+            display: flex;
+            gap:6px;
+            color:var(--text-secondary);
+            font-size:0.85rem;
+            min-width: 80px;
+            justify-content: flex-end;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .script-box {
+            margin: 40px 0 50px;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 24px 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .script-title {
+            font-size: 1.1rem;
+            color: var(--spring-bud);
+            margin-bottom: 20px;
+        }
+        .line {
+            margin-bottom: 12px;
+            padding: 6px 0;
+        }
+        .en {
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+        .cn {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .content {
+            padding: 0;
+            margin: 0 0 40px 0;
+        }
+        .content h2 {
+            color: var(--spring-bud);
+            font-size:1.3rem;
+            margin-bottom:20px;
+        }
+        .content p {
+            color: var(--text);
+            font-size:1rem;
+            line-height:1.9;
+            margin-bottom:18px;
+        }
+
+        .tip-box {
+            background: rgba(4, 54, 20, 0.12);
+            border-left:3px solid #4FC3F7;
+            padding:18px;
+            margin:26px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        .tip-box h3 {
+            color: var(--spring-bud);
+            font-size:1rem;
+            margin-bottom:10px;
+        }
+        .tip-example {
+            font-size:0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .dig-input {
+            width: 100%;
+            min-height: 80px;
+            margin: 10px 0 20px;
+            padding: 12px 14px;
+            background: rgba(20,20,35,0.5);
+            border: 1px solid rgba(4, 54, 20, 0.3);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+        .dig-input:focus {
+            border-color: var(--spring-bud);
+            background: rgba(20,20,35,0.7);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 24px; left:20px;
+            width:44px; height:44px;
+            border-radius:50%;
+            background: rgba(20,20,35,0.7);
+            border:1px solid rgba(255,255,255,0.1);
+            color:#fff;
+            display:grid; place-items:center;
+            cursor:pointer;
+            z-index:10;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            border-color: var(--spring-bud);
+            color: var(--spring-bud);
+        }
+        .lock-note {
+            text-align:center;
+            padding:20px 0;
+            color: var(--text-secondary);
+            font-size:0.9rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px 0 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .footer-brand {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+        .footer-brand span {
+            display: inline-block;
+            background: linear-gradient(90deg, #B7F700, #428DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transform: skew(-8deg);
+            animation: letterBounce 2.8s ease-in-out infinite alternate;
+        }
+        .footer-brand span:nth-child(1) { animation-delay: 0s; }
+        .footer-brand span:nth-child(2) { animation-delay: 0.15s; }
+        .footer-brand span:nth-child(3) { animation-delay: 0.3s; }
+        .footer-brand span:nth-child(4) { animation-delay: 0.45s; }
+        .footer-brand span:nth-child(5) { animation-delay: 0.6s; }
+        .footer-date {
+            font-size: 0.8rem;
+        }
+        .closing-note {
+            text-align: center;
+            color: var(--spring-bud);
+            margin: 20px 0;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+/* === Enhanced Interactions === */
+.scroll { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+.scroll::-webkit-scrollbar { width: 4px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: rgba(183,247,0,0.2); border-radius: 10px; }
+.scroll::-webkit-scrollbar-thumb:hover { background: rgba(183,247,0,0.4); }
+#particleCanvas { will-change: transform, opacity; }
+h1 { will-change: transform, opacity; text-shadow: 0 1px 2px rgba(0,0,0,0.3); font-weight: 700; }
+.audio-tip { transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.play-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.play-btn svg { transition: fill 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.play-btn:hover { color: var(--spring-bud); transform: scale(1.15); }
+.play-btn:active { transform: scale(0.96); }
+.play-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; border-radius: 50%; }
+.back-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.back-btn:hover { background: rgba(183,247,0,0.15); border-color: var(--spring-bud); color: var(--spring-bud); transform: scale(1.1); box-shadow: 0 0 15px rgba(183,247,0,0.25); }
+.back-btn:active { transform: scale(0.95); }
+.back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+.progress-bar { transition: box-shadow 0.3s ease; cursor: pointer; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
+.progress-bar:hover { box-shadow: 0 0 12px rgba(183,247,0,0.2), inset 0 1px 3px rgba(0,0,0,0.3); }
+.time-group { transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.time-group:hover { color: var(--spring-bud); }
+.dig-input { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.dig-input:hover { border-color: rgba(183,247,0,0.4); box-shadow: 0 0 8px rgba(183,247,0,0.1); }
+.dig-input:focus { border-color: var(--spring-bud); background: rgba(20,20,35,0.7); box-shadow: 0 0 12px rgba(183,247,0,0.15); }
+.tip-box { transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+.tip-box:hover { border-left-color: var(--spring-bud); box-shadow: 0 8px 30px rgba(0,0,0,0.25); }
+.tip-box h3 { font-weight: 600; }
+.line { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; padding: 8px 12px; margin-left: -12px; margin-right: -12px; border-left: 2px solid transparent; }
+.line:hover { background: rgba(183,247,0,0.05); transform: translateX(4px); border-left-color: var(--spring-bud); }
+.line:nth-child(1) { animation-delay: 0s; }
+.line:nth-child(2) { animation-delay: 0.05s; }
+.line:nth-child(3) { animation-delay: 0.1s; }
+.line:nth-child(4) { animation-delay: 0.15s; }
+.line:nth-child(5) { animation-delay: 0.2s; }
+.line:nth-child(6) { animation-delay: 0.25s; }
+.line:nth-child(7) { animation-delay: 0.3s; }
+.line:nth-child(8) { animation-delay: 0.35s; }
+.en, .cn { line-height: 1.8; }
+.content { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+.content h2 { position: relative; padding-bottom: 12px; font-weight: 600; }
+.content h2::after { content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 2px; background: linear-gradient(90deg, var(--spring-bud), transparent); border-radius: 2px; }
+.content p { line-height: 1.8; letter-spacing: 0.3px; transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.content p:hover { color: #f0f0f5; }
+.script-title { font-weight: 600; }
+@keyframes subtleFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes subtlePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+header { animation: subtleFloat 6s ease-in-out infinite; }
+.closing-note { transition: all 0.3s ease; animation: subtlePulse 3s ease-in-out infinite; }
+.closing-note:hover { text-shadow: 0 0 15px rgba(183,247,0,0.3); }
+body { animation: pageIn 0.1s ease; will-change: transform, opacity; }
+body.no-page-anim { animation: none !important; }
+@keyframes pageIn { from { opacity: 0.7; transform: translate3d(15px,0,0); } }
+    
+/* 背景图模糊加载：瞬间显示极小占位符→清晰图淡入 */
+.bg-loader {
+  position: fixed;
+  filter: brightness(1);
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  filter: blur(20px);
+  transform: scale(1.1);
+  transition: filter 0.8s ease-out, transform 0.8s ease-out;
+  background: linear-gradient(135deg, #101020 0%, #0f0f1c 50%, #0a0a14 100%);
+}
+.bg-loader.loaded {
+  filter: brightness(1) blur(0);
+  transform: scale(1);
+}
+
+</style>
+</head>
+<body style="background-color:#0a0a14;">
+<!-- 背景图：先显示极小的模糊占位符（0网络请求），清晰WebP加载后自动淡入 -->
+<img class="bg-loader" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAoAB4DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDMjPNTSH5KjjWllyBTgZPcquOaQClPWnChlontmyasSx7lqjbvg1pRMHFXHaxlLcz2iINKENaDQZ7U37P7VNh8xkxmtC0b5gKKKoJGvFHuUVMtsCKKKB2P/9k=" data-src="yeshu.webp" alt="" fetchpriority="high">
+<div class="page-bg"></div>
+<canvas id="particleCanvas"></canvas>
+<button class="back-btn" onclick="location.href='hall.html'" aria-label="返回成长大厅">←</button>
+
+<div class="scroll">
+<div class="container">
+<header>
+    <div class="tag">DAY 3 · IDENTITY REBUILD</div>
+    <h1><span>重</span><span>塑</span><span>身</span><span>份</span></h1>
+    <div class="personal-tag" id="personalTag"></div>
+    <p class="desc">第3天｜先成为，再做到，让改变自然发生</p>
+</header>
+
+<div class="audio-tip">在开始今天的主题之前，请你认真听完这段关于身份与自我塑造的演讲</div>
+
+<div class="player">
+    <div class="controls">
+        <button class="play-btn" id="toggleBtn" aria-label="播放音频">
+            <svg id="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"></path>
+            </svg>
+        </button>
+        <div class="progress-bar" id="progressBar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="time-group">
+            <span id="current">0:00</span>
+            <span>/</span>
+            <span id="total">0:00</span>
+        </div>
+    </div>
+    <audio id="audio" preload="auto"></audio>
+</div>
+
+<div class="script-box">
+    <div class="script-title">励志音频｜完整英文对照</div>
+    <div class="line"><div class="en">Don't be afraid to reinvent yourself</div><div class="cn">不要害怕重塑自己</div></div>
+    <div class="line"><div class="en">and don't be afraid to be different, man.</div><div class="cn">也别害怕与众不同，伙计。</div></div>
+    <div class="line"><div class="en">You ain't got to fit in the crowd.</div><div class="cn">你没必要去迎合人群。</div></div>
+    <div class="line"><div class="en">I tell my sons all the time</div><div class="cn">我一直跟我的儿子们说</div></div>
+    <div class="line"><div class="en">why are you following everybody</div><div class="cn">你干嘛要跟着所有人走</div></div>
+    <div class="line"><div class="en">when you were clearly meant to lead?</div><div class="cn">明明你是要做领袖的人？</div></div>
+    <div class="line"><div class="en">It's always better to just do your thing.</div><div class="cn">做好自己的事，总归是更好的。</div></div>
+    <div class="line"><div class="en">And I don't care what situation</div><div class="cn">我不在乎你处于什么处境</div></div>
+    <div class="line"><div class="en">you done got your life in.</div><div class="cn">你把生活过成了什么样。</div></div>
+    <div class="line"><div class="en">You can turn your life around</div><div class="cn">你可以扭转自己的人生</div></div>
+    <div class="line"><div class="en">'cause it ain't never too late.</div><div class="cn">因为永远都不算晚。</div></div>
+    <div class="line"><div class="en">See</div><div class="cn">你看</div></div>
+    <div class="line"><div class="en">I didn't get into comedy until I was 27.</div><div class="cn">我到27岁才涉足喜剧领域。</div></div>
+    <div class="line"><div class="en">I was homeless</div><div class="cn">我曾无家可归</div></div>
+    <div class="line"><div class="en">from 30 to 33</div><div class="cn">从30岁到33岁</div></div>
+    <div class="line"><div class="en">I lived in a 1976 tempo.</div><div class="cn">我住在一辆1976年的Tempo车里。</div></div>
+    <div class="line"><div class="en">I lived in a car for three years, man.</div><div class="cn">伙计，我在车里住了三年。</div></div>
+    <div class="line"><div class="en">And so people see me today</div><div class="cn">所以现在人们看到我</div></div>
+    <div class="line"><div class="en">they don't know</div><div class="cn">他们不知道</div></div>
+    <div class="line"><div class="en">where I come from.</div><div class="cn">我是从什么样的处境里走出来的。</div></div>
+    <div class="line"><div class="en">And I tell young cats all the time man</div><div class="cn">我常跟年轻人说，伙计</div></div>
+    <div class="line"><div class="en">the key is</div><div class="cn">关键是</div></div>
+    <div class="line"><div class="en">you can't ever give up.</div><div class="cn">你永远不能放弃。</div></div>
+    <div class="line"><div class="en">At some point, I think we all hit that moment in life,</div><div class="cn">在某个时刻，我想我们都会遇到人生中的那个节点</div></div>
+    <div class="line"><div class="en">where things just are not going</div><div class="cn">事情的发展</div></div>
+    <div class="line"><div class="en">how you thought they would go.</div><div class="cn">完全不是你预想的那样。</div></div>
+    <div class="line"><div class="en">Sacrifice is always required</div><div class="cn">在追逐梦想的路上</div></div>
+    <div class="line"><div class="en">on the road to your dream.</div><div class="cn">牺牲是必不可少的。</div></div>
+    <div class="line"><div class="en">The question is, what are you willing to sacrifice?</div><div class="cn">问题是，你愿意牺牲什么？</div></div>
+    <div class="line"><div class="en">When you are in that darkness?</div><div class="cn">当你身处黑暗时？</div></div>
+    <div class="line"><div class="en">It feels uncomfortable, but you can't wait,</div><div class="cn">这感觉很不舒服，但你不能等着</div></div>
+    <div class="line"><div class="en">and sit in that darkness.</div><div class="cn">就这么待在黑暗里。</div></div>
+    <div class="line"><div class="en">The only way out is to step forward,</div><div class="cn">唯一的出路就是向前迈步</div></div>
+    <div class="line"><div class="en">to face your fears, to become your own life.</div><div class="cn">直面恐惧，活出自己的人生。</div></div>
+    <div class="line"><div class="en">Anything is possible,</div><div class="cn">一切皆有可能</div></div>
+    <div class="line"><div class="en">but only if that is what you believe.</div><div class="cn">但前提是你要相信这一点。</div></div>
+    <div class="line"><div class="en">See if you are a type that says no,</div><div class="cn">如果你是那种总说“不行”的人</div></div>
+    <div class="line"><div class="en">anything is impossible.</div><div class="cn">那一切都会变得不可能。</div></div>
+    <div class="line"><div class="en">That will also be your reality.</div><div class="cn">那也会成为你的现实。</div></div>
+    <div class="line"><div class="en">If you live your life in expectations,</div><div class="cn">如果你活在对他人的期待里</div></div>
+    <div class="line"><div class="en">that's what happens to you.</div><div class="cn">那你就会被期待所左右。</div></div>
+    <div class="line"><div class="en">If you live your life in despair,</div><div class="cn">如果你活在绝望里</div></div>
+    <div class="line"><div class="en">that's what happens to you.</div><div class="cn">那绝望就会吞噬你。</div></div>
+    <div class="line"><div class="en">And as you begin to take that process into your hands,</div><div class="cn">当你开始掌控这个过程</div></div>
+    <div class="line"><div class="en">as you begin to shape it,</div><div class="cn">开始塑造它</div></div>
+    <div class="line"><div class="en">as you begin to craft it,</div><div class="cn">开始打磨它</div></div>
+    <div class="line"><div class="en">you need to remember one thing,</div><div class="cn">你需要记住一件事</div></div>
+    <div class="line"><div class="en">as Larry Page said,</div><div class="cn">就像拉里·佩奇说的</div></div>
+    <div class="line"><div class="en">being negative is not how we make progress.</div><div class="cn">消极并不是我们取得进步的方式。</div></div>
+    <div class="line"><div class="en">Tearing yourself down over the s*** that you've done,</div><div class="cn">为自己做过的糟心事而自我贬低</div></div>
+    <div class="line"><div class="en">it's not gonna empower you to change the patterns</div><div class="cn">并不能让你有能力去改变</div></div>
+    <div class="line"><div class="en">that are keeping you stuck.</div><div class="cn">那些让你停滞不前的模式。</div></div>
+    <div class="line"><div class="en">The moment you change the frequency</div><div class="cn">当你改变自己“发射”的频率</div></div>
+    <div class="line"><div class="en">that your tower emits,</div><div class="cn">也就是你的气场和状态</div></div>
+    <div class="line"><div class="en">different things come back to you.</div><div class="cn">不同的事物就会向你涌来。</div></div>
+    <div class="line"><div class="en">You become more smarter,</div><div class="cn">你会变得更聪慧</div></div>
+    <div class="line"><div class="en">you become more educated,</div><div class="cn">更有学识</div></div>
+    <div class="line"><div class="en">you know more,</div><div class="cn">懂得更多</div></div>
+    <div class="line"><div class="en">but you can't come back.</div><div class="cn">但你再也回不到从前了。</div></div>
+    <div class="line"><div class="en">You cannot come back the same individual.</div><div class="cn">你再也不是原来的那个人了。</div></div>
+    <div class="line"><div class="en">The aha moment is the door that opens,</div><div class="cn">顿悟的时刻就像一扇敞开的门</div></div>
+    <div class="line"><div class="en">but your new life does not begin</div><div class="cn">但你的新生活并不会开始</div></div>
+    <div class="line"><div class="en">unless you can step through the door.</div><div class="cn">除非你敢跨过那扇门。</div></div>
+    <div class="line"><div class="en">I keep going.</div><div class="cn">我会继续前行。</div></div>
+    <div class="line"><div class="en">I am saying, I believe in myself.</div><div class="cn">我是说，我相信自己。</div></div>
+    <div class="line"><div class="en">Best thing about this is that you get to decide</div><div class="cn">这件事最棒的地方在于，你可以决定</div></div>
+    <div class="line"><div class="en">what it decides is important.</div><div class="cn">什么对你来说是重要的。</div></div>
+    <div class="line"><div class="en">That's why if you focus on your goals being possible</div><div class="cn">这就是为什么，如果你总觉得目标只对别人可行</div></div>
+    <div class="line"><div class="en">only for somebody else,</div><div class="cn">而自己做不到</div></div>
+    <div class="line"><div class="en">you will see evidence of it everywhere.</div><div class="cn">你就会到处看到“自己做不到”的证据。</div></div>
+    <div class="line"><div class="en">And if you focus on your goals,</div><div class="cn">但如果你坚信自己的目标</div></div>
+    <div class="line"><div class="en">being inevitable for you,</div><div class="cn">对你来说是必然能实现的</div></div>
+    <div class="line"><div class="en">you will see evidence everywhere.</div><div class="cn">你就会到处看到能实现的证据。</div></div>
+</div>
+
+<div class="content">
+    <h2>成为那个人：在抵达之前先活成那个样子</h2>
+    <p>绝大多数人的人生困境，都源于本末倒置的因果思维。</p>
+    <p>我们所有人的惯性思维，永远是先追逐结果，再被迫付出行动：我们想要瘦身减脂、拥有好身材，想要高薪收入、实现财富自由，想要事业顺遂、人生圆满，想要松弛自在、无忧无虑的生活。</p>
+    <p>为了抵达这些理想结果，我们疯狂立目标、做规划、定清单，试图依靠强行的自律、咬牙的坚持、痛苦的硬撑，一点点堆砌出自己想要的人生结局。可绝大多数人拼尽全力、痛苦坚持到最后，依旧一无所获、屡屡失败。</p>
+    <p>我们习惯性将失败归咎于自己不够努力、不够自律、不够坚持，却从未看透人生的底层因果逻辑：结果从来不是强行行为的堆砌，而是内在身份的自然副产品。</p>
+    <p>你想要什么样的人生结果，首先要沉淀、塑造、成为什么样的人。</p>
+    <p>身份不改，行为不固，结果必空。</p>
+    <p>普通人的改变，永远停留在肤浅的行为表层，只是在反复修修补补、自我伪装。我们试图用全新的、自律的、上进的新行为，覆盖懒惰的、拖延的、平庸的旧行为，却从未改变支撑所有坏习惯、坏状态的底层自我身份认知。</p>
+    <p>这就像一栋根基腐朽、摇摇欲坠的老房子，我们不愿深耕地基、重构框架，只是一遍遍粉刷崭新的油漆、装饰华丽的外墙，妄图把破旧老屋伪装成精致宫殿。</p>
+    <p>可只要一阵微风拂过，虚假的油漆就会层层剥落，破败的本质暴露无遗。</p>
+    <p>这也是为什么无数人的自律和坚持，永远只能短暂存续：只要稍微放松、稍有懈怠，立刻打回原形、重回平庸。</p>
+    <p>因为你的外在行为在刻意精进，你的内在身份始终停留在原地。</p>
+    <p>在你的潜意识深处，你依旧是那个贪图安逸、畏惧吃苦、习惯性拖延、沉迷舒适区的普通人，从未真正蜕变升级。</p>
+    <p>我们羡慕的所有优秀的人，从来不需要靠意志力死磕自律。</p>
+    <p>那些常年健身、身材紧致的健身达人，从不需要逼迫自己吃清淡餐、强迫自己泡健身房。</p>
+    <p>对他们而言，健康饮食、规律运动，从来不是痛苦的负担、刻意的坚持，而是刻进生活的日常、融入本能的生活方式。</p>
+    <p>如果让他们暴饮暴食、久坐躺平，他们反而会身心不适、心生愧疚、浑身别扭。</p>
+    <p>那些白手起家、持续精进的创业者、自律精进的深耕者，从不需要靠闹钟逼迫自己早起、靠鸡汤支撑自己奋斗。</p>
+    <p>对他们而言，早起深耕、持续精进、打磨事业，不是牺牲享乐、委屈自己，而是发自内心的热爱与享受。</p>
+    <p>让他们整日躺平摆烂、虚度光阴、消耗自我，反而会让他们倍感煎熬、浪费生命。</p>
+    <p>在外人眼中，他们极致自律、拼命努力、天赋过人；但对他们自己而言，所有的优秀和精进，都是最自然、最本能的生活状态。他们早已完成了身份的重塑，自然拥有匹配优秀人生的行为习惯。</p>
+    <p>而你坚持目标倍感煎熬、屡屡放弃、难以长久，核心从来不是意志力薄弱，而是你的内在身份，与目标所需的行为状态完全不匹配。</p>
+    <p>你内核是贪图舒适、畏惧困难的普通人，却强行模仿强者的自律行为，本质上是逆人性、逆本心的挣扎对抗，注定无法长久。</p>
+    <p>这就像让天生擅长游水的鱼，强行上岸爬树；让擅长翱翔的飞鸟，强行潜水遨游。无论它们如何拼尽全力、咬牙坚持，最终都会徒劳无功、身心俱疲。不是它们不够努力，而是赛道与本体完全不符，身份与行为彻底相悖。</p>
+    <p>由此我们可以笃定：真正的人生蜕变，从来不是强行让自己“做到某件事”，而是从心底彻底让自己“成为某类人”。</p>
+    <p>身份的迭代重塑，才是人生最根本、最彻底的改变。</p>
+    <p>当你的内在身份完成升级，你的思维、习惯、行为、选择，都会自然而然随之改变。</p>
+    <p>因为你会本能地维护全新的自我身份，主动做出匹配身份的所有行为，无需逼迫、无需硬撑、无需内耗。</p>
+    <p>心理学中经典的自我实现预言效应，完美印证了这个逻辑：人对自我的定义，会潜移默化影响自身行为；而长期重复的行为，又会反向强化自我认知，最终形成闭环，塑造人生结局。</p>
+    <p>如果你始终认定自己是“懒惰拖延、坚持不住的人”，你的潜意识就会不断催生懈怠、摆烂、放弃的行为；而一次次的半途而废，又会让你更加笃定自己天生平庸、无法改变，最终彻底固化平庸的人生。</p>
+    <p>反之，如果你主动重塑认知，认定自己是“自律上进、持续深耕、敢于坚持的人”，你的潜意识就会主动驱动你精进、努力、成长；而一次次的正向行动，又会不断强化你的优秀身份，最终实现彻底蜕变。</p>
+    <p>生活中最常见的减肥悖论，最能体现身份认知的重要性。无数人常年喊着减肥、塑形、逆袭，一边痛苦节食、刻意运动，一边暗自心存侥幸：等我瘦下来，就可以恢复正常饮食、随心所欲吃喝、不再辛苦运动。</p>
+    <p>这句话的底层本质，就是从未接纳全新的自我身份。</p>
+    <p>在他们的潜意识里，自己的本体依旧是“易胖、慵懒、不自律的人”，减肥只是暂时的任务、痛苦的妥协，而非永久的生活升级。</p>
+    <p>所以他们的坚持充满煎熬，一旦达成短期目标，立刻回弹反弹，永远无法真正逆袭。</p>
+    <p>真正彻底、不反弹的蜕变，从来不是减掉脂肪、改变外形，而是重塑身份、升级认知。</p>
+    <p>你需要从心底彻底接纳：我本就是健康自律、体态轻盈、热爱运动的人。</p>
+    <p>当这个身份深深扎根在你的潜意识里，健康饮食、规律运动、自律生活，就会成为你的本能，减肥不再需要痛苦坚持，而是水到渠成的必然结果。</p>
+    <p>于此同时，我们更要通透一个更高维度的认知：身份从来不是人生的终点，只是自我成长的工具。</p>
+    <p>当你能够看透这一层逻辑，就不会执着、拘泥、捆绑于任何一种身份标签。“自律的人”“优秀的人”“深耕者”“追梦人”，所有身份都是我们阶段性使用的临时角色，而非永恒不变的自我本体。</p>
+    <p>你可以根据人生需求，随时拾起、随时放下、随时切换。</p>
+    <p>你不会因为偶尔懈怠、打破自律，就自我否定；不会因为暂时低谷、未能精进，就陷入焦虑。</p>
+    <p>因为你清楚地知道：懈怠只是一时的状态，而非我的全部；身份只是我使用的工具，而非真正的我。</p>
+    <p>在所有角色、身份、行为的背后，永远有那个清醒中立的内在观察者：它能清晰看见自己的拖延与懈怠，能识破自己的表演式努力，能自主选择想要的人生角色，能掌控自己的人生节奏。</p>
+    <p>这个自由、清醒、可自主选择的观察者，才是最真实、最永恒的你。</p>
+    <p>人生真正的觉醒与改变，从来不是你彻底变成了另一个完美的人，而是你从固化的身份执念中退后一步，看见自我的无限可能性，拥有了选择和重塑的自由。这看似简单的一步退让，却是所有人生蜕变的核心原点。</p>
+    <p>当然，身份重塑从来不是一蹴而就、一步登天的，它是一个循序渐进、日积月累、慢慢固化的过程。你不需要逼迫自己瞬间脱胎换骨、彻底蜕变，只需要每天践行一点点匹配新身份的微小行为。</p>
+    <p>如果你想成为“坚持运动、热爱生活的人”，不必一开始就强迫自己每天健身两小时、高强度训练，只需每天晨起做十个俯卧撑、睡前拉伸五分钟；如果你想成为“持续阅读、丰盈自我的人”，不必强迫自己每日读书两小时，只需每天睡前静心阅读十分钟；如果你想成为“自律精进、持续成长的人”，不必彻底杜绝娱乐，只需每天优先完成核心任务。</p>
+    <p>日复一日，这些微小、正向、无压力的行为，会持续向你的潜意识传递正向信号：我真的在改变，我就是这样优秀的人。</p>
+    <p>当微小行为不断重复、不断沉淀，就会固化成稳定的好习惯，好习惯最终会彻底重塑你的身份认知，完成人生的迭代升级。</p>
+    <p>永远不要轻视日常的微小行动，所有惊天动地的蜕变，都源于日复一日的细碎坚持。就像一颗渺小的种子，无需急于开花结果，只需每日浇水、默默扎根，终会破土而出、向阳生长，长成参天大树。</p>
+    <p>请记住人生最高级的成长逻辑：在尚未抵达理想生活之前，先全力以赴，活成理想中的自己。</p>
+    <p>不要等瘦下来再买喜欢的衣服，当下就好好打扮自己、接纳自己；不要等功成名就再去看世界、享生活，当下就奔赴热爱、取悦自己；不要等有钱有闲再好好善待自己，当下就温柔生活、认真度日。</p>
+    <p>当你开始按照理想身份的生活方式，认真对待每一天、每一件事，你的生活状态、思维认知、气质格局，都会慢慢向理想中的自己靠拢。生活方式塑造身份认知，身份认知决定人生结局。</p>
+    <p>而终其一生，你都要守住最后的清醒：你可以扮演所有优秀的角色，拥有所有美好的身份，但你永远是那个自由的观察者、选择者、创造者，从不被任何标签捆绑。</p>
+
+    <div class="tip-box">
+        <h3>今日深度挖掘（必须完成）</h3>
+        
+        <p>1. 如果三年后的你已经完全蜕变成理想中的样子，请你用"现在的时态"描写Ta的一天——从早上睁眼到晚上入睡。</p>
+        <div class="tip-example">例：早上6:30自然醒来，不看手机先喝一杯水，然后写作45分钟……</div>
+        <textarea class="dig-input" id="dig1" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>2. 选出上一题中描写的3个具体行为，从明天开始就执行。注意：不是"尝试"，而是"像那个人一样自然地做"。</p>
+        <div class="tip-example">例：那个人不看手机起床 → 从今晚起，手机放客厅充电，明早直接起身</div>
+        <textarea class="dig-input" id="dig2" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>3. 当"旧你"的声音冒出来说"我不行""我还没准备好"时，你如何用"新身份"来回击？写下一段具体对话。</p>
+        <div class="tip-example">例：旧我「我没经验，做不好」→ 新我「每个专家都曾是新手，开始比完美重要」</div>
+        <textarea class="dig-input" id="dig3" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>4. 找到一个你身边或你知道的、已经活成了你想要的样子的人。写下Ta的3个核心特质，并找出你可以立刻模仿的第一个行为。</p>
+        <div class="tip-example">例：模仿对象「村上春树」→ 特质：规律、专注、持久 → 第一个行为：每天固定时间写作</div>
+        <textarea class="dig-input" id="dig4" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>5. 完成这句话，并把它放在你每天能看到的地方："我不是在努力成为______，我本来就是______。从现在起，我用行动证明这一点。"</p>
+        <div class="tip-example">例：我不是在努力成为一个自律的人，我本来就是自律的人。从现在起，我用行动证明这一点。</div>
+        <textarea class="dig-input" id="dig5" placeholder="请在这里输入你的答案..."></textarea>
+    </div>
+
+    <div class="closing-note">
+        先在心里成为，行动自然会跟上。<br>
+        明天，我们将用新身份，重新定义你的人生。
+    </div>
+</div>
+
+<div class="lock-note" id="unlockTip">明日内容将在 凌晨0点 自动解锁｜每日0点更新</div>
+
+<div class="footer">
+    <div class="footer-brand"><span>Y</span><span>o</span><span>u</span> <span>捻</span><span>光</span></div>
+    <div class="footer-date" id="footerDate"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* 背景图模糊加载：LQIP占位符瞬间显示，WebP加载完成后清晰淡入 */
+(function(){
+  var img = document.querySelector('.bg-loader');
+  if (!img) return;
+  var webp = img.getAttribute('data-src');
+  if (!webp) return;
+  img.onload = function(){
+    // 只响应真实图片的加载（跳过初始LQIP base64）
+    if (img.src.indexOf('base64') === -1) {
+      img.classList.add('loaded');
+    }
+  };
+  img.onerror = function(){
+    if (img.src.indexOf('.webp') > -1) {
+      img.src = img.getAttribute('data-src').replace('.webp','.png');
+    }
+  };
+  img.src = webp;
+  // 缓存命中时 onload 可能不触发
+  if (img.complete && img.src.indexOf('base64') === -1) {
+    img.classList.add('loaded');
+  }
+})();
+
+const audio = document.getElementById('audio');
+const toggleBtn = document.getElementById('toggleBtn');
+const icon = document.getElementById('icon');
+const progress = document.getElementById('progress');
+const current = document.getElementById('current');
+const total = document.getElementById('total');
+const progressBar = document.getElementById('progressBar');
+
+// 修复：使用抖音直链，支持拖动
+audio.src = "https://sf6-cdn-tos.douyinstatic.com/obj/ies-music/7161723393045859109.mp3";
+
+const playSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>`;
+const pauseSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"></path></svg>`;
+
+let isDragging = false;
+
+function formatTime(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+}
+
+audio.addEventListener('loadedmetadata', () => {
+    total.textContent = formatTime(audio.duration);
+});
+
+toggleBtn.addEventListener('click', () => {
+    if (audio.paused) {
+        audio.play();
+        icon.innerHTML = pauseSvg;
+    } else {
+        audio.pause();
+        icon.innerHTML = playSvg;
+    }
+});
+
+// 修复：拖动时不刷新，防止回弹
+audio.addEventListener('timeupdate', () => {
+    if (isDragging) return;
+    current.textContent = formatTime(audio.currentTime);
+    progress.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+});
+
+// 修复：点击 + 拖动
+progressBar.addEventListener('mousedown', (e) => {
+    isDragging = true;
+});
+progressBar.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const rect = progressBar.getBoundingClientRect();
+    const p = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = audio.duration * p;
+});
+document.addEventListener('mouseup', () => {
+    isDragging = false;
+});
+
+progressBar.addEventListener('touchstart', (e) => {
+    isDragging = true;
+});
+progressBar.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const rect = progressBar.getBoundingClientRect();
+    const p = (e.touches[0].clientX - rect.left) / rect.width;
+    audio.currentTime = audio.duration * p;
+});
+document.addEventListener('touchend', () => {
+    isDragging = false;
+});
+
+// 修复：单独点击支持
+progressBar.addEventListener('click', (e) => {
+    const rect = progressBar.getBoundingClientRect();
+    const p = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = audio.duration * p;
+});
+
+// 以下完全不变
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let w = innerWidth, h = innerHeight;
+canvas.width = w;
+canvas.height = h;
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * w;
+    this.y = Math.random() * h;
+    this.s = Math.random() * 1.5 + 0.3;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.o = Math.random() * 0.4 + 0.1;
+    this.hue = Math.random() > 0.5 ? 220 + Math.random() * 20 : 90 + Math.random() * 20;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > w) this.vx *= -1;
+    if (this.y < 0 || this.y > h) this.vy *= -1;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue}, 90%, 65%, ${this.o})`;
+    ctx.fill();
+  }
+}
+
+const particles = Array.from({ length: 80 }, () => new Particle());
+function anim() {
+  ctx.clearRect(0, 0, w, h);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(anim);
+}
+anim();
+
+const week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const now = new Date();
+document.getElementById('footerDate').innerText = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} · ${week[now.getDay()]}`;
+
+function updateUnlockTimer() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const diff = midnight - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    let timeText = h > 0 ? `${h} 小时 ${m} 分钟` : `${m} 分钟`;
+    document.getElementById('unlockTip').innerText = `明日内容将在 ${timeText} 后自动解锁｜每日 0 点更新`;
+}
+updateUnlockTimer();
+setInterval(updateUnlockTimer, 60000);
+
+const storageKey = "day3_dig_data";
+function loadDigData() {
+    const saved = localStorage.getItem(storageKey);
+    if (!saved) return;
+    const data = JSON.parse(saved);
+    document.getElementById('dig1').value = data.q1 || '';
+    document.getElementById('dig2').value = data.q2 || '';
+    document.getElementById('dig3').value = data.q3 || '';
+    document.getElementById('dig4').value = data.q4 || '';
+    document.getElementById('dig5').value = data.q5 || '';
+}
+function saveDigData() {
+    const data = {
+        q1: document.getElementById('dig1').value,
+        q2: document.getElementById('dig2').value,
+        q3: document.getElementById('dig3').value,
+        q4: document.getElementById('dig4').value,
+        q5: document.getElementById('dig5').value
+    };
+    localStorage.setItem(storageKey, JSON.stringify(data));
+}
+document.querySelectorAll('.dig-input').forEach(input => {
+    input.addEventListener('input', saveDigData);
+});
+window.addEventListener('DOMContentLoaded', loadDigData);
+</script>
+<script>
+(function(){
+var n=performance.getEntriesByType('navigation')[0];
+if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
+var pn=localStorage.getItem('playerName');if(pn)document.getElementById('personalTag').innerText=pn+' 的成长之旅';
+var s1=localStorage.getItem('startDate'),jd=3;
+if(s1){var st=new Date(parseInt(s1));st.setHours(0,0,0,0);var n2=new Date();n2.setHours(0,0,0,0);jd=Math.min(Math.floor((n2-st)/86400000)+1,7);}
+var dp=document.getElementById('dayProgress');
+if(!dp){dp=document.createElement('div');dp.id='dayProgress';dp.className='day-progress';var h1=document.querySelector('header h1');if(h1)h1.parentNode.insertBefore(dp,h1);}
+if(dp)dp.innerText='你的旅程 · 第 '+jd+'/7 天';
+var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
+})();
+</script>
+</body>
+</html>

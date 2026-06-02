@@ -1,0 +1,877 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第6天｜升级心智 - 7天重塑人生</title>
+<link rel="preload" as="image" href="hailang.webp" fetchpriority="high">
+<meta name="view-transition" content="same-origin">
+    <style>
+        :root {
+            --bg:#0a0a14;
+            --text:#ffffff;
+            --text-secondary:rgba(255,255,255,0.8);
+            --vibrant-blue: #0436FE;
+            --spring-bud: #B7F700;
+            --transition:0.4s ease;
+        }
+        * {
+            margin:0; padding:0; box-sizing:border-box;
+            -webkit-font-smoothing:antialiased;
+        }
+        html, body {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a14;
+        }
+        body {
+            /* 文字阴影增强背景图上的可读性 */
+            text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--text);
+            /* background-attachment: fixed; removed for mobile performance */
+        }
+        .page-bg {
+            position: fixed; inset:0; z-index:-2;
+            background: rgba(10,10,20,0.3);
+        }
+        #particleCanvas {
+            position:fixed; inset:0; z-index:-1;
+            pointer-events:none;
+        }
+        .scroll {
+            position:fixed; inset:0;
+            overflow-y:auto; overflow-x:hidden;
+            padding: 20px;
+        }
+        .container {
+            max-width: 720px;
+            margin: 60px auto;
+            position:relative; z-index:1;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .tag {
+            color: var(--spring-bud);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        @keyframes letterBounce {
+            0% { transform: translateY(0) skew(-8deg); }
+            50% { transform: translateY(-6px) skew(-8deg); }
+            100% { transform: translateY(0) skew(-8deg); }
+        }
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            font-weight: 900;
+            margin-bottom: 12px;
+            display: inline-block;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        h1 span {
+            display: inline-block;
+            background: linear-gradient(90deg, #B7F700, #428DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transform: skew(-8deg);
+            animation: letterBounce 2.8s ease-in-out infinite alternate;
+        }
+        h1 span:nth-child(1) { animation-delay: 0s; }
+        h1 span:nth-child(2) { animation-delay: 0.15s; }
+        h1 span:nth-child(3) { animation-delay: 0.3s; }
+        h1 span:nth-child(4) { animation-delay: 0.45s; }
+        .personal-tag {
+            color: var(--spring-bud);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            opacity: 0.85;
+        }
+        .day-progress {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .audio-tip {
+            text-align: center;
+            color: var(--spring-bud);
+            font-size: 1rem;
+            margin: 20px 0 30px;
+            opacity: 0.9;
+        }
+        .player {
+            background: transparent;
+            padding: 0;
+            margin: 0 0 30px 0;
+            border: none;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .play-btn {
+            width: 38px;
+            height: 38px;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: var(--text);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+            margin-top: -1px;
+        }
+        .play-btn:hover {
+            color: var(--spring-bud);
+            transform: scale(1.08);
+        }
+        .progress-bar {
+            flex:1;
+            height:6px;
+            background: rgba(255,255,255,0.1);
+            border-radius:99px;
+            overflow:hidden;
+            cursor:pointer;
+            position: relative;
+        }
+        .progress {
+            height:100%;
+            background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+            width:0%;
+            transition: width 0.05s linear;
+            position: absolute;
+            left:0; top:0;
+        }
+        .time-group {
+            display: flex;
+            gap:6px;
+            color:var(--text-secondary);
+            font-size:0.85rem;
+            min-width: 80px;
+            justify-content: flex-end;
+            align-items: center;
+            flex-shrink: 0;
+            transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .time-group:hover {
+            color: var(--spring-bud);
+        }
+        .script-box {
+            margin: 40px 0 50px;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 24px 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .script-title {
+            font-size: 1.1rem;
+            color: var(--spring-bud);
+            margin-bottom: 20px;
+        }
+        .line {
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 2px solid transparent;
+        }
+        .en {
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+        .line:hover {
+            background: rgba(183,247,0,0.05);
+            transform: translateX(4px);
+            border-left-color: var(--spring-bud);
+        }
+        .cn {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .content {
+            padding: 0;
+            margin: 0 0 40px 0;
+        }
+        .content h2 {
+            color: var(--spring-bud);
+            font-size:1.3rem;
+            margin-bottom:20px;
+        }
+        .content p {
+            color: var(--text);
+            font-size:1rem;
+            line-height:1.9;
+            margin-bottom:18px;
+        }
+        .tip-box {
+            background: rgba(4, 54, 20, 0.12);
+            border-left:3px solid #4FC3F7;
+            padding:18px;
+            margin:26px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        .tip-box h3 {
+            color: var(--spring-bud);
+            font-size:1rem;
+            margin-bottom:10px;
+        }
+        .tip-box p {
+            font-size:0.95rem;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .dig-input {
+            width: 100%;
+            min-height: 80px;
+            margin: 10px 0 20px;
+            padding: 12px 14px;
+            background: rgba(20,20,35,0.5);
+            border: 1px solid rgba(4, 54, 20, 0.3);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+        .dig-input:focus {
+            border-color: var(--spring-bud);
+            background: rgba(20,20,35,0.7);
+        }
+        .back-btn {
+            position: fixed;
+            top: 24px; left:20px;
+            width:44px; height:44px;
+            border-radius:50%;
+            background: rgba(20,20,35,0.7);
+            border:1px solid rgba(255,255,255,0.1);
+            color:#fff;
+            display:grid; place-items:center;
+            cursor:pointer;
+            z-index:10;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            border-color: var(--spring-bud);
+            color: var(--spring-bud);
+        }
+        .lock-note {
+            text-align:center;
+            padding:20px 0;
+            color: var(--text-secondary);
+            font-size:0.9rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px 0 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .footer-brand {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+        .footer-brand span {
+            display: inline-block;
+            background: linear-gradient(90deg, #B7F700, #428DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transform: skew(-8deg);
+            animation: letterBounce 2.8s ease-in-out infinite alternate;
+        }
+        .footer-brand span:nth-child(1) { animation-delay: 0s; }
+        .footer-brand span:nth-child(2) { animation-delay: 0.15s; }
+        .footer-brand span:nth-child(3) { animation-delay: 0.3s; }
+        .footer-brand span:nth-child(4) { animation-delay: 0.45s; }
+        .footer-brand span:nth-child(5) { animation-delay: 0.6s; }
+        .footer-date {
+            font-size: 0.8rem;
+        }
+        .closing-note {
+            text-align: center;
+            color: var(--spring-bud);
+            margin: 20px 0;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+/* === Enhanced Interactions === */
+.scroll { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+.scroll::-webkit-scrollbar { width: 4px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: rgba(183,247,0,0.2); border-radius: 10px; }
+.scroll::-webkit-scrollbar-thumb:hover { background: rgba(183,247,0,0.4); }
+#particleCanvas { will-change: transform, opacity; }
+h1 { will-change: transform; }
+.play-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.play-btn:hover { color: var(--spring-bud); transform: scale(1.15); }
+.play-btn:active { transform: scale(0.9); }
+.play-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; border-radius: 50%; }
+.back-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.back-btn:hover { background: rgba(183,247,0,0.15); border-color: var(--spring-bud); color: var(--spring-bud); transform: scale(1.1); box-shadow: 0 0 15px rgba(183,247,0,0.25); }
+.back-btn:active { transform: scale(0.95); }
+.back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+.progress-bar { transition: box-shadow 0.3s ease; cursor: pointer; }
+.progress-bar:hover { box-shadow: 0 0 12px rgba(183,247,0,0.2); }
+.dig-input { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.dig-input:hover { border-color: rgba(183,247,0,0.35); box-shadow: 0 0 8px rgba(183,247,0,0.08); }
+.dig-input:focus { border-color: var(--spring-bud); background: rgba(20,20,35,0.7); box-shadow: 0 0 15px rgba(183,247,0,0.15); }
+.tip-box { transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+.tip-box:hover { border-left-color: var(--spring-bud); box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
+.line { transition: all 0.3s ease; border-radius: 8px; padding: 8px 12px; margin-left: -12px; margin-right: -12px; }
+.line:hover { background: rgba(255,255,255,0.025); transform: translateX(4px); }
+.content h2 { position: relative; padding-bottom: 12px; }
+.content h2::after { content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 2px; background: linear-gradient(90deg, var(--spring-bud), transparent); border-radius: 2px; }
+@keyframes subtleFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.tag { animation: subtleFloat 3s ease-in-out infinite; }
+.closing-note { transition: all 0.3s ease; }
+.closing-note:hover { text-shadow: 0 0 15px rgba(183,247,0,0.3); }
+body { animation: pageIn 0.1s ease; will-change: transform, opacity; }
+body.no-page-anim { animation: none !important; }
+@keyframes pageIn { from { opacity: 0.7; transform: translate3d(15px,0,0); } }
+    
+/* 背景图模糊加载：瞬间显示极小占位符→清晰图淡入 */
+.bg-loader {
+  position: fixed;
+  filter: brightness(1);
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  filter: blur(20px);
+  transform: scale(1.1);
+  transition: filter 0.8s ease-out, transform 0.8s ease-out;
+  background: linear-gradient(135deg, #101020 0%, #0f0f1c 50%, #0a0a14 100%);
+}
+.bg-loader.loaded {
+  filter: brightness(1) blur(0);
+  transform: scale(1);
+}
+
+</style>
+</head>
+<body style="background-color:#0a0a14;">
+<!-- 背景图：先显示极小的模糊占位符（0网络请求），清晰WebP加载后自动淡入 -->
+<img class="bg-loader" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCABBAB4DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDHFSKOaYBUsQywrUyNKwj6GtRWwKqWaYQVZIqGzRHLg1PbIS4qCLk1qWcIJBqyEjRtUwgqcikjG1aU1kzRHIqcGtfTpM4FY9aOnHDCtCEbueKBTFPyinA1myzkqu2LbWFUVNTwttYVoZnRxNlBTqqWcm5RVqoZaOSWpk6iiirRDNew6CtCiioZaP/Z" data-src="hailang.webp" alt="" fetchpriority="high">
+<div class="page-bg"></div>
+<canvas id="particleCanvas"></canvas>
+<button class="back-btn" onclick="location.href='hall.html'" aria-label="返回成长大厅">←</button>
+
+<div class="scroll">
+<div class="container">
+<header>
+    <div class="tag">DAY 6 · MINDSET UPGRADE</div>
+    <h1><span>升</span><span>级</span><span>心</span><span>智</span></h1>
+    <div class="personal-tag" id="personalTag"></div>
+    <p class="desc">第6天｜心智层级决定人生上限，向内升级才是终身蜕变</p>
+</header>
+
+<div class="audio-tip">在开始今天的主题之前，请你认真听完这段关于认知与价值的演讲</div>
+
+<div class="player">
+    <div class="controls">
+        <button class="play-btn" id="toggleBtn" aria-label="播放音频">
+            <svg id="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"></path>
+            </svg>
+        </button>
+        <div class="progress-bar" id="progressBar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="time-group">
+            <span id="current">0:00</span>
+            <span>/</span>
+            <span id="total">0:00</span>
+        </div>
+    </div>
+    <audio id="audio" preload="auto" src="https://sf6-cdn-tos.douyinstatic.com/obj/ies-music/7514219354213468937.mp3"></audio>
+</div>
+
+<div class="script-box">
+    <div class="script-title">励志音频｜完整英文对照</div>
+
+    <div class="line">
+        <div class="en">No one will ever pay you what you're worth.</div>
+        <div class="cn">永远没有人根据你的价值来支付你的薪酬。</div>
+    </div>
+    <div class="line">
+        <div class="en">They'll only ever pay you what they think you're worth.</div>
+        <div class="cn">他们只按自己所认可的你的价值支付你薪酬。</div>
+    </div>
+    <div class="line">
+        <div class="en">And you control their thinking.</div>
+        <div class="cn">你能掌控他们的想法。</div>
+    </div>
+    <div class="line">
+        <div class="en">Not like this.</div>
+        <div class="cn">但不是这样控制的。</div>
+    </div>
+    <div class="line">
+        <div class="en">Although that would be cool.</div>
+        <div class="cn">尽管那样很赞。</div>
+    </div>
+    <div class="line">
+        <div class="en">That would be really cool.</div>
+        <div class="cn">能那样可太赞了。</div>
+    </div>
+    <div class="line">
+        <div class="en">Instead, like this: clearly defining and communicating your value are essential to being paid well for your excellence.</div>
+        <div class="cn">然而，实际上应该这样做：清楚地定义并传达自己的价值，对于为自己的优秀赢得等价回报是十分重要的。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I did that by asking key value questions.</div>
+        <div class="cn">我通过问自己几个关键价值问题来做到这一点。</div>
+    </div>
+    <div class="line">
+        <div class="en">What are my clients' needs and how do I meet them?</div>
+        <div class="cn">我的客户需要什么？我如何帮他们实现？</div>
+    </div>
+    <div class="line">
+        <div class="en">What is my unique skill set that makes me better qualified to serve my clients?</div>
+        <div class="cn">对客户来说，我与别人相比独特的专长是什么？</div>
+    </div>
+    <div class="line">
+        <div class="en">What do I do that no one else does?</div>
+        <div class="cn">我提供的什么服务是独一无二的？</div>
+    </div>
+    <div class="line">
+        <div class="en">What problems do I solve for clients?</div>
+        <div class="cn">我为客户解决了哪些问题？</div>
+    </div>
+    <div class="line">
+        <div class="en">What value do I add?</div>
+        <div class="cn">为客户的公司增加了多大价值？</div>
+    </div>
+    <div class="line">
+        <div class="en">I had done the homework.</div>
+        <div class="cn">我做了功课。</div>
+    </div>
+    <div class="line">
+        <div class="en">I knew the value was there.</div>
+        <div class="cn">我清楚自己有这个价值。</div>
+    </div>
+    <div class="line">
+        <div class="en">So when prospects came, I prepared the proposals with the new higher pricing and sent them out and communicated the value.</div>
+        <div class="cn">所以当机会来临，我把准备好的提价方案发给客户，并与客户探讨其中的价值。</div>
+    </div>
+    <div class="line">
+        <div class="en">How's the story end?</div>
+        <div class="cn">结果呢？</div>
+    </div>
+    <div class="line">
+        <div class="en">Clients continue to hire me and refer me and recommend me.</div>
+        <div class="cn">客户不但继续与我合作，还把我推荐给更多人。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I'm still here.</div>
+        <div class="cn">我的生意还在。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I share the story because doubts and fears are natural and normal, but they don't define our value and they shouldn't limit our earning potential.</div>
+        <div class="cn">与你们分享这故事，是因为疑惑与恐惧都是自然正常的，但这些都不决定你的价值，也不应该制约我们赚钱的能力。</div>
+    </div>
+    <div class="line">
+        <div class="en">One thing I shared with her is that it's so important to find your own voice.</div>
+        <div class="cn">我与她分享了一件非常重要的事：找到自己的声音。</div>
+    </div>
+    <div class="line">
+        <div class="en">A voice that's authentic and true to you.</div>
+        <div class="cn">一个对你而言，准确且真实的声音。</div>
+    </div>
+    <div class="line">
+        <div class="en">Don't try to channel your sister-in-law just because she's a great salesperson or your neighbor who tells a great joke.</div>
+        <div class="cn">不用学你善于销售的嫂子，也不用学特别会说笑话的邻居。</div>
+    </div>
+    <div class="line">
+        <div class="en">If that's not who you are, give up this notion that that's shooting your own horn.</div>
+        <div class="cn">因为那都不是你。试着放下“自吹自擂”的成见。</div>
+    </div>
+    <div class="line">
+        <div class="en">Make it about the other party.</div>
+        <div class="cn">从对方的角度观察。</div>
+    </div>
+    <div class="line">
+        <div class="en">Focus on serving and adding your value and it won't feel like bragging.</div>
+        <div class="cn">关注服务和价值的提升，就不会觉得自夸。</div>
+    </div>
+    <div class="line">
+        <div class="en">What do you love about what you do?</div>
+        <div class="cn">你喜欢工作的哪部分？</div>
+    </div>
+    <div class="line">
+        <div class="en">What excites you about the work that you do?</div>
+        <div class="cn">工作中什么事让你充满热情？</div>
+    </div>
+    <div class="line">
+        <div class="en">If you connect with that, communicating your value will come naturally.</div>
+        <div class="cn">如果将这些联系起来，必定会传达你的价值。</div>
+    </div>
+    <div class="line">
+        <div class="en">Being properly valued is so important and you can hear in this story that the implications range far beyond just finances into the realm of self-respect, self-confidence.</div>
+        <div class="cn">能被正确的评价是很重要的，从这件事可以看出，其影响范围不但超出了金钱，而且还进入了自尊自信的范畴。</div>
+    </div>
+    <div class="line">
+        <div class="en">Today I've told two stories. One about defining our value and the other about communicating our value.</div>
+        <div class="cn">今天我分享了两个故事：一个是确定自我价值；另一个是传达自我价值。</div>
+    </div>
+    <div class="line">
+        <div class="en">And these are the two elements to realizing our full earning potential.</div>
+        <div class="cn">这两个要素，让我们意识到了自己赚钱的潜力。</div>
+    </div>
+    <div class="line">
+        <div class="en">That's the equation.</div>
+        <div class="cn">这就是核心公式。</div>
+    </div>
+    <div class="line">
+        <div class="en">And if you're sitting in the audience today and you're not being paid what you're worth, I'd like to welcome you into this equation.</div>
+        <div class="cn">如果今天坐在观众席的你，拿到的薪水与你的价值不等，我欢迎你使用这个等式。</div>
+    </div>
+    <div class="line">
+        <div class="en">Just imagine what life could be like.</div>
+        <div class="cn">想象一下生活会怎样变化。</div>
+    </div>
+    <div class="line">
+        <div class="en">How much more we could do.</div>
+        <div class="cn">我们能更多地做些什么。</div>
+    </div>
+    <div class="line">
+        <div class="en">How much more we could give back.</div>
+        <div class="cn">我们能更多地回赠些什么。</div>
+    </div>
+    <div class="line">
+        <div class="en">How much more we could plan for the future.</div>
+        <div class="cn">能更多地为未来做出哪些计划。</div>
+    </div>
+    <div class="line">
+        <div class="en">How validated and respected we would feel if we could earn our full potential, realize our full value.</div>
+        <div class="cn">如果我们能够获得与我们潜力相对应的收入，实现自我最大的价值，会发觉自己多踏实自信。</div>
+    </div>
+    <div class="line">
+        <div class="en">No one will ever pay you what you're worth.</div>
+        <div class="cn">没有人会按你的价值买单。</div>
+    </div>
+    <div class="line">
+        <div class="en">They'll only ever pay you what they think you're worth and you control their thinking.</div>
+        <div class="cn">他们只按自己认可的你的价值买单，但你可以掌控他们的想法。</div>
+    </div>
+</div>
+
+<div class="content">
+    <h2>心智的阶梯：你能拥有的人生，由你的心智层级决定</h2>
+    <p>人生如同一场没有终点、无人陪同、独自前行的登山之旅。所有人的起点相同，但最终抵达的高度、看见的风景、拥有的人生天差地别。</p>
+    <p>绝大多数人终其一生，都困在山底原地徘徊：被眼前的琐碎困扰、被当下的情绪裹挟、被眼前的利益迷惑、被脚下的荆棘阻碍，始终没有勇气迈出向上攀登的脚步，终身被困在平庸的底层。</p>
+    <p>少数人鼓起勇气前行，抵达半山腰：看见了更辽阔的风景、解锁了更广阔的认知、摆脱了底层的琐碎，却也因前路疲惫、未知迷茫、无人同行心生退意，最终半途而废、止步不前。</p>
+    <p>只有极少数心智通透、持续精进、不断升级的人，能够跨越迷茫、抵御疲惫、坚持深耕，一步步向上攀登，最终登顶群山，看见世间最壮阔、最通透、最独一无二的风景。</p>
+    <p>决定一个人人生高度、人生格局、人生结局的，从来不是天赋、运气、家境、努力，而是心智层级。</p>
+    <p>一个人永远无法拥有超越自身心智层级的人生，这是人生的底层铁律。</p>
+    <p>哪怕你凭借运气、机遇、外力，侥幸获得财富、地位、荣誉、顺遂，倘若心智层级无法匹配，最终也会凭实力流失所有好运，回归到与自己心智认知完全匹配的人生状态。</p>
+    <p>人的心智成长，是一套循序渐进、由低到高、层层递进、不可跳跃的完整进化体系。没有人可以跳过底层阶段、直接抵达高层通透的境界，每一个心智层级，都对应专属的思维模式、认知维度、价值观念、行为选择。</p>
+    <p>所有高层级的通透、从容、智慧、自由，都必须建立在低层级的迷茫、痛苦、试错、内耗之上。历经底层的煎熬，才能完成高层的蜕变，每一步成长，都不可或缺。</p>
+    <p>为了让所有人都能通俗理解、精准对标、落地自查，我将心智层级结合普通人的真实生活场景、行为状态、内心想法逐一拆解，人人可对应、可自查、可升级。</p>
+    <p>最底层是冲动本能阶段，这是最原始、最本能的心智状态，和孩童的思维模式高度一致，完全被本能、情绪、即时欲望支配，毫无理性和长远思维。</p>
+    <p>处于这个层级的人，做事凭心情、做人凭喜好、行事无底线、选择无规划。</p>
+    <p>想要什么必须立刻得到，无法等待、无法延迟满足；得不到就暴躁易怒、消极摆烂、自我内耗。</p>
+    <p>做事不计后果、不顾长远、不懂隐忍、不懂克制，只追求当下的快乐和宣泄。</p>
+    <p>生活中最常见的表现就是脾气暴躁、情绪化消费、熬夜摆烂、冲动决策、遇事抱怨、稍有不顺就摆烂放弃、只顾当下享乐不顾未来人生。</p>
+    <p>往上一层是自我保护阶段，度过原始冲动后，人会进入自我保护的心智层级。</p>
+    <p>这个阶段的核心特征是认定世界充满风险、人心充满算计，核心目标是自保、避害、利己。</p>
+    <p>处于这个层级的人，极度缺乏安全感，凡事优先考虑自身利益，防备心极强，习惯性隐瞒、敷衍、权衡利弊、利己优先。</p>
+    <p>害怕受伤、害怕吃亏、害怕被欺骗、害怕被利用，所以习惯性封闭自我、防备他人、精致利己。</p>
+    <p>典型状态就是遇事先自保、不愿付出、害怕吃亏、多疑敏感、习惯性逃避风险、拒绝尝试、不愿突破，为了规避伤害，宁愿原地不动、放弃成长。</p>
+    <p>再往上就是绝大多数人的终身层级——从众依附阶段，核心是依附群体、放弃自我、随波逐流。</p>
+    <p>处于这个层级的人，没有独立的认知、独立的三观、独立的选择，完全依附世俗规则、大众潮流、群体认知、他人评价。</p>
+    <p>把多数人的选择当成真理，把世俗的标准当成人生唯一答案，把群体的价值观当成自我的价值观。</p>
+    <p>极度害怕与众不同、害怕被孤立、害怕被非议、害怕成为异类，宁愿跟随大众平庸内卷、盲目跟风、按部就班，也不敢遵从本心、坚持自我、走出专属赛道。</p>
+    <p>典型表现就是别人内卷我也内卷、别人稳定我也稳定、别人追梦我也跟风，终身活在别人的节奏里，不敢有自己的想法和选择，随波逐流、随遇而安、终身平庸。</p>
+    <p>当一个人开始感受到内心与现实的脱节、自我与世俗的割裂，不再盲目认同大众认知、不再全盘接纳外界规训、不再盲目跟风从众，就进入了自我觉醒阶段，这是普通人跳出平庸、突破内耗、实现蜕变的第一道分水岭。</p>
+    <p>走到这个层级的人，会开始深度自我发问：我是谁？</p>
+    <p>我为什么而活？</p>
+    <p>我真正想要什么？</p>
+    <p>我为什么持续内耗？</p>
+    <p>我的人生意义是什么？</p>
+    <p>我想活成什么样子？</p>
+    <p>这个阶段最大的特点是迷茫且痛苦、孤独且清醒。</p>
+    <p>你开始质疑过往的人生、推翻固有的认知、挣脱世俗的束缚、寻找真实的自我。</p>
+    <p>你不再合群、不再盲从、不再随波逐流，开始独自思考、独自复盘、独自成长。</p>
+    <p>所有的心智成长、人生蜕变，都从这一层觉醒开始，熬过迷茫痛苦，方能迎来新生。</p>
+    <p>完成自我觉醒后，心智正式进入成熟稳定的自觉负责阶段，核心是自我主导、为己负责、内心笃定、不受干扰。</p>
+    <p>处于这个层级的人，彻底摆脱了他人眼光、世俗评价、群体裹挟。</p>
+    <p>拥有完整独立的三观、清晰的人生目标、稳定的内核力量。</p>
+    <p>不再被外界焦虑、他人节奏、世俗标准影响，不跟风内卷、不盲目攀比、不自我内耗。</p>
+    <p>能够自主规划人生、主动突破成长、坦然接纳成败，所有行为、选择、努力，都源于自我本心，而非外界逼迫。</p>
+    <p>典型状态就是清醒自律、内核稳定、专注自我、稳步成长、遇事复盘不抱怨、为自己的所有选择全权负责，松弛且有力量。</p>
+    <p>再往上就是包容思辨阶段，属于个人主义的高阶心智。</p>
+    <p>这个层级的人，彻底看透了认知的本质：所有观念、标准、真理，都是环境产物，没有绝对对错，只有适配与否。</p>
+    <p>他们不再固执己见、不再非黑即白、不再偏执狭隘。</p>
+    <p>拥有极强的共情能力、包容心态、思辨思维。</p>
+    <p>能够接纳不同的观点、尊重不同的人生、理解不同的选择。</p>
+    <p>不轻易评判他人、不随意否定生活、不偏执固有认知。</p>
+    <p>懂得换位思考、多元看待问题、灵活应对变化，心态开放、格局宽广、通透豁达。</p>
+    <p>抵达全局策略阶段的人，拥有系统思维、全局视野、本质洞察力，跳出了个人情绪、眼前得失、单一视角的局限。</p>
+    <p>遇事不再纠结表象、不再纠结情绪、不再纠结得失，能够快速看透事物底层逻辑、看清问题本质、预判发展趋势、制定最优策略。</p>
+    <p>能够跳出自我视角、跳出当下困境，从长远、全局、系统的角度规划人生、解决问题。</p>
+    <p>从容应对人生的所有变数、挫折、困境，精准掌控自己的人生节奏与发展轨迹。</p>
+    <p>绝大多数人难以抵达的通透层级是建构自由阶段，核心认知是所有身份、标签、规则、框架、标准，都是人为建构的工具，而非人生的枷锁。</p>
+    <p>处于这个层级的人，彻底实现了精神自由。</p>
+    <p>不被任何身份捆绑、不被任何规则束缚、不被任何认知困住。</p>
+    <p>可以根据人生需求，自由建构、切换、舍弃自己的身份和角色，灵活运用所有规则、资源、认知为自己的人生服务。</p>
+    <p>他们清晰觉知内在观察者的存在，深知自己可以扮演任何角色、拥有任何身份，但永远不被角色定义，是自由的创造者、选择者、掌控者，拥有绝对的精神自由。</p>
+    <p>心智成长的终极境界是合一通透阶段，自我与生活、当下、世界彻底合一。</p>
+    <p>抵达这个层级的人，彻底放下执念、焦虑、恐惧、欲望、内耗。</p>
+    <p>工作与休闲、奋斗与松弛、得到与失去，再无对立分别。</p>
+    <p>全然活在当下、享受当下、接纳当下。</p>
+    <p>内心极致平静、通透、从容、慈悲，不焦虑未来、不纠结过往、不内耗自我。</p>
+    <p>既能全力奔赴山海、深耕事业，也能安然接纳平凡、享受生活。</p>
+    <p>与自我和解、与生活相融、与世界温柔相处，活出极致通透、自由、丰盈的人生。</p>
+    <p>在这里我们需要明白一个核心真相：高层级心智，从来不是彻底抛弃低层级的本能和思维，而是包容、掌控、活用底层心智。</p>
+    <p>高阶通透的人，不是没有情绪、没有欲望、没有惰性，而是不会被情绪支配、不会被欲望捆绑、不会被惰性掌控。</p>
+    <p>他们可以随性玩乐、松弛生活，也可以全力以赴、深耕奋斗；可以温柔包容、共情他人，也可以坚定果断、守住底线。</p>
+    <p>他们拥有绝对的选择自由，而非被动被本能操控。</p>
+    <p>心智升级，是一场漫长且痛苦的自我迭代，没有捷径、无法速成。它需要我们持续学习、深度思考、不断复盘，需要我们敢于打破固有认知、跳出舒适圈层、直面内心恐惧、接纳成长痛苦。</p>
+    <p>但所有的煎熬、迷茫、试错、内耗，终有回报。当你的心智层级持续升级，你会豁然开朗：曾经困住你的困境，不过是小事；曾经让你焦虑的得失，不过是云烟；曾经让你纠结的内耗，早已不复存在。</p>
+    <p>你终将跳出世俗的裹挟、他人的节奏、自我的局限，清晰知晓自己的本心、热爱、方向，坚定奔赴属于自己的、独一无二的顶级人生。你的心智层级，最终决定了你人生的最高上限。</p>
+
+    <div class="tip-box">
+        <h3>今日深度挖掘（必须完成）</h3>
+        
+        <p>1. 回顾过去一周遇到的3个困难，你当时的第一反应是什么？（抱怨/逃避/等待帮助/主动解决/寻找模式？）这些反应揭示了你目前的心智层级。</p>
+        <div class="tip-example">例：遇到工作失误 → 第一反应「这不是我的错」→ 揭示：受害者层级，习惯推卸责任</div>
+        <textarea class="dig-input" id="dig1" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>2. 你认识的人中，谁的心智层级明显比你高？Ta在面对同样困境时，会怎么想、怎么做？写出3个具体对比。</p>
+        <div class="tip-example">例：同事被客户刁难 → 我：觉得客户不讲理 → 高心智同事：分析客户真正的需求是什么，找到双赢方案</div>
+        <textarea class="dig-input" id="dig2" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>3. 你的"默认情绪"是什么？当你没有外部刺激时，你的内心状态倾向于什么？（焦虑/平静/空虚/兴奋……）这个默认情绪是你哪个层级思维模式的产物？</p>
+        <div class="tip-example">例：默认情绪「焦虑」→ 来源：总觉得不够好、不够快 → 思维模式：执行者层级的"永远在赶路"</div>
+        <textarea class="dig-input" id="dig3" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>4. 如果"向上跃迁一个层级"是你接下来30天的唯一目标，列出你必须停止的3件事和必须开始的3件事。</p>
+        <div class="tip-example">例：停止「遇到问题先找借口」→ 开始「遇到问题先找解决方案」｜停止「等别人告诉我怎么做」→ 开始「主动提出方案」</div>
+        <textarea class="dig-input" id="dig4" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>5. 给自己写一封来自"下一层级自己"的信。用高一层次的视角和语气，告诉现在的自己：Ta看到了什么你看不到的？Ta会给你什么建议？</p>
+        <div class="tip-example">例：来自创造者层级的我：「你困住的那些问题，在我看来只是游戏关卡。你不是做不到，你是太认真了。放松点，去试。」</div>
+        <textarea class="dig-input" id="dig5" placeholder="请在这里输入你的答案..."></textarea>
+    </div>
+
+    <div class="closing-note">
+        你不需要立刻变得完美，只需要每天向上成长一点点。<br>
+        明天，我们将进入7天旅程的最后一站：终极蜕变。
+    </div>
+</div>
+
+<div class="lock-note" id="unlockTip">明日内容将在 凌晨0点 自动解锁｜每日0点更新</div>
+
+<div class="footer">
+    <div class="footer-brand"><span>Y</span><span>o</span><span>u</span> <span>捻</span><span>光</span></div>
+    <div class="footer-date" id="footerDate"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* 背景图模糊加载：LQIP占位符瞬间显示，WebP加载完成后清晰淡入 */
+(function(){
+  var img = document.querySelector('.bg-loader');
+  if (!img) return;
+  var webp = img.getAttribute('data-src');
+  if (!webp) return;
+  img.onload = function(){
+    // 只响应真实图片的加载（跳过初始LQIP base64）
+    if (img.src.indexOf('base64') === -1) {
+      img.classList.add('loaded');
+    }
+  };
+  img.onerror = function(){
+    if (img.src.indexOf('.webp') > -1) {
+      img.src = img.getAttribute('data-src').replace('.webp','.png');
+    }
+  };
+  img.src = webp;
+  // 缓存命中时 onload 可能不触发
+  if (img.complete && img.src.indexOf('base64') === -1) {
+    img.classList.add('loaded');
+  }
+})();
+
+const audio = document.getElementById('audio');
+const toggleBtn = document.getElementById('toggleBtn');
+const icon = document.getElementById('icon');
+const progress = document.getElementById('progress');
+const current = document.getElementById('current');
+const total = document.getElementById('total');
+const progressBar = document.getElementById('progressBar');
+
+const playSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>`;
+const pauseSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"></path></svg>`;
+
+function fmt(t) {
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60).toString().padStart(2, '0');
+    return m + ':' + s;
+}
+
+audio.addEventListener('loadedmetadata', () => {
+    total.innerText = fmt(audio.duration);
+});
+
+toggleBtn.addEventListener('click', () => {
+    if (audio.paused) {
+        audio.play();
+        icon.innerHTML = pauseSvg;
+    } else {
+        audio.pause();
+        icon.innerHTML = playSvg;
+    }
+});
+
+audio.addEventListener('timeupdate', () => {
+    current.innerText = fmt(audio.currentTime);
+    progress.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+});
+
+let isDragging = false;
+function seekToPosition(e) {
+    e.preventDefault();
+    const rect = progressBar.getBoundingClientRect();
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    const percent = (clientX - rect.left) / rect.width;
+    const seekTime = audio.duration * Math.max(0, Math.min(1, percent));
+    
+    audio.currentTime = seekTime;
+    progress.style.width = (seekTime / audio.duration) * 100 + '%';
+    current.innerText = fmt(seekTime);
+}
+
+progressBar.addEventListener('mousedown', (e) => { isDragging = true; seekToPosition(e); });
+document.addEventListener('mousemove', (e) => { if(isDragging) seekToPosition(e); });
+document.addEventListener('mouseup', () => { isDragging = false; });
+
+progressBar.addEventListener('touchstart', (e) => { isDragging = true; seekToPosition(e); });
+document.addEventListener('touchmove', (e) => { if(isDragging) seekToPosition(e); });
+document.addEventListener('touchend', () => { isDragging = false; });
+
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let w = innerWidth, h = innerHeight;
+canvas.width = w; canvas.height = h;
+class Particle{
+  constructor(){
+    this.x=Math.random()*w;
+    this.y=Math.random()*h;
+    this.s=Math.random()*1.5+0.3;
+    this.vx=(Math.random()-0.5)*0.3;
+    this.vy=(Math.random()-0.5)*0.3;
+    this.o=Math.random()*0.4+0.1;
+    this.hue = Math.random() > 0.5 ? 220 + Math.random()*20 : 90 + Math.random()*20;
+  }
+  update(){
+    this.x+=this.vx;
+    this.y+=this.vy;
+    if(this.x<0||this.x>w)this.vx*=-1;
+    if(this.y<0||this.y>h)this.vy*=-1;
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.s,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${this.hue}, 90%, 65%, ${this.o})`;
+    ctx.fill();
+  }
+}
+const particles=Array.from({length:80},()=>new Particle());
+function anim(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach(p=>{p.update();p.draw()});
+  requestAnimationFrame(anim);
+}
+anim();
+
+const week = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const now = new Date();
+const dayName = week[now.getDay()];
+const monthName = months[now.getMonth()];
+const dateStr = `${monthName} ${now.getDate()}, ${now.getFullYear()} · ${dayName}`;
+document.getElementById('footerDate').innerText = dateStr;
+
+function updateUnlockTimer() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const diff = midnight - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    let timeText = h > 0 ? `${h} 小时 ${m} 分钟` : `${m} 分钟`;
+    document.getElementById('unlockTip').innerText = `明日内容将在 ${timeText} 后自动解锁｜每日 0 点更新`;
+}
+updateUnlockTimer();
+setInterval(updateUnlockTimer, 60000);
+
+const storageKey = "day6_dig_data";
+function loadDigData() {
+    const saved = localStorage.getItem(storageKey);
+    if (!saved) return;
+    const data = JSON.parse(saved);
+    document.getElementById('dig1').value = data.q1 || '';
+    document.getElementById('dig2').value = data.q2 || '';
+    document.getElementById('dig3').value = data.q3 || '';
+    document.getElementById('dig4').value = data.q4 || '';
+    document.getElementById('dig5').value = data.q5 || '';
+}
+function saveDigData() {
+    const data = {
+        q1: document.getElementById('dig1').value,
+        q2: document.getElementById('dig2').value,
+        q3: document.getElementById('dig3').value,
+        q4: document.getElementById('dig4').value,
+        q5: document.getElementById('dig5').value
+    };
+    localStorage.setItem(storageKey, JSON.stringify(data));
+}
+document.querySelectorAll('.dig-input').forEach(input => {
+    input.addEventListener('input', saveDigData);
+});
+window.addEventListener('DOMContentLoaded', loadDigData);
+</script>
+<script>
+(function(){
+var n=performance.getEntriesByType('navigation')[0];
+if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
+var pn=localStorage.getItem('playerName');if(pn)document.getElementById('personalTag').innerText=pn+' 的成长之旅';
+var s1=localStorage.getItem('startDate'),jd=6;
+if(s1){var st=new Date(parseInt(s1));st.setHours(0,0,0,0);var n2=new Date();n2.setHours(0,0,0,0);jd=Math.min(Math.floor((n2-st)/86400000)+1,7);}
+var dp=document.getElementById('dayProgress');
+if(!dp){dp=document.createElement('div');dp.id='dayProgress';dp.className='day-progress';var h1=document.querySelector('header h1');if(h1)h1.parentNode.insertBefore(dp,h1);}
+if(dp)dp.innerText='你的旅程 · 第 '+jd+'/7 天';
+var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,845 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第5天｜克服恐惧 - 7天重塑人生</title>
+<link rel="preload" as="image" href="huojian.webp" fetchpriority="high">
+<meta name="view-transition" content="same-origin">
+    <style>
+        :root {
+            --bg:#0a0a14;
+            --text:#ffffff;
+            --text-secondary:rgba(255,255,255,0.8);
+            --vibrant-blue: #0436FE;
+            --spring-bud: #B7F700;
+            --transition:0.4s ease;
+        }
+        * {
+            margin:0; padding:0; box-sizing:border-box;
+            -webkit-font-smoothing:antialiased;
+        }
+        html, body {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a14;
+        }
+        body {
+            /* 文字阴影增强背景图上的可读性 */
+            text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--text);
+            /* background-attachment: fixed; removed for mobile performance */
+        }
+        .page-bg {
+            position: fixed; inset:0; z-index:-2;
+            background: rgba(10,10,20,0.3);
+        }
+        #particleCanvas {
+            position:fixed; inset:0; z-index:-1;
+            pointer-events:none;
+        }
+        .scroll {
+            position:fixed; inset:0;
+            overflow-y:auto; overflow-x:hidden;
+            padding: 20px;
+        }
+        .container {
+            max-width: 720px;
+            margin: 60px auto;
+            position:relative; z-index:1;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .tag {
+            color: var(--spring-bud);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        @keyframes letterBounce {
+            0% { transform: translateY(0) skew(-8deg); }
+            50% { transform: translateY(-6px) skew(-8deg); }
+            100% { transform: translateY(0) skew(-8deg); }
+        }
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            font-weight: 900;
+            margin-bottom: 12px;
+            display: inline-block;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        h1 span {
+            display: inline-block;
+            background: linear-gradient(90deg, #B7F700, #428DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transform: skew(-8deg);
+            animation: letterBounce 2.8s ease-in-out infinite alternate;
+        }
+        h1 span:nth-child(1) { animation-delay: 0s; }
+        h1 span:nth-child(2) { animation-delay: 0.15s; }
+        h1 span:nth-child(3) { animation-delay: 0.3s; }
+        h1 span:nth-child(4) { animation-delay: 0.45s; }
+        .personal-tag {
+            color: var(--spring-bud);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            opacity: 0.85;
+        }
+        .day-progress {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .audio-tip {
+            text-align: center;
+            color: var(--spring-bud);
+            font-size: 1rem;
+            margin: 20px 0 30px;
+            opacity: 0.9;
+        }
+        .player {
+            background: transparent;
+            padding: 0;
+            margin: 0 0 30px 0;
+            border: none;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .play-btn {
+            width: 38px;
+            height: 38px;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: var(--text);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+            margin-top: -1px;
+        }
+        .play-btn:hover {
+            color: var(--spring-bud);
+            transform: scale(1.08);
+        }
+        .progress-bar {
+            flex:1;
+            height:6px;
+            background: rgba(255,255,255,0.1);
+            border-radius:99px;
+            overflow:hidden;
+            cursor:pointer;
+            position: relative;
+        }
+        .progress {
+            height:100%;
+            background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+            width:0%;
+            transition: width 0.05s linear;
+            position: absolute;
+            left:0; top:0;
+        }
+        .time-group {
+            display: flex;
+            gap:6px;
+            color:var(--text-secondary);
+            font-size:0.85rem;
+            min-width: 80px;
+            justify-content: flex-end;
+            align-items: center;
+            flex-shrink: 0;
+            transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .time-group:hover {
+            color: var(--spring-bud);
+        }
+        .script-box {
+            margin: 40px 0 50px;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 24px 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .script-title {
+            font-size: 1.1rem;
+            color: var(--spring-bud);
+            margin-bottom: 20px;
+        }
+        .line {
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 2px solid transparent;
+        }
+        .en {
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+        .line:hover {
+            background: rgba(183,247,0,0.05);
+            transform: translateX(4px);
+            border-left-color: var(--spring-bud);
+        }
+        .cn {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .content {
+            padding: 0;
+            margin: 0 0 40px 0;
+        }
+        .content h2 {
+            color: var(--spring-bud);
+            font-size:1.3rem;
+            margin-bottom:20px;
+        }
+        .content p {
+            color: var(--text);
+            font-size:1rem;
+            line-height:1.9;
+            margin-bottom:18px;
+        }
+        .tip-box {
+            background: rgba(4, 54, 20, 0.12);
+            border-left:3px solid #4FC3F7;
+            padding:18px;
+            margin:26px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        .tip-box h3 {
+            color: var(--spring-bud);
+            font-size:1rem;
+            margin-bottom:10px;
+        }
+        .tip-box p {
+            font-size:0.95rem;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .tip-example {
+            font-size:0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .dig-input {
+            width: 100%;
+            min-height: 80px;
+            margin: 10px 0 20px;
+            padding: 12px 14px;
+            background: rgba(20,20,35,0.5);
+            border: 1px solid rgba(4, 54, 20, 0.3);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+        .dig-input:focus {
+            border-color: var(--spring-bud);
+            background: rgba(20,20,35,0.7);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 24px; left:20px;
+            width:44px; height:44px;
+            border-radius:50%;
+            background: rgba(20,20,35,0.7);
+            border:1px solid rgba(255,255,255,0.1);
+            color:#fff;
+            display:grid; place-items:center;
+            cursor:pointer;
+            z-index:10;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            border-color: var(--spring-bud);
+            color: var(--spring-bud);
+        }
+        .lock-note {
+            text-align:center;
+            padding:20px 0;
+            color: var(--text-secondary);
+            font-size:0.9rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px 0 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .footer-brand {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+        .footer-brand span {
+            display: inline-block;
+            background: linear-gradient(90deg, #B7F700, #428DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transform: skew(-8deg);
+            animation: letterBounce 2.8s ease-in-out infinite alternate;
+        }
+        .footer-brand span:nth-child(1) { animation-delay: 0s; }
+        .footer-brand span:nth-child(2) { animation-delay: 0.15s; }
+        .footer-brand span:nth-child(3) { animation-delay: 0.3s; }
+        .footer-brand span:nth-child(4) { animation-delay: 0.45s; }
+        .footer-brand span:nth-child(5) { animation-delay: 0.6s; }
+        .footer-date {
+            font-size: 0.8rem;
+        }
+        .closing-note {
+            text-align: center;
+            color: var(--spring-bud);
+            margin: 20px 0;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+/* === Enhanced Interactions === */
+.scroll { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+.scroll::-webkit-scrollbar { width: 4px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: rgba(183,247,0,0.2); border-radius: 10px; }
+.scroll::-webkit-scrollbar-thumb:hover { background: rgba(183,247,0,0.4); }
+#particleCanvas { will-change: transform, opacity; }
+h1 { will-change: transform; }
+.play-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.play-btn:hover { color: var(--spring-bud); transform: scale(1.15); }
+.play-btn:active { transform: scale(0.9); }
+.play-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; border-radius: 50%; }
+.back-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.back-btn:hover { background: rgba(183,247,0,0.15); border-color: var(--spring-bud); color: var(--spring-bud); transform: scale(1.1); box-shadow: 0 0 15px rgba(183,247,0,0.25); }
+.back-btn:active { transform: scale(0.95); }
+.back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+.progress-bar { transition: box-shadow 0.3s ease; cursor: pointer; }
+.progress-bar:hover { box-shadow: 0 0 12px rgba(183,247,0,0.2); }
+.dig-input { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.dig-input:hover { border-color: rgba(183,247,0,0.35); box-shadow: 0 0 8px rgba(183,247,0,0.08); }
+.dig-input:focus { border-color: var(--spring-bud); background: rgba(20,20,35,0.7); box-shadow: 0 0 15px rgba(183,247,0,0.15); }
+.tip-box { transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+.tip-box:hover { border-left-color: var(--spring-bud); box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
+.line { transition: all 0.3s ease; border-radius: 8px; padding: 8px 12px; margin-left: -12px; margin-right: -12px; }
+.line:hover { background: rgba(255,255,255,0.025); transform: translateX(4px); }
+.content h2 { position: relative; padding-bottom: 12px; }
+.content h2::after { content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 2px; background: linear-gradient(90deg, var(--spring-bud), transparent); border-radius: 2px; }
+@keyframes subtleFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.tag { animation: subtleFloat 3s ease-in-out infinite; }
+.closing-note { transition: all 0.3s ease; }
+.closing-note:hover { text-shadow: 0 0 15px rgba(183,247,0,0.3); }
+body { animation: pageIn 0.1s ease; will-change: transform, opacity; }
+body.no-page-anim { animation: none !important; }
+@keyframes pageIn { from { opacity: 0.7; transform: translate3d(15px,0,0); } }
+    
+/* 背景图模糊加载：瞬间显示极小占位符→清晰图淡入 */
+.bg-loader {
+  position: fixed;
+  filter: brightness(1);
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  filter: blur(20px);
+  transform: scale(1.1);
+  transition: filter 0.8s ease-out, transform 0.8s ease-out;
+  background: linear-gradient(135deg, #101020 0%, #0f0f1c 50%, #0a0a14 100%);
+}
+.bg-loader.loaded {
+  filter: brightness(1) blur(0);
+  transform: scale(1);
+}
+
+</style>
+</head>
+<body style="background-color:#0a0a14;">
+<!-- 背景图：先显示极小的模糊占位符（0网络请求），清晰WebP加载后自动淡入 -->
+<img class="bg-loader" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAlAB4DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCgo5pZBxTlHNPdMrVS2CO5UA5p+KdsINLiiASJ448mrKw8UsC81aK4FZSkaRiUJYcVXK4NabLlapSLhqcJClEswdatP92iispFoj7VUl+9RRTiDP/Z" data-src="huojian.webp" alt="" fetchpriority="high">
+<div class="page-bg"></div>
+<canvas id="particleCanvas"></canvas>
+<button class="back-btn" onclick="location.href='hall.html'" aria-label="返回成长大厅">←</button>
+
+<div class="scroll">
+<div class="container">
+<header>
+    <div class="tag">DAY 5 · OVERCOME FEAR</div>
+    <h1><span>克</span><span>服</span><span>恐</span><span>惧</span></h1>
+    <div class="personal-tag" id="personalTag"></div>
+    <p class="desc">第5天｜跨越内心枷锁，直面恐惧与压力，才能真正觉醒</p>
+</header>
+
+<div class="audio-tip">在开始今天的主题之前，请你认真听完这段关于你该升级你的人生版本了的演讲</div>
+
+<div class="player">
+    <div class="controls">
+        <button class="play-btn" id="toggleBtn" aria-label="播放音频">
+            <svg id="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"></path>
+            </svg>
+        </button>
+        <div class="progress-bar" id="progressBar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="time-group">
+            <span id="current">0:00</span>
+            <span>/</span>
+            <span id="total">0:00</span>
+        </div>
+    </div>
+    <audio id="audio" preload="auto" src="https://sf6-cdn-tos.douyinstatic.com/obj/ies-music/7353543209747893043.mp3"></audio>
+</div>
+
+<div class="script-box">
+    <div class="script-title">励志音频｜完整英文对照</div>
+
+    <div class="line">
+        <div class="en">Our lives don't get better by chance; they get better by change.</div>
+        <div class="cn">我们的生活不会偶然变好，而是通过改变变得更好。</div>
+    </div>
+    <div class="line">
+        <div class="en">Change is one of the necessary laws of life. Remember this.</div>
+        <div class="cn">变化是生活的必要法则之一，记住这一点。</div>
+    </div>
+    <div class="line">
+        <div class="en">Action and adaptability create opportunity.</div>
+        <div class="cn">行动与适应能创造机会。</div>
+    </div>
+    <div class="line">
+        <div class="en">Adapt and overcome and watch everything change before your eyes.</div>
+        <div class="cn">去适应、去克服，然后看着一切在你眼前改变。</div>
+    </div>
+    <div class="line">
+        <div class="en">Adaptability isn't just some secret for survival; it is the power to build the future.</div>
+        <div class="cn">适应能力不只是生存的秘诀，更是构建未来的力量。</div>
+    </div>
+    <div class="line">
+        <div class="en">Adaptability is the capacity to be modified for a new purpose, to be moved this way.</div>
+        <div class="cn">适应能力是为新目标做出调整、顺势而为的能力。</div>
+    </div>
+    <div class="line">
+        <div class="en">And still punch through targets and reach my goals and be everything I've been called to be, but I've got to adapt to the times.</div>
+        <div class="cn">仍能突破目标、达成所愿，成为我注定要成为的样子，但我必须适应时代。</div>
+    </div>
+    <div class="line">
+        <div class="en">Adaptability requires movement, growth, wisdom, knowledge, understanding, revelation, and awareness.</div>
+        <div class="cn">适应需要行动、成长、智慧、知识、理解、领悟和觉察。</div>
+    </div>
+    <div class="line">
+        <div class="en">We've got to be able to recognize when we're outdated, when we need an upgrade, when we've got to go to that next level, and I can't be embarrassed about it.</div>
+        <div class="cn">我们得能意识到自己何时过时、何时需要提升、何时必须更上一层楼，而且我不能为此感到难堪。</div>
+    </div>
+    <div class="line">
+        <div class="en">Adaptability is not buckling under pressure; it's understanding that in order for me to have the lifestyle I see in my head, I'm going to have to raise my standards. This is an adjustment, a modification.</div>
+        <div class="cn">适应不是在压力下崩溃，而是明白要想拥有我脑海中设想的生活方式，我就得提高自己的标准。这是一种调整，一种改变。</div>
+    </div>
+    <div class="line">
+        <div class="en">That in times past, this version of me was good enough, but it only got me where I am, and in order for me to go to that next level, something inside of me has to change.</div>
+        <div class="cn">过去的我在当时已经足够好，但那只能让我走到现在的位置，要想更上一层楼，我内心的某些东西必须改变。</div>
+    </div>
+    <div class="line">
+        <div class="en">So when you face storms, adversity, trial, tribulation, in the eye of the storm, in the middle, in the core of your devastation, when you are faced with opposition, that's when you raise the heat.</div>
+        <div class="cn">所以当你面对风暴、逆境、考验、苦难，身处风暴中心，处于灾难的核心，面临反对时，就是你发力的时候。</div>
+    </div>
+    <div class="line">
+        <div class="en">You don't change your message; you change your methodology. Are you understanding me?</div>
+        <div class="cn">你不是要改变你的目标，而是要改变你的方法。你明白我的意思吗？</div>
+    </div>
+    <div class="line">
+        <div class="en">Adaptability is not buckling under pressure, nor is it losing your moral compass. It's raising your voice.</div>
+        <div class="cn">适应不是在压力下屈服，也不是丢失你的道德准则，而是敢于发声。</div>
+    </div>
+    <div class="line">
+        <div class="en">And so the harder life hits me, the harder I'm gonna fight, the harder I'm going to believe, the harder I'm gonna keep pushing, keep going.</div>
+        <div class="cn">生活越是重击我，我就越是奋力抗争，越是坚定信念，越是奋力前行。</div>
+    </div>
+    <div class="line">
+        <div class="en">I will persevere and build resilience, and the harder life hits, the stronger I get.</div>
+        <div class="cn">我会坚持不懈，培养韧性，生活越艰难，我就越强大。</div>
+    </div>
+    <div class="line">
+        <div class="en">You've got problem-solving skills, resilience, determination, and a measure of commitment that nobody in the room has because you've been able to adapt.</div>
+        <div class="cn">你拥有解决问题的能力、韧性、决心，还有一种责任感，这房间里没人具备，因为你懂得适应。</div>
+    </div>
+    <div class="line">
+        <div class="en">And for many of us, we are in the halftime of our destiny, and if you're going to win, you are going to have to make the adjustments, the necessary modifications to have your future.</div>
+        <div class="cn">对我们很多人来说，我们正处于命运的中场休息阶段，如果你想赢，就必须做出调整，做出必要的改变来创造你的未来。</div>
+    </div>
+    <div class="line">
+        <div class="en">When I become more flexible, more agile, more adaptable, another thing that happens is that we build our inner resilience.</div>
+        <div class="cn">当我变得更灵活、更敏捷、更具适应性时，另一件事就会发生——我们会培养内心的韧性。</div>
+    </div>
+    <div class="line">
+        <div class="en">And this isn't just about honing in on your problem-solving skills; resilience literally changes your brain.</div>
+        <div class="cn">这不仅仅是磨练你解决问题的能力；韧性确实会改变你的大脑。</div>
+    </div>
+    <div class="line">
+        <div class="en">It changes your operating systems, shifts your behavior. Resilience empowers you to build new habits.</div>
+        <div class="cn">它会改变你的“操作系统”，改变你的行为。韧性让你能够养成新习惯。</div>
+    </div>
+    <div class="line">
+        <div class="en">It's not running from your programming; it's upgrading, taking it to the next level.</div>
+        <div class="cn">这不是逃避你的固有模式，而是升级它，让它更上一层楼。</div>
+    </div>
+    <div class="line">
+        <div class="en">The necessary growth strategies, necessary modification, personality adjustment, attitude upgrades —</div>
+        <div class="cn">必要的成长策略、必要的改变、个性调整、心态升级——</div>
+    </div>
+    <div class="line">
+        <div class="en">the wise adapt themselves to the circumstances, like water molds itself to the pitcher.</div>
+        <div class="cn">智者会适应环境，就像水会适应容器的形状。</div>
+    </div>
+    <div class="line">
+        <div class="en">To understand the revelation of adaptability is to realize that life is lived on levels.</div>
+        <div class="cn">理解适应的真谛，就是要意识到人生是分层次的。</div>
+    </div>
+    <div class="line">
+        <div class="en">I've got angles, I've got approaches, that destiny is in the details.</div>
+        <div class="cn">我有不同的视角和方法，命运藏在细节里。</div>
+    </div>
+    <div class="line">
+        <div class="en">It's how I see this thing, how I can adjust my thinking, how I can upgrade my inner software.</div>
+        <div class="cn">这关乎我如何看待事物，如何调整思维，如何升级我的“内在软件”。</div>
+    </div>
+    <div class="line">
+        <div class="en">At some point, you gotta sit back and think to yourself, "You know what? I've been here too long, thought like this too long, hurt too long, been fractured long enough, been depressed long enough.</div>
+        <div class="cn">某个时刻，你得停下来想想：“你知道吗？我在这里待太久了，这样想太久了，受伤太久了，崩溃太久了，压抑太久了。</div>
+    </div>
+    <div class="line">
+        <div class="en">I've been here too long; it's time for me to go."</div>
+        <div class="cn">我在这里太久了，是时候离开了。”</div>
+    </div>
+    <div class="line">
+        <div class="en">We all have to get to the point where we realize we have not adapted to the current times.</div>
+        <div class="cn">我们都必须意识到自己尚未适应当下的时代。</div>
+    </div>
+    <div class="line">
+        <div class="en">And this is not a departure from authenticity, nor is it losing yourself. This is finding your next level.</div>
+        <div class="cn">这不是背离真实，也不是迷失自我，而是去寻找你的下一个高度。</div>
+    </div>
+    <div class="line">
+        <div class="en">The question is: Are you willing to adapt?</div>
+        <div class="cn">问题是：你愿意去适应吗？</div>
+    </div>
+    <div class="line">
+        <div class="en">Adaptability is the bridge to the future.</div>
+        <div class="cn">适应能力是通向未来的桥梁。</div>
+    </div>
+    <div class="line">
+        <div class="en">I need to be able to adapt cognitively, emotionally — my personality, my behavior, my language, my thinking.</div>
+        <div class="cn">我需要在认知上、情感上适应——我的个性、行为、语言、思维。</div>
+    </div>
+    <div class="line">
+        <div class="en">I've got to be able to adapt, and it is only when I'm willing to accept this reality.</div>
+        <div class="cn">我必须能够适应，而这只有在我愿意接受这个现实时才能实现。</div>
+    </div>
+
+</div>
+
+<div class="content">
+    <h2>打破编程：你被外界塑造的人生</h2>
+    <p>当你历经迷茫、挣脱内耗、读懂本心、找到自己真正的潜意识渴望后，你以为从此就能义无反顾、奔赴热爱、彻底蜕变。</p>
+    <p>可很快你就会发现，总有一股无形、隐秘、强大的力量，死死拖住你的脚步、阻碍你的成长、困住你的人生。</p>
+    <p>这股终极阻力，不是懒惰、不是拖延、不是能力不足，而是根植内心的深层恐惧：恐惧打破固有生活、恐惧重塑自我身份、恐惧脱离熟悉环境、恐惧承担未知风险、恐惧他人非议眼光、恐惧失败后的尴尬与落差。</p>
+    <p>更残酷的真相是：我们所有的自我设限、内心恐惧、不敢改变，从来不是与生俱来的天性，而是后天被外界一步步编程、塑造、植入的结果。</p>
+    <p>心理学家麦克斯威尔·马尔茨在《心理控制术》中提出过一个颠覆性的观点：所有被你深信不疑的人生信念、自我认知、价值标准，无论源自父母教诲、学校教育、社会舆论还是网络广告，都拥有和催眠指令一模一样的力量，悄无声息地编程、操控、定义你的一生。</p>
+    <p>我们的自我认知、人生三观、身份定位，从来不是天生成型的，而是从呱呱坠地开始，被家庭、父母、学校、社会、环境，日复一日、潜移默化植入的程序化代码。</p>
+    <p>童年时期，人类的核心生存本能就是“活下去、被接纳、被偏爱”。</p>
+    <p>年幼的我们没有独立生存的能力，完全依赖父母的养育和照顾。</p>
+    <p>为了获得父母的爱、认可和庇护，为了规避指责、批评和抛弃，我们被迫顺从父母的价值观，全盘接纳他们的规训、期待和生活方式。</p>
+    <p>父母告诉我们：听话的孩子才优秀、安稳的人生才幸福、读书考试是唯一出路、稳定工作才是归宿。于是我们压抑自己的天性、隐藏自己的喜好、放弃自己的渴望，努力活成父母期待的乖孩子、好学生。</p>
+    <p>老师告诉我们：成绩代表一切、努力只为升学、出格就是错误、平庸才是安稳。于是我们放弃自我探索、放弃兴趣热爱、放弃个性锋芒，按照既定轨迹按部就班成长。</p>
+    <p>步入社会后，环境继续给我们植入新的代码：年少必须拼命搞钱、三十必须成家立业、人生必须买房买车、稳定体面才是成功。</p>
+    <p>数十年的持续植入、反复强化，这些外界的标准、规训、期待，慢慢变成了我们根深蒂固的固有认知，刻进了我们思维底层，成为我们支配人生的默认代码。</p>
+    <p>成年后的我们，早已实现生存独立、人格独立，却依旧像一台被预设程序操控的机器，日复一日按照别人编写的代码运行自己的人生。</p>
+    <p>我们执着维护自己的职业标签、社会身份、固有认知、圈层立场，一旦有人质疑、挑战、否定我们的固有模式，一旦生活需要我们打破现状、重塑自我，我们就会瞬间陷入应激状态：焦虑、愤怒、抵触、固执，拼尽全力维护老旧、错误的自我认知，誓死拒绝改变和突破。</p>
+    <p>因为打破固有编程、推翻旧有认知，意味着要承认过去的自己不够通透、不够清醒，意味着要走出数十年的舒适区，意味着要面对未知的不确定性，意味着要彻底颠覆熟悉的生活方式。</p>
+    <p>这份心理冲击和认知重构，是绝大多数人畏惧、逃避、拒绝的。</p>
+    <p>这也是无数人终身困在原地、无法蜕变的核心原因：我们被后天植入的认知牢笼困住，把“不敢改变”当成了“不能改变”，把“习惯平庸”当成了“命中注定”。</p>
+    <p>生活中有太多这样真实且遗憾的时刻。</p>
+    <p>多少人在格子间里日复一日重复着毫无热情的工作，对着电脑屏幕发呆时，脑海里闪过无数次辞职的念头，心里藏着被搁置多年的热爱——有人想拿起画笔描绘世界，有人想背着相机记录人间，有人想开一家温暖的小店，有人想投身自己真正认同的事业。</p>
+    <p>可这些念头，往往只在深夜的辗转反侧中闪现，天亮之后，又被现实的惯性拉回原地。</p>
+    <p>不是没有能力，不是没有机会，而是外界植入的认知代码像无形的锁链，牢牢捆住了他们的脚步：“稳定大于一切”“折腾到最后只会一无所有”“别人都在按部就班，你凭什么与众不同”。</p>
+    <p>他们害怕打破多年来维持的安稳表象，害怕辜负家人的期待，害怕成为别人口中“不务正业”的异类，害怕万一失败后要面对的嘲讽和落差。</p>
+    <p>于是，他们把热爱藏进心底最深处，任由时间一点点消磨掉所有的勇气，在日复一日的内耗中，慢慢活成了自己曾经最不想成为的样子。</p>
+    <p>还有很多人，深陷不幸福、不契合的亲密关系，没有陪伴、没有偏爱、没有共鸣，整日内耗拉扯、身心俱疲，明明拥有抽身离开的能力和底气，却始终不敢止损、不敢重启人生。</p>
+    <p>根源依旧是外界编程的束缚：世俗植入“分开就是失败”“中年不该折腾”“将就才是人生常态”“为了孩子必须隐忍”的认知。</p>
+    <p>我们害怕旁人指指点点、害怕家庭舆论非议、害怕打破固有生活、害怕未知的独处人生，最终选择委屈自己、将就余生。</p>
+    <p>这世间绝大多数人的人生遗憾，都源于这层无形的认知牢笼。牢笼由童年规训、社会期待、他人眼光、世俗标准编织而成，看似温和无害，却困住了我们的热爱、天赋、可能性与一生的自由。</p>
+    <p>但我们必须清醒认知：打破外界编程，从来不是与世界为敌、与生活对抗、逃离世俗体系、彻底特立独行。真正的觉醒，是清醒地参与，自由地选择。</p>
+    <p>你不需要彻底否定社会规则、抵触世俗标准、脱离现实生活，但你需要拥有筛选、修改、取舍、重构自我认知的权利。</p>
+    <p>你不再把父母的期待、社会的标准、他人的评价，当成唯一的人生指南，但你可以把这些规则当成生活工具、成长资源、处世参考；</p>
+    <p>你不再畏惧旁人的眼光、世俗的非议、圈层的束缚，但你依旧可以温柔共情、真诚共处、良性合作、融入社会；</p>
+    <p>你不再被固有认知、老旧代码、世俗定义奴役，但你可以利用体系的资源、时代的机会、生活的规则，去实现自己的本心热爱、专属人生。</p>
+    <p>想要彻底打破后天编程、挣脱认知牢笼、掌控人生主权，首先要主动质疑固有身份，拆解所有认知来源。</p>
+    <p>静下心逐一审问自己：我现在的人生追求、价值标准、自我定位，是我自己真心想要的，还是别人强行植入的？</p>
+    <p>我害怕改变、不敢突破，是真的风险巨大，还是被固有认知恐吓？</p>
+    <p>这个困住我的身份和执念，带给我的是成长还是消耗？</p>
+    <p>当你开始质疑老旧认知、拆解固有代码，你就已经打破了催眠式的束缚，迈出了觉醒的第一步。</p>
+    <p>接着要坦然接纳不确定性，重构安全认知。绝大多数人的安稳，都是虚假的舒适：固守不热爱的工作、将就不幸福的生活、维持不契合的状态，看似稳定，实则终身内耗、持续消耗。</p>
+    <p>真正的安全感，从来不是一成不变的环境、固步自封的生活，而是内心的底气、成长的能力、随时重启人生的勇气。不确定性从来不是灾难，而是人生的无限可能性，是蜕变成长的必经之路。</p>
+    <p>最后要全权为自己的人生负责，挣脱他人绑架。你的人生、你的选择、你的得失、你的结局，终究只属于你自己。不必为了满足父母的期待委屈自己，不必为了迎合世俗的标准消耗自己，不必为了匹配他人的眼光困住自己。</p>
+    <p>不抱怨、不内耗、不推诿，接纳所有选择的结果，承担所有改变的代价，全权掌控自己的人生节奏。</p>
+    <p>当你真正打破外界的认知编程、挣脱世俗的无形牢笼、拿回人生的主导权，你终将活成最通透、最自由、最滚烫的自己，真正过上自己定义的、独一无二的理想人生，改变注定痛苦，必然心生惶恐，过程更是抽丝剥茧。</p>
+    <p>有些枷锁，唯有亲手摧毁；有些牵绊，唯有狠心放下，才能完成一场彻底的重生。</p>
+    <p>我们惧怕变化，恐惧未知与不确定。</p>
+    <p>于是困在痛苦的现状里踟蹰不前：不愿换掉勉强度日的工作，不舍离开不断内耗的人，不敢敲定影响一生的决定。</p>
+    <p>本能让我们贪恋熟悉，宁可在原地煎熬，也不敢走向陌生的希望。</p>
+    <p>可静如一潭死水，动方自有生机。</p>
+    <p>不破，便无法而立。</p>
+    <p>不敢改变，就永远走不出过去。</p>
+    <p>终在人间烟火与草木光影里，寻到心灵栖息之所。</p>
+
+    <div class="tip-box">
+        <h3>今日深度挖掘（必须完成）</h3>
+        
+        <p>1. 写下你人生中5个"必须______"的信念。然后逐一追溯来源：这个信念是谁植入给你的？（父母/老师/社会/媒体……）它经得起推敲吗？</p>
+        <div class="tip-example">例：信念「必须买房才能结婚」→ 来源：父母和社会舆论 → 推敲：很多幸福的婚姻从租房开始</div>
+        <textarea class="dig-input" id="dig1" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>2. 你做过哪些"不是真正想做的、但为了满足他人期待"的重大选择？如果完全按照自己的意愿，你会怎么选？</p>
+        <div class="tip-example">例：选了"好就业"的会计专业 → 自己真正想学的是心理学 → 现在可以重新开始学习</div>
+        <textarea class="dig-input" id="dig2" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>3. 你有什么恐惧，和过去某段具体的经历直接相关？把这段经历写下来，然后以今天的你的视角，重新审视它：它真的能定义你吗？</p>
+        <div class="tip-example">例：初中被当众嘲笑口音→ 从此害怕公开讲话→ 重新审视：那个嘲笑我的同学早忘了这件事，只有我还被困在那天</div>
+        <textarea class="dig-input" id="dig3" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>4. 如果你从今天起彻底不在乎任何人的看法——父母的、同事的、朋友圈的——你会立刻做出哪3个改变？</p>
+        <div class="tip-example">例：①辞掉体面但不喜欢的工作 ②把朋友圈设为三天可见 ③开始学一直想学的街舞</div>
+        <textarea class="dig-input" id="dig4" placeholder="请在这里输入你的答案..."></textarea>
+
+        <p>5. 找一句你反复对自己说的"限制性话语"，把它改写成一句"赋能话语"。今天起，每当你听到旧话语，就用新话语替换。</p>
+        <div class="tip-example">例：旧「我不够好」→ 新「我正在变好，而且我有权利用自己的节奏成长」</div>
+        <textarea class="dig-input" id="dig5" placeholder="请在这里输入你的答案..."></textarea>
+    </div>
+
+    <div class="closing-note">
+        恐惧是成长的必修课，跨越它，你将解锁无限人生。<br>
+        明天，我们将带着无畏的心，走向真正的自由。
+    </div>
+</div>
+
+<div class="lock-note" id="unlockTip">明日内容将在 凌晨0点 自动解锁｜每日0点更新</div>
+
+<div class="footer">
+    <div class="footer-brand"><span>Y</span><span>o</span><span>u</span> <span>捻</span><span>光</span></div>
+    <div class="footer-date" id="footerDate"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* 背景图模糊加载：LQIP占位符瞬间显示，WebP加载完成后清晰淡入 */
+(function(){
+  var img = document.querySelector('.bg-loader');
+  if (!img) return;
+  var webp = img.getAttribute('data-src');
+  if (!webp) return;
+  img.onload = function(){
+    // 只响应真实图片的加载（跳过初始LQIP base64）
+    if (img.src.indexOf('base64') === -1) {
+      img.classList.add('loaded');
+    }
+  };
+  img.onerror = function(){
+    if (img.src.indexOf('.webp') > -1) {
+      img.src = img.getAttribute('data-src').replace('.webp','.png');
+    }
+  };
+  img.src = webp;
+  // 缓存命中时 onload 可能不触发
+  if (img.complete && img.src.indexOf('base64') === -1) {
+    img.classList.add('loaded');
+  }
+})();
+
+// 音频播放器核心
+const audio = document.getElementById('audio');
+const toggleBtn = document.getElementById('toggleBtn');
+const icon = document.getElementById('icon');
+const progress = document.getElementById('progress');
+const current = document.getElementById('current');
+const total = document.getElementById('total');
+const progressBar = document.getElementById('progressBar');
+
+const playSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>`;
+const pauseSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"></path></svg>`;
+
+function fmt(t) {
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60).toString().padStart(2, '0');
+    return m + ':' + s;
+}
+
+audio.addEventListener('loadedmetadata', () => {
+    total.innerText = fmt(audio.duration);
+});
+
+toggleBtn.addEventListener('click', () => {
+    if (audio.paused) {
+        audio.play();
+        icon.innerHTML = pauseSvg;
+    } else {
+        audio.pause();
+        icon.innerHTML = playSvg;
+    }
+});
+
+audio.addEventListener('timeupdate', () => {
+    current.innerText = fmt(audio.currentTime);
+    progress.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+});
+
+let isDragging = false;
+function seekToPosition(e) {
+    e.preventDefault();
+    const rect = progressBar.getBoundingClientRect();
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    const percent = (clientX - rect.left) / rect.width;
+    const seekTime = audio.duration * Math.max(0, Math.min(1, percent));
+    
+    audio.currentTime = seekTime;
+    progress.style.width = (seekTime / audio.duration) * 100 + '%';
+    current.innerText = fmt(seekTime);
+}
+
+progressBar.addEventListener('mousedown', (e) => { isDragging = true; seekToPosition(e); });
+document.addEventListener('mousemove', (e) => { if(isDragging) seekToPosition(e); });
+document.addEventListener('mouseup', () => { isDragging = false; });
+
+progressBar.addEventListener('touchstart', (e) => { isDragging = true; seekToPosition(e); });
+document.addEventListener('touchmove', (e) => { if(isDragging) seekToPosition(e); });
+document.addEventListener('touchend', () => { isDragging = false; });
+
+// 粒子背景
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let w = innerWidth, h = innerHeight;
+canvas.width = w; canvas.height = h;
+class Particle{
+  constructor(){
+    this.x=Math.random()*w;
+    this.y=Math.random()*h;
+    this.s=Math.random()*1.5+0.3;
+    this.vx=(Math.random()-0.5)*0.3;
+    this.vy=(Math.random()-0.5)*0.3;
+    this.o=Math.random()*0.4+0.1;
+    this.hue = Math.random() > 0.5 ? 220 + Math.random()*20 : 90 + Math.random()*20;
+  }
+  update(){
+    this.x+=this.vx;
+    this.y+=this.vy;
+    if(this.x<0||this.x>w)this.vx*=-1;
+    if(this.y<0||this.y>h)this.vy*=-1;
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.s,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${this.hue}, 90%, 65%, ${this.o})`;
+    ctx.fill();
+  }
+}
+const particles=Array.from({length:80},()=>new Particle());
+function anim(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach(p=>{p.update();p.draw()});
+  requestAnimationFrame(anim);
+}
+anim();
+
+// 日期
+const week = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const now = new Date();
+const dayName = week[now.getDay()];
+const monthName = months[now.getMonth()];
+const dateStr = `${monthName} ${now.getDate()}, ${now.getFullYear()} · ${dayName}`;
+document.getElementById('footerDate').innerText = dateStr;
+
+// 解锁倒计时
+function updateUnlockTimer() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const diff = midnight - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    let timeText = h > 0 ? `${h} 小时 ${m} 分钟` : `${m} 分钟`;
+    document.getElementById('unlockTip').innerText = `明日内容将在 ${timeText} 后自动解锁｜每日 0 点更新`;
+}
+updateUnlockTimer();
+setInterval(updateUnlockTimer, 60000);
+
+// 本地存储
+const storageKey = "day5_dig_data";
+function loadDigData() {
+    const saved = localStorage.getItem(storageKey);
+    if (!saved) return;
+    const data = JSON.parse(saved);
+    document.getElementById('dig1').value = data.q1 || '';
+    document.getElementById('dig2').value = data.q2 || '';
+    document.getElementById('dig3').value = data.q3 || '';
+    document.getElementById('dig4').value = data.q4 || '';
+    document.getElementById('dig5').value = data.q5 || '';
+}
+function saveDigData() {
+    const data = {
+        q1: document.getElementById('dig1').value,
+        q2: document.getElementById('dig2').value,
+        q3: document.getElementById('dig3').value,
+        q4: document.getElementById('dig4').value,
+        q5: document.getElementById('dig5').value
+    };
+    localStorage.setItem(storageKey, JSON.stringify(data));
+}
+document.querySelectorAll('.dig-input').forEach(input => {
+    input.addEventListener('input', saveDigData);
+});
+window.addEventListener('DOMContentLoaded', loadDigData);
+</script>
+<script>
+(function(){
+var n=performance.getEntriesByType('navigation')[0];
+if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
+var pn=localStorage.getItem('playerName');if(pn)document.getElementById('personalTag').innerText=pn+' 的成长之旅';
+var s1=localStorage.getItem('startDate'),jd=5;
+if(s1){var st=new Date(parseInt(s1));st.setHours(0,0,0,0);var n2=new Date();n2.setHours(0,0,0,0);jd=Math.min(Math.floor((n2-st)/86400000)+1,7);}
+var dp=document.getElementById('dayProgress');
+if(!dp){dp=document.createElement('div');dp.id='dayProgress';dp.className='day-progress';var h1=document.querySelector('header h1');if(h1)h1.parentNode.insertBefore(dp,h1);}
+if(dp)dp.innerText='你的旅程 · 第 '+jd+'/7 天';
+var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
+})();
+</script>
+</body>
+</html>

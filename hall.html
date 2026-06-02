@@ -1,0 +1,828 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>7天重塑人生 - 成长大厅</title>
+<link rel="preload" as="image" href="背景图1.webp" fetchpriority="high">
+<link rel="preload" as="image" href="图8.webp" fetchpriority="high">
+<meta name="view-transition" content="same-origin">
+    <style>
+        :root {
+            --bg: #0a0a14;
+            --surface:#1211f;
+            --card-bg:#1a1a2e;
+            --text:#e0e0e8;
+            --text-secondary:#a0a0b8;
+            /* 标题浅蓝 */
+            --title-blue: #428DFF;
+            /* 进度条/原有深蓝 保持不变 */
+            --vibrant-blue: #0436FE;
+            --spring-bud: #B7F700;
+            --glass: rgba(255,255,255,0.03);
+            --cyan: #00f5d4;
+            --blue: #0099ff;
+            --transition:0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+            --border-radius:20px;
+        }
+        * {
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            -webkit-font-smoothing:antialiased;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+        html, body {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a14;
+            touch-action: none;
+            overscroll-behavior: none;
+        }
+        body {
+            font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+            color: var(--text);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 24px; left:20px;
+            width:44px; height:44px;
+            border-radius:50%;
+            background: rgba(20,20,35,0.7);
+            border:1px solid rgba(255,255,255,0.1);
+            color:#fff;
+            display:grid; place-items:center;
+            cursor:pointer;
+            z-index:10;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            border-color: var(--spring-bud);
+            color: var(--spring-bud);
+        }
+
+        .fixed-background {
+            position: fixed;
+            z-index: -3;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('背景图1.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(183, 247, 0, 0.06) 0%, transparent 60%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        #particleCanvas {
+            position: fixed;
+            z-index: -1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .content-scroll {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            scrollbar-width: none;
+        }
+        .content-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .wrapper {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 70px 24px;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+        }
+        .hero {
+            text-align: center;
+            max-width: 600px;
+            animation: fadeIn 1.2s ease forwards;
+        }
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.15);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--spring-bud);
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+            animation: badgePulse 3s ease-in-out infinite;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            cursor: default;
+        }
+        .badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(183,247,0,0.4);
+        }
+        @keyframes badgePulse {
+            0%,100% { transform: scale(1); box-shadow: 0 0 10px rgba(183,247,0,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(183,247,0,0.5); }
+        }
+        .welcome-text {
+            font-size: 1.1rem;
+            color: var(--spring-bud);
+            margin-bottom: 8px;
+            font-weight: 500;
+            animation: fadeIn 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+        
+        /* ========== 只改这里：倾斜渐变艺术标题（你选的3号） ========== */
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            display: inline-block;
+        }
+        .hero h1 span {
+            display: inline-block;
+            background: linear-gradient(90deg, #B7F700, #428DFF);
+            -webkit-background-clip: text;
+            color: transparent;
+            transform: skew(-8deg);
+            animation: letterBounce 2.8s ease-in-out infinite alternate;
+        }
+        .hero h1 span:nth-child(1) { animation-delay: 0s; }
+        .hero h1 span:nth-child(2) { animation-delay: 0.06s; }
+        .hero h1 span:nth-child(3) { animation-delay: 0.12s; }
+        .hero h1 span:nth-child(4) { animation-delay: 0.18s; }
+        .hero h1 span:nth-child(5) { animation-delay: 0.24s; }
+        .hero h1 span:nth-child(6) { animation-delay: 0.30s; }
+        .hero h1 span:nth-child(7) { animation-delay: 0.36s; }
+        .hero h1 span:nth-child(8) { animation-delay: 0.42s; }
+        .hero h1 span:nth-child(9) { animation-delay: 0.48s; }
+        .hero h1 span:nth-child(10) { animation-delay: 0.54s; }
+        .hero h1 span:nth-child(11) { animation-delay: 0.60s; }
+        .hero h1 span:nth-child(12) { animation-delay: 0.66s; }
+        .hero h1 span:nth-child(13) { animation-delay: 0.72s; }
+        .hero h1 span:nth-child(14) { animation-delay: 0.78s; }
+        .hero h1 span:nth-child(15) { animation-delay: 0.84s; }
+        .hero h1 span:nth-child(16) { animation-delay: 0.90s; }
+
+        @keyframes letterBounce {
+            0% { transform: translateY(0) skew(-8deg); }
+            50% { transform: translateY(-6px) skew(-8deg); }
+            100% { transform: translateY(0) skew(-8deg); }
+        }
+        
+        .hero p {
+            font-size: 1rem;
+            color: #ffffff;
+            opacity: 0.9;
+        }
+        .progress-box {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto 0;
+            animation: fadeIn 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 99px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3 rgba(0,0,0,0.2);
+        }
+        .progress-fill {
+            height: 100%;
+            /* 进度条恢复原深蓝色 */
+            background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+            border-radius: 99px;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,250,0.2) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 99px;
+        }
+        .cards {
+            width: 100%;
+            max-width: 460px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .day-card {
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            border-radius: var(--border-radius);
+            padding: 24px 28px;
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            display: flex;
+            align-items:center;
+            justify-content: space-between;
+            animation: fadeUp 0.8s ease backwards;
+            overflow: visible;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+            will-change: background-image;
+            transform: translateZ(0);
+            filter: none;
+        }
+        .day-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(4, 54, 254, 0.15), rgba(183, 247, 0, 0.1), transparent 70%);
+            border-radius: var(--border-radius);
+            pointer-events: none;
+        }
+        .day-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.08) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            transform: rotate(30deg);
+            animation: shine 3.5s infinite linear;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes shine {
+            0% { transform: rotate(30deg) translateX(-100%); }
+            100% { transform: rotate(30deg) translateX(100%); }
+        }
+        .current-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(4, 54, 254, 0.4);
+            animation: pulse 2s infinite ease-in-out;
+            white-space: nowrap;
+            z-index: 2;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 2px 8px rgba(4, 54, 254, 0.4); }
+            50% { transform: scale(1.06); box-shadow: 0 4px 12px rgba(4, 54, 254, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 2px 8px rgba(4, 54, 254, 0.4); }
+        }
+        .day-card.unlocked {
+            border-color: rgba(183, 247, 0, 0.2);
+        }
+        .day-card.locked {
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            border-color: rgba(255,255,255,0.04);
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none;
+        }
+        .day-card.unlocked:hover {
+            transform: translateY(-4px);
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            border-color: var(--spring-bud);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25), 0 0 30px rgba(183, 247, 0, 0.12), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .day-card.unlocked:hover::after {
+            opacity: 1;
+        }
+        .day-card.unlocked:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+        .day-card .info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            position: relative;
+            z-index: 1;
+        }
+        .day-card .num {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--spring-bud);
+            opacity: 0.85;
+        }
+        .day-card .title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color:#fff;
+        }
+        .day-card .desc {
+            font-size: 0.8rem;
+            color: #ffffff;
+            opacity: 1;
+        }
+        .day-card .status {
+            font-size: 0.85rem;
+            color: #ffffff;
+            white-space: nowrap;
+            position: relative;
+            z-index: 1;
+        }
+        .day-card.locked .num,
+        .day-card.locked .title,
+        .day-card.locked .desc {
+            color: #ffffff;
+            opacity: 0.8;
+        }
+
+.poster-card {
+    display: none;
+    background: url('图8.webp');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+    border-radius: var(--border-radius);
+    padding: 24px 28px;
+    border: 1px solid rgba(183, 247, 0, 0.2);
+    backdrop-filter: blur(12px);
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    text-align: center;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+    will-change: background-image;
+    transform: translateZ(0);
+    filter: none;
+}
+.poster-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(4, 54, 254, 0.15), rgba(183, 247, 0, 0.1), transparent 70%);
+    border-radius: var(--border-radius);
+    pointer-events: none;
+}
+.poster-card.show {
+    display: block;
+    animation: fadeUp 0.8s ease forwards;
+}
+.poster-card:hover {
+    transform: translateY(-4px);
+    background: url('图8.webp');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+    border-color: var(--spring-bud);
+    box-shadow: 0 8px 25px rgba(183, 247, 0, 0.15);
+}
+.poster-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--spring-bud);
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+}
+.poster-desc {
+    font-size: 0.85rem;
+    color: #ffffff;
+    position: relative;
+    z-index: 1;
+}
+
+        .brand-footer {
+            margin-top: 60px;
+            text-align: center;
+            animation: fadeIn 1.5s ease forwards;
+            position: relative;
+            padding: 10px 0;
+        }
+        .brand-footer::before,
+        .brand-footer::after {
+            content: '✦';
+            position: absolute;
+            color: var(--spring-bud);
+            opacity: 0.5;
+            font-size: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .brand-footer::before { left: 0; }
+        .brand-footer::after { right: 0; }
+        
+        /* ========== 底部品牌流光渐变 完全没动 ========== */
+        .brand-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            display: inline-block;
+        }
+        .brand-name span {
+            display: inline-block;
+            background: linear-gradient(90deg, #B7F700, #428DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transform: skew(-8deg);
+            animation: letterBounce 2.8s ease-in-out infinite alternate;
+        }
+        .brand-name span:nth-child(1) { animation-delay: 0s; }
+        .brand-name span:nth-child(2) { animation-delay: 0.15s; }
+        .brand-name span:nth-child(3) { animation-delay: 0.3s; }
+        .brand-name span:nth-child(4) { animation-delay: 0.45s; }
+        .brand-name span:nth-child(5) { animation-delay: 0.6s; }
+
+        .date-text {
+            font-size: 0.9rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width:600px) {
+            .wrapper { padding: 60px 16px; gap: 40px; }
+            .day-card { padding: 22px 20px; }
+            .current-badge {
+                top: -8px;
+                right: -8px;
+                font-size: 0.65rem;
+                padding: 4px 8px;
+            }
+            .brand-footer { margin-top: 40px; }
+        }
+        @media (orientation: landscape) and (max-height: 600px) {
+            .wrapper {
+                padding: 30px 24px;
+                gap: 24px;
+            }
+            .hero h1 {
+                font-size: clamp(1.8rem, 5vw, 2.6rem);
+            }
+        }
+.back-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.back-btn:hover { background: rgba(183,247,0,0.15); border-color: var(--spring-bud); color: var(--spring-bud); transform: scale(1.1); box-shadow: 0 0 15px rgba(183,247,0,0.25); }
+.back-btn:active { transform: scale(0.95); }
+.back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+body { animation: pageIn 0.1s ease; will-change: transform, opacity; }
+body.no-page-anim { animation: none !important; }
+@keyframes pageIn { from { opacity: 0.7; transform: translate3d(15px,0,0); } }
+    </style>
+</head>
+<body style="background-color:#0a0a14;">
+<button class="back-btn" onclick="location.href='shouye.html'" aria-label="返回首页">←</button>
+
+    <div class="fixed-background"></div>
+    <canvas id="particleCanvas"></canvas>
+    <div class="content-scroll">
+        <div class="wrapper">
+            <div class="hero">
+                <div class="badge">✦ 7 DAY TRANSFORMATION ✦</div>
+                <div class="welcome-text" id="welcomeText" style="cursor:pointer;" title="点击修改名字" onclick="editName()">欢迎你，旅行者！ ✎</div>
+                
+                <h1><span>R</span><span>e</span><span>i</span><span>n</span><span>v</span><span>e</span><span>n</span><span>t</span> <span>y</span><span>o</span><span>u</span><span>r</span><span>s</span><span>e</span><span>l</span><span>f</span></h1>
+                <p id="journeySub">按顺序完成每一天的成长任务，逐步蜕变成为全新的自己</p>
+                
+                <div class="progress-box">
+                    <div class="progress-info">
+                        <span>成长进度</span>
+                        <span id="progressText">0/7 天</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="cards" id="cardContainer"></div>
+            <a id="posterCard" class="poster-card" href="poster.html">
+                <div class="poster-title">7天蜕变 · 专属结业海报</div>
+                <div class="poster-desc">恭喜你完成全部挑战，点击领取你的成长纪念</div>
+            </a>
+            <div class="brand-footer">
+                <div class="brand-name"><span>Y</span><span>o</span><span>u</span> <span>捻</span><span>光</span></div>
+                <div class="date-text" id="dateDisplay"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let w, h, particles = [];
+let mouseX = 0, mouseY = 0;
+
+function resize() {
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w;
+    canvas.height = h;
+}
+resize();
+window.addEventListener('resize', resize);
+
+window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.s = Math.random() * 1.6 + 0.4;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.o = Math.random() * 0.5 + 0.2;
+        this.hue = 120;
+    }
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        this.x += dx * 0.0012;
+        this.y += dy * 0.0012;
+
+        if (this.x < 0 || this.x > w) this.vx *= -1;
+        if (this.y < 0 || this.y > h) this.vy *= -1;
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 90%, 70%, ${this.o})`;
+        ctx.fill();
+    }
+}
+function init() {
+    particles = [];
+    for (let i = 0; i < 130; i++) particles.push(new Particle());
+}
+init();
+function anim() {
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(anim);
+}
+anim();
+
+const dayBackgrounds = {
+    1: '图1.webp',
+    2: '图2.webp',
+    3: '图3.webp',
+    4: '图4.webp',
+    5: '图5.webp',
+    6: '图6.webp',
+    7: '图7.webp'
+};
+
+const dayList = [
+    { day:1, title:"看见真相", desc:"认识真实的自己" },
+    { day:2, title:"接纳自己", desc:"打破信念枷锁" },
+    { day:3, title:"重塑身份", desc:"重新定义重要之事" },
+    { day:4, title:"发现渴望", desc:"描绘理想人生蓝图" },
+    { day:5, title:"克服恐惧", desc:"设计你的日常仪式" },
+    { day:6, title:"升级心智", desc:"优化你的世界" },
+    { day:7, title:"游戏人生", desc:"成为新版本的自己" }
+];
+
+function editName(){
+    location.href = 'create-identity.html?edit=1';
+}
+
+function getAutoUnlockedDay() {
+    const startStr = localStorage.getItem('startDate');
+    let start;
+    if (!startStr) {
+        start = new Date();
+        start.setHours(0, 0, 0, 0);
+        localStorage.setItem('startDate', start.getTime());
+    } else {
+        start = new Date(parseInt(startStr));
+    }
+    const now = new Date();
+    const nowDay = new Date(now.setHours(0, 0, 0, 0));
+    const diffTime = nowDay - start;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const autoDay = Math.min(diffDays + 1, 7);
+    return autoDay;
+}
+
+function getUnlockedDays() {
+    const autoDay = getAutoUnlockedDay();
+    const arr = [];
+    for (let i = 1; i <= autoDay; i++) arr.push(i);
+    return arr;
+}
+
+function isDayUnlocked(day) {
+    return getUnlockedDays().includes(day);
+}
+
+function canAccess(day) {
+    return isDayUnlocked(day);
+}
+
+function getCurrentDay() {
+    return getAutoUnlockedDay();
+}
+
+function checkPosterUnlock() {
+    const unlocked = getUnlockedDays();
+    const posterCard = document.getElementById('posterCard');
+    if (unlocked.includes(7)) {
+        posterCard.classList.add('show');
+    } else {
+        posterCard.classList.remove('show');
+    }
+}
+
+function renderCards() {
+    const c = document.getElementById('cardContainer');
+    c.innerHTML = '';
+    const currentDay = getCurrentDay();
+    dayList.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = `day-card ${isDayUnlocked(item.day) ? 'unlocked' : 'locked'}`;
+        a.style.animationDelay = `${0.1 + index * 0.08}s`;
+        
+        const bgImage = dayBackgrounds[item.day];
+        const baseGradient = 'linear-gradient(135deg, rgba(26,26,46,0.4) 0%, rgba(32,32,54,0.45) 100%)';
+        const hoverGradient = 'linear-gradient(135deg, rgba(32,32,54,0.45) 0%, rgba(38,38,62,0.5) 100%)';
+        const lockedGradient = 'rgba(20,20,35,0.3)';
+        
+        a.style.background = `${baseGradient}, url('${bgImage}')`;
+        a.style.backgroundSize = 'cover';
+        a.style.backgroundPosition = 'center';
+        a.style.backgroundBlendMode = 'overlay';
+
+        a.addEventListener('mouseenter', () => {
+            if (a.classList.contains('unlocked')) {
+                a.style.background = `${hoverGradient}, url('${bgImage}')`;
+                a.style.backgroundSize = 'cover';
+                a.style.backgroundPosition = 'center';
+                a.style.backgroundBlendMode = 'overlay';
+            }
+        });
+        a.addEventListener('mouseleave', () => {
+            if (a.classList.contains('unlocked')) {
+                a.style.background = `${baseGradient}, url('${bgImage}')`;
+                a.style.backgroundSize = 'cover';
+                a.style.backgroundPosition = 'center';
+                a.style.backgroundBlendMode = 'overlay';
+            }
+        });
+        if (a.classList.contains('locked')) {
+            a.style.background = `${lockedGradient}, url('${bgImage}')`;
+            a.style.backgroundSize = 'cover';
+            a.style.backgroundPosition = 'center';
+            a.style.backgroundBlendMode = 'overlay';
+        }
+        
+        let badge = '';
+        if (canAccess(item.day) && item.day === currentDay) {
+            badge = '<div class="current-badge">当前</div>';
+        }
+        if (canAccess(item.day)) a.href = `day${item.day}.html`;
+        
+        a.innerHTML = `
+            ${badge}
+            <div class="info">
+                <div class="num">第 ${item.day} 天</div>
+                <div class="title">${item.title}</div>
+                <div class="desc">${item.desc}</div>
+            </div>
+            <div class="status">${canAccess(item.day) ? '可进入' : '未解锁'}</div>
+        `;
+        c.appendChild(a);
+    });
+}
+
+function renderUserInfo() {
+    const playerName = localStorage.getItem('playerName');
+    const unlocked = getUnlockedDays();
+    const count = unlocked.length;
+    const startStr2 = localStorage.getItem('startDate');
+    let journeyDay = count;
+    if(startStr2){
+        const start = new Date(parseInt(startStr2));
+        const now2 = new Date(); now2.setHours(0,0,0,0);
+        start.setHours(0,0,0,0);
+        journeyDay = Math.min(Math.floor((now2-start)/(1000*60*60*24))+1, 7);
+    }
+    if(playerName){
+        document.getElementById('welcomeText').innerHTML = `欢迎回来，${playerName}！ <span style="font-size:0.7em;opacity:0.5;">✎</span>`;
+        const subs = [
+            '一切才刚刚开始，迈出第一步最重要。',
+            '第二天了，你已经走在大多数人前面。',
+            '三分之一的路程，蜕变正在发生。',
+            '过半了！坚持的力量已经开始显现。',
+            '第五天，新习惯正在取代旧模式。',
+            '只剩两天，你已经不是原来的自己。',
+            '最后一天，崭新的你即将诞生。'
+        ];
+        document.getElementById('journeySub').innerText = subs[journeyDay-1] || subs[6];
+    }
+    document.getElementById('progressText').innerText = `第 ${journeyDay} 天 · ${count}/7 已完成`;
+    document.getElementById('progressFill').style.width = `${(count / 7) * 100}%`;
+}
+
+// 仅修改这里：日期星期改为英文显示
+function renderDate() {
+    const now = new Date();
+    const opt = { year:'numeric', month:'long', day:'numeric', weekday:'long' };
+    document.getElementById('dateDisplay').innerText = now.toLocaleDateString('en-US', opt);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    renderUserInfo();
+    renderCards();
+    renderDate();
+    checkPosterUnlock();
+});
+</script>
+<script>
+(function(){
+var n=performance.getEntriesByType('navigation')[0];
+if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
+var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1164 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>7天重塑人生 · 专属纪念海报</title>
+<link rel="preload" as="image" href="图片9.webp" fetchpriority="high">
+<link rel="preload" as="image" href="poster1.webp" fetchpriority="high">
+<link rel="preload" as="image" href="poster2.webp" fetchpriority="high">
+<link rel="preload" as="image" href="poster3.webp" fetchpriority="high">
+	<link rel="preload" as="image" href="nasa.webp" fetchpriority="high">
+<meta name="view-transition" content="same-origin">
+    <style>
+        :root {
+            --bg: #0a0a14;
+            --text: #e8e8f0;
+            --text-sub: #a0a0b0;
+            --cyan: #00f5d4;
+            --blue: #0099ff;
+            --gradient: linear-gradient(90deg, #00f5d4, #0099ff, #00f5d4);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a14;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--text);
+            background-image: url('nasa.webp');
+            background-size: cover;
+            background-position: center;
+            /* background-attachment: fixed; removed for mobile performance */
+        }
+        .page-bg {
+            position: fixed; inset:0; z-index:-2;
+            background: rgba(0,0,0,0.6);
+        }
+        .scroll {
+            position:fixed; inset:0;
+            overflow-y:auto; overflow-x:hidden;
+            padding: 30px 24px 100px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position:relative; z-index:1;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            background: var(--gradient);
+            background-size: 300% 100%;
+            animation: flow 6s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        @keyframes flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+        .subtitle {
+            color: var(--text-sub);
+            font-size: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .tab {
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-sub);
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tab.active {
+            background: var(--gradient);
+            color: #000;
+            font-weight: 500;
+        }
+        .canvas-wrapper {
+            width: 100%;
+            max-width: 380px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 153, 255, 0.2);
+            background: #fff;
+        }
+        #posterCanvas {
+            display: block;
+            width: 100%;
+        }
+        .save-btn {
+            margin-top: 28px;
+            padding: 12px 36px;
+            border-radius: 100px;
+            background: var(--gradient);
+            background-size: 300% 100%;
+            animation: flow 6s linear infinite;
+            color: #000;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .save-btn:active {
+            transform: scale(0.96);
+        }
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+        }
+        .brand {
+            font-size: 20px;
+            font-weight: bold;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+        #date {
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+        .scroll::-webkit-scrollbar { width: 4px; }
+        .scroll::-webkit-scrollbar-track { background: transparent; }
+        .scroll::-webkit-scrollbar-thumb { background: #0099ff55; border-radius: 10px; }
+        .scroll::-webkit-scrollbar-thumb:hover { background: #0099ff88; }
+        /* === Enhanced Interactions === */
+        .scroll { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        .tab { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+        .tab:hover:not(.active) { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: #fff; transform: translateY(-2px); }
+        .tab:active { transform: scale(0.95); }
+        .tab:focus-visible { outline: 2px solid #00f5d4; outline-offset: 2px; }
+        .save-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
+        .save-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,153,255,0.4); filter: brightness(1.1); }
+        .save-btn:focus-visible { outline: 2px solid #00f5d4; outline-offset: 2px; }
+        .canvas-wrapper { transition: box-shadow 0.3s ease; }
+        .canvas-wrapper:hover { box-shadow: 0 12px 40px rgba(0,153,255,0.3); }
+        .title { will-change: transform; }
+        .brand { will-change: transform; }
+.back-btn {
+    position: fixed;
+    top: 24px; left:20px;
+    width:44px; height:44px;
+    border-radius:50%;
+    background: rgba(20,20,35,0.7);
+    border:1px solid rgba(255,255,255,0.1);
+    color:#fff;
+    display:grid; place-items:center;
+    cursor:pointer;
+    z-index:999;
+    transition: all 0.3s;
+}
+.back-btn:hover { border-color: #00f5d4; color: #00f5d4; }
+.back-btn:active { transform: scale(0.95); }
+body { animation: pageIn 0.1s ease; will-change: transform, opacity; }
+body.no-page-anim { animation: none !important; }
+@keyframes pageIn { from { opacity: 0.7; transform: translate3d(15px,0,0); } }
+    </style>
+</head>
+<body style="background-color:#0a0a14;">
+<button class="back-btn" onclick="location.href='hall.html'" aria-label="返回成长大厅">←</button>
+    <div class="page-bg"></div>
+    <div class="scroll">
+        <div class="container">
+            <div class="title">7天重塑人生 · 专属纪念海报</div>
+            <div class="subtitle">
+                七天蜕变，打破旧我<br>
+               重塑新生，遇见更好的自己
+            </div>
+            <div class="tab-bar">
+                <div class="tab active" data-id="1">Poster One</div>
+                <div class="tab" data-id="2">Poster Two</div>
+                <div class="tab" data-id="3">Poster Three</div>
+                <div class="tab" data-id="4">Poster Four</div>
+            </div>
+            <div class="canvas-wrapper">
+                <div id="tabLoading" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:14px;letter-spacing:2px;z-index:10;">加载中...</div>
+                <canvas id="posterCanvas"></canvas>
+            </div>
+            <button class="save-btn" id="saveBtn" aria-label="保存海报图片">保存海报，传递美好</button>
+            <div class="footer">
+                <div class="brand">You 捻光</div>
+                <div id="date"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('posterCanvas');
+        const mainCtx = canvas.getContext('2d');
+        let ctx = mainCtx;
+        const tabs = document.querySelectorAll('.tab');
+        const saveBtn = document.getElementById('saveBtn');
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const width = 1440 * dpr;
+        const height = 2160 * dpr;
+        canvas.width = width;
+        canvas.height = height;
+        mainCtx.imageSmoothingEnabled = true;
+        mainCtx.imageSmoothingQuality = 'high';
+
+        const posterCache = {};
+        let currentPoster = 1;
+
+        function showCached(id) {
+            if (posterCache[id]) {
+                mainCtx.clearRect(0, 0, width, height);
+                mainCtx.drawImage(posterCache[id], 0, 0);
+                document.getElementById('tabLoading').style.display = 'none';
+            }
+        }
+
+        function startOffscreen() {
+            const off = document.createElement('canvas');
+            off.width = width; off.height = height;
+            const octx = off.getContext('2d');
+            octx.imageSmoothingEnabled = true;
+            octx.imageSmoothingQuality = 'high';
+            octx.translate(0.5, 0.5);
+            ctx = octx;
+            return off;
+        }
+
+        function finishOffscreen(off, id) {
+            posterCache[id] = off;
+            ctx = mainCtx;
+            if (id === currentPoster) showCached(id);
+        }
+        function getUserName() {
+            try { return localStorage.getItem('playerName') || '重塑者'; } 
+            catch (e) { return '重塑者'; }
+        }
+        function showDate() {
+            const date = new Date();
+            const opt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').innerText = date.toLocaleDateString('en-US', opt);
+        }
+        let userName = getUserName();
+
+        // 预加载所有海报图片到内存
+        const posterImages = {
+            1: 'poster1.webp',
+            2: 'poster2.webp',
+            3: 'poster3.webp',
+            4: 'poster4.webp'
+        };
+        const preloaded = {};
+        let loadedCount = 0;
+        Object.entries(posterImages).forEach(([id, src]) => {
+            const img = new Image();
+            img.onload = () => {
+                loadedCount++;
+                preloaded[id] = img;
+                if (loadedCount === 1) drawPoster(1);
+            };
+            img.onerror = () => { loadedCount++; };
+            img.src = src;
+        });
+
+        function drawPoster(id) {
+            if (posterCache[id]) { showCached(id); return; }
+            const off = startOffscreen();
+            const img = preloaded[id] || new Image();
+            
+            if (id === 1) {
+                // ===== 海报1：蜕变 =====
+                img.src = 'poster1.webp';
+                img.onload = function () {
+                    const W = width, H = height;
+                    const pad = 85 * dpr;
+
+                    // 全幅背景图 cover
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = W / H;
+                    let sw, sh, sx, sy;
+                    if (imgRatio > canvasRatio) {
+                        sh = img.naturalHeight; sw = sh * canvasRatio;
+                        sx = (img.naturalWidth - sw) / 2; sy = 0;
+                    } else {
+                        sw = img.naturalWidth; sh = sw / canvasRatio;
+                        sx = 0; sy = (img.naturalHeight - sh) / 2;
+                    }
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
+
+                    // 暗色渐变叠层
+                    var overlay = ctx.createLinearGradient(0, 0, 0, H);
+                    overlay.addColorStop(0, 'rgba(0,0,0,0.12)');
+                    overlay.addColorStop(0.25, 'rgba(0,0,0,0.22)');
+                    overlay.addColorStop(0.55, 'rgba(0,0,0,0.42)');
+                    overlay.addColorStop(0.8, 'rgba(0,0,0,0.56)');
+                    overlay.addColorStop(1, 'rgba(0,0,0,0.68)');
+                    ctx.fillStyle = overlay;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // ===== 顶部品牌栏 =====
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (24 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('◆  YOU You 捻光', pad, 90 * dpr);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+                    ctx.lineWidth = 0.7 * dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, 103 * dpr); ctx.lineTo(pad + 170 * dpr, 103 * dpr); ctx.stroke();
+
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#fff';
+                    ctx.font = (17 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('NO.01  /  7 DAYS REBIRTH', W - pad, 90 * dpr);
+
+                    // ===== 主视觉 "蜕" — 高级质感 =====
+                    ctx.textAlign = 'center';
+                    var cx = W/2, cy = 480*dpr, fSize = 260*dpr;
+
+                    // 第一层：深色投影（深度感）
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0,0,0,0.30)';
+                    ctx.shadowBlur = 25*dpr;
+                    ctx.shadowOffsetX = 3*dpr;
+                    ctx.shadowOffsetY = 5*dpr;
+                    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('蜕', cx, cy);
+                    ctx.restore();
+
+                    // 第二层：外发光
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0,245,212,0.45)';
+                    ctx.shadowBlur = 55*dpr;
+                    ctx.fillStyle = 'rgba(0,0,0,0)';
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('蜕', cx, cy);
+                    ctx.restore();
+
+                    // 第三层：青白渐变主体
+                    ctx.save();
+                    var cGrad = ctx.createLinearGradient(cx-200*dpr, cy-fSize, cx+200*dpr, cy);
+                    cGrad.addColorStop(0, '#009980');
+                    cGrad.addColorStop(0.2, '#00e0c0');
+                    cGrad.addColorStop(0.4, '#a0fff0');
+                    cGrad.addColorStop(0.5, '#ffffff');
+                    cGrad.addColorStop(0.6, '#a0fff0');
+                    cGrad.addColorStop(0.8, '#00e0c0');
+                    cGrad.addColorStop(1, '#009980');
+                    ctx.fillStyle = cGrad;
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('蜕', cx, cy);
+                    ctx.restore();
+
+                    // 第四层：顶部高光线
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'screen';
+                    var hlGrad = ctx.createLinearGradient(0, cy-fSize*0.7, 0, cy);
+                    hlGrad.addColorStop(0, 'rgba(255,255,255,0.35)');
+                    hlGrad.addColorStop(1, 'rgba(255,255,255,0)');
+                    ctx.fillStyle = hlGrad;
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('蜕', cx, cy);
+                    ctx.restore();
+
+                    // 副标题
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (44 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('放下执念 · 与自己和解释怀', W / 2, 560 * dpr);
+
+                    // 英文副标
+                    ctx.fillStyle = 'rgba(255,255,255,0.48)';
+                    ctx.font = 'italic ' + (27 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('A journey of letting go and becoming', W / 2, 605 * dpr);
+
+                    // 关键词
+                    ctx.fillStyle = 'rgba(255,255,255,0.36)';
+                    ctx.font = (24 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('觉察  |  接纳  |  行动  |  坚持  |  突破  |  成长  |  蜕变', W / 2, 650 * dpr);
+
+                    // ===== 7天数据 =====
+                    var dataY = 710 * dpr;
+                    ctx.strokeStyle = 'rgba(0,245,212,0.25)';
+                    ctx.lineWidth = 0.8 * dpr;
+                    ctx.beginPath(); ctx.moveTo(W * 0.20, dataY); ctx.lineTo(W * 0.35, dataY); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(W * 0.65, dataY); ctx.lineTo(W * 0.80, dataY); ctx.stroke();
+                    ctx.fillStyle = '#ffd54f';
+                    ctx.font = 'bold ' + (76 * dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('7', W / 2 - 50 * dpr, dataY);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (38 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('天', W / 2 + 12 * dpr, dataY);
+                    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+                    ctx.font = (28 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('心智蜕变之旅', W / 2 + 72 * dpr, dataY);
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                    ctx.font = 'bold ' + (22 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('重塑人生', W - pad, dataY);
+
+                    // ===== 图片小窗 =====
+                    ctx.textAlign = 'center';
+                    var iw = 520 * dpr, ih = 330 * dpr;
+                    var ix = (W - iw) / 2, iy = 780 * dpr;
+                    // 外底
+                    ctx.fillStyle = 'rgba(0,210,180,0.05)';
+                    ctx.fillRect(ix - 16 * dpr, iy - 16 * dpr, iw + 32 * dpr, ih + 32 * dpr);
+                    // 外框
+                    ctx.strokeStyle = 'rgba(0,245,212,0.28)';
+                    ctx.lineWidth = 1.2 * dpr;
+                    ctx.strokeRect(ix - 12 * dpr, iy - 12 * dpr, iw + 24 * dpr, ih + 24 * dpr);
+                    // 图片
+                    ctx.drawImage(img, ix, iy, iw, ih);
+                    // 内框
+                    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+                    ctx.lineWidth = 0.8 * dpr;
+                    ctx.strokeRect(ix, iy, iw, ih);
+                    // 青绿装饰线
+                    ctx.strokeStyle = 'rgba(0,245,212,0.5)';
+                    ctx.lineWidth = 2.5 * dpr;
+                    ctx.beginPath(); ctx.moveTo(ix, iy - 6 * dpr); ctx.lineTo(ix + 140 * dpr, iy - 6 * dpr); ctx.stroke();
+                    // 四角L形
+                    var Lsz = 20 * dpr;
+                    ctx.strokeStyle = 'rgba(0,245,212,0.35)';
+                    ctx.lineWidth = 1.6 * dpr;
+                    [[ix,iy,1,1],[ix+iw,iy,-1,1],[ix,iy+ih,1,-1],[ix+iw,iy+ih,-1,-1]].forEach(function(a){
+                        ctx.beginPath();
+                        ctx.moveTo(a[0], a[1] - a[3]*Lsz); ctx.lineTo(a[0], a[1]); ctx.lineTo(a[0] + a[2]*Lsz, a[1]);
+                        ctx.stroke();
+                    });
+
+                    // ===== 金句区 =====
+                    var qY = iy + ih + 60 * dpr;
+                    // 圆点
+                    ctx.fillStyle = 'rgba(0,245,212,0.45)';
+                    [W/2-20*dpr, W/2, W/2+20*dpr].forEach(function(dx){ctx.beginPath();ctx.arc(dx, qY-15*dpr, 2.5*dpr, 0, Math.PI*2);ctx.fill();});
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold italic ' + (44 * dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('" 放下过去，才能拥抱更好的未来 "', W / 2, qY + 15 * dpr);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                    ctx.font = (34 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天仅仅是开始，余生皆是蜕变', W / 2, qY + 75 * dpr);
+
+                    // ===== 七日历程 =====
+                    var stepY = qY + 150 * dpr;
+                    var steps = ['觉察','接纳','行动','坚持','突破','成长','蜕变'];
+                    var stepGap = 115 * dpr;
+                    var stepTotalW = steps.length * stepGap;
+                    var stepStartX = (W - stepTotalW) / 2 + stepGap / 2;
+                    steps.forEach(function(s, i){
+                        var sx = stepStartX + i * stepGap;
+                        // 连线
+                        if (i < steps.length - 1) {
+                            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+                            ctx.lineWidth = 1 * dpr;
+                            ctx.beginPath();
+                            ctx.moveTo(sx + 22*dpr, stepY);
+                            ctx.lineTo(sx + stepGap - 22*dpr, stepY);
+                            ctx.stroke();
+                        }
+                        // 圆
+                        var isLast = (i === steps.length - 1);
+                        ctx.fillStyle = isLast ? '#00f5d4' : 'rgba(255,255,255,0.14)';
+                        ctx.beginPath(); ctx.arc(sx, stepY, 18*dpr, 0, Math.PI*2); ctx.fill();
+                        if (isLast) {
+                            ctx.strokeStyle = 'rgba(0,245,212,0.5)';
+                            ctx.lineWidth = 2 * dpr;
+                            ctx.beginPath(); ctx.arc(sx, stepY, 18*dpr, 0, Math.PI*2); ctx.stroke();
+                        }
+                        // 序号
+                        ctx.fillStyle = isLast ? '#000' : 'rgba(255,255,255,0.6)';
+                        ctx.font = 'bold ' + (16*dpr) + 'px "Georgia",sans-serif';
+                        ctx.fillText(i+1, sx, stepY + 6*dpr);
+                        // 标签
+                        ctx.fillStyle = isLast ? '#00f5d4' : 'rgba(255,255,255,0.45)';
+                        ctx.font = (21*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText(s, sx, stepY + 48*dpr);
+                    });
+
+                    // ===== 用户名 =====
+                    var nY = stepY + 140 * dpr;
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(255,200,60,0.45)';
+                    ctx.shadowBlur = 26 * dpr;
+                    var nGrad = ctx.createLinearGradient(W * 0.25, 0, W * 0.75, 0);
+                    nGrad.addColorStop(0, '#FFD700');
+                    nGrad.addColorStop(0.4, '#FFF5C0');
+                    nGrad.addColorStop(0.6, '#FFA500');
+                    nGrad.addColorStop(1, '#FFD700');
+                    ctx.fillStyle = nGrad;
+                    ctx.font = 'bold ' + (76 * dpr) + 'px "Georgia", "PingFang SC", "Microsoft YaHei", serif';
+                    ctx.fillText(userName, W / 2, nY);
+                    ctx.restore();
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.58)';
+                    ctx.font = (29 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('已完成7天心智蜕变之旅', W / 2, nY + 55 * dpr);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    ctx.font = (23 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天重塑人生  ·  蜕变新生', W / 2, nY + 88 * dpr);
+
+                    // ===== 底部英文 =====
+                    var botY = nY + 180 * dpr;
+                    ctx.fillStyle = 'rgba(255,255,255,0.40)';
+                    ctx.font = 'italic ' + (30 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('" The wound is where the light enters you. "', W / 2, botY);
+                    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+                    ctx.font = (24 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('伤口是光进入你内心的地方', W / 2, botY + 42 * dpr);
+
+                    // ===== 品牌 =====
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.lineWidth = 0.6 * dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, H - 60 * dpr); ctx.lineTo(W - pad, H - 60 * dpr); ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.40)';
+                    ctx.font = (26 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('© You 捻光', W / 2, H - 28 * dpr);
+
+                    ctx.fillStyle = 'rgba(0,245,212,0.30)';
+                    ctx.beginPath(); ctx.arc(W/2, H - 12*dpr, 2*dpr, 0, Math.PI*2); ctx.fill();
+
+                    finishOffscreen(off, 1);
+                };
+            }
+            else if (id === 2) {
+                // ===== 海报2：压花磨砂玻璃 · 冲破黑暗光芒万丈 =====
+                // 【背景图片替换位置】修改下一行图片路径
+                img.src = 'poster2.webp';
+                img.onload = function () {
+                    const W = width, H = height;
+                    const midX = W / 2;
+                    const pad = 65 * dpr;
+                    const glassAlpha = 0.45;  // 【玻璃透明度】越大越白，0.45≈55%透光
+
+                    // ===== 1. 全幅背景图 =====
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = W / H;
+                    let sw, sh, sx, sy;
+                    if (imgRatio > canvasRatio) {
+                        sh = img.naturalHeight; sw = sh * canvasRatio;
+                        sx = (img.naturalWidth - sw) / 2; sy = 0;
+                    } else {
+                        sw = img.naturalWidth; sh = sw / canvasRatio;
+                        sx = 0; sy = (img.naturalHeight - sh) / 2;
+                    }
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
+
+                    // ===== 2. 左侧压花磨砂玻璃 =====
+                    // 2a. 高斯模糊
+                    const offBlur = document.createElement('canvas');
+                    offBlur.width = W; offBlur.height = H;
+                    const bctx = offBlur.getContext('2d');
+                    bctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
+                    bctx.filter = 'blur(' + (24 * dpr) + 'px)';
+                    bctx.drawImage(offBlur, 0, 0, W, H, 0, 0, W, H);
+                    bctx.filter = 'none';
+                    ctx.drawImage(offBlur, 0, 0, midX, H, 0, 0, midX, H);
+
+                    // 2b. 水波纹纹理
+                    ctx.save();
+                    ctx.beginPath(); ctx.rect(0, 0, midX, H); ctx.clip();
+                    for (let w = 0; w < 8; w++) {
+                        const baseY = H * (0.05 + w * 0.12);
+                        const amp = (10 + w * 5) * dpr;
+                        const freq = (0.006 + w * 0.002) / dpr;
+                        ctx.strokeStyle = 'rgba(255,255,255,' + (0.05 + w * 0.01) + ')';
+                        ctx.lineWidth = (1.2 + w * 0.5) * dpr;
+                        ctx.beginPath();
+                        for (let x = 0; x <= midX; x += 4 * dpr) {
+                            const y = baseY + Math.sin(x * freq) * amp
+                                    + Math.sin(x * freq * 2.5 + 1.5) * amp * 0.4
+                                    + Math.sin(x * freq * 0.3 + 2.8) * amp * 0.25;
+                            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+                    for (let v = 0; v < 10; v++) {
+                        const baseX = midX * (0.04 + v * 0.09);
+                        ctx.strokeStyle = 'rgba(255,255,255,' + (0.03 + v * 0.005) + ')';
+                        ctx.lineWidth = (0.4 + v * 0.2) * dpr;
+                        ctx.beginPath();
+                        for (let y = 0; y <= H; y += 6 * dpr) {
+                            const x = baseX + Math.sin(y * 0.005 + v) * (2 + v * 1.5) * dpr;
+                            if (y === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+                    // 噪点纹理
+                    const grain = document.createElement('canvas');
+                    grain.width = midX; grain.height = H;
+                    const gctx = grain.getContext('2d');
+                    const imgData = gctx.createImageData(Math.floor(midX / dpr), Math.floor(H / dpr));
+                    const d = imgData.data;
+                    for (let i = 0; i < d.length; i += 4) {
+                        const n = Math.random() * 50;
+                        d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = n * 0.22;
+                    }
+                    gctx.putImageData(imgData, 0, 0);
+                    ctx.drawImage(grain, 0, 0, midX, H);
+                    ctx.restore();
+
+                    // 2c. 白色磨砂蒙版
+                    const mask = ctx.createLinearGradient(0, 0, 0, H);
+                    mask.addColorStop(0, 'rgba(238,242,248,' + (glassAlpha + 0.10) + ')');
+                    mask.addColorStop(0.25, 'rgba(242,245,250,' + glassAlpha + ')');
+                    mask.addColorStop(0.55, 'rgba(238,241,247,' + (glassAlpha - 0.06) + ')');
+                    mask.addColorStop(0.8, 'rgba(242,245,250,' + glassAlpha + ')');
+                    mask.addColorStop(1, 'rgba(235,239,245,' + (glassAlpha + 0.08) + ')');
+                    ctx.fillStyle = mask;
+                    ctx.fillRect(0, 0, midX, H);
+
+                    // 2d. 右边缘内阴影
+                    const edge = ctx.createLinearGradient(midX - 22 * dpr, 0, midX, 0);
+                    edge.addColorStop(0, 'rgba(0,0,0,0)');
+                    edge.addColorStop(0.55, 'rgba(0,0,0,0.08)');
+                    edge.addColorStop(1, 'rgba(0,0,0,0.15)');
+                    ctx.fillStyle = edge;
+                    ctx.fillRect(midX - 22 * dpr, 0, 22 * dpr, H);
+
+                    // ===== 3. 右侧暗色叠加，让文字可读 =====
+                    const rightShade = ctx.createLinearGradient(midX, 0, W, 0);
+                    rightShade.addColorStop(0, 'rgba(10,10,20,0.60)');
+                    rightShade.addColorStop(0.2, 'rgba(10,10,20,0.38)');
+                    rightShade.addColorStop(0.5, 'rgba(10,10,20,0.18)');
+                    rightShade.addColorStop(1, 'rgba(10,10,20,0.06)');
+                    ctx.fillStyle = rightShade;
+                    ctx.fillRect(midX, 0, W - midX, H);
+
+                    // ===== 4. 白色分割线 =====
+                    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+                    ctx.lineWidth = 1 * dpr;
+                    ctx.beginPath(); ctx.moveTo(midX, 0); ctx.lineTo(midX, H); ctx.stroke();
+
+                    // ===== 5. 左侧面板内容 =====
+                    ctx.textAlign = 'left';
+                    const L = pad;
+                    const clrDark = '#141428';
+                    const clrMid = '#222240';
+                    const clrLight = '#383858';
+
+                    // 品牌
+                    ctx.fillStyle = clrDark;
+                    ctx.font = 'bold ' + (22 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('◆  YOU You 捻光', L, 80 * dpr);
+                    ctx.strokeStyle = 'rgba(20,20,40,0.18)';
+                    ctx.lineWidth = 0.7 * dpr;
+                    ctx.beginPath(); ctx.moveTo(L, 93 * dpr); ctx.lineTo(L + 165 * dpr, 93 * dpr); ctx.stroke();
+
+                    // 编号
+                    ctx.fillStyle = 'rgba(20,20,40,0.4)';
+                    ctx.font = (18 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('NO.02  /  7 DAYS REBIRTH', L, 125 * dpr);
+
+                    // 大字 "破"
+                    ctx.fillStyle = clrDark;
+                    ctx.font = 'bold ' + (210 * dpr) + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('破', L - 5 * dpr, 370 * dpr);
+
+                    // 副标题
+                    ctx.fillStyle = clrMid;
+                    ctx.font = 'bold ' + (42 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('冲破黑暗 · 光芒万丈', L, 440 * dpr);
+
+                    // 关键词
+                    ctx.fillStyle = clrLight;
+                    ctx.font = (26 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('破局  |  觉醒  |  自律  |  专注', L, 490 * dpr);
+                    ctx.fillText('勇气  |  光芒  |  新生', L, 525 * dpr);
+
+                    // 分隔线
+                    ctx.strokeStyle = 'rgba(20,20,40,0.12)';
+                    ctx.lineWidth = 0.6 * dpr;
+                    ctx.beginPath(); ctx.moveTo(L, 555 * dpr); ctx.lineTo(midX - L * 0.8, 555 * dpr); ctx.stroke();
+
+                    // 7天数据
+                    const dataY = 640 * dpr;
+                    ctx.fillStyle = clrDark;
+                    ctx.font = 'bold ' + (90 * dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('7', L, dataY);
+                    const m7 = ctx.measureText('7');
+                    ctx.fillStyle = clrMid;
+                    ctx.font = 'bold ' + (44 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('天', L + m7.width + 10 * dpr, dataY);
+                    ctx.fillStyle = clrLight;
+                    ctx.font = (32 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('心智蜕变之旅', L, dataY + 55 * dpr);
+
+                    // 用户名
+                    const nameY = 820 * dpr;
+                    const nameGrad = ctx.createLinearGradient(L, nameY, L + 450 * dpr, nameY + 50 * dpr);
+                    nameGrad.addColorStop(0, clrDark);
+                    nameGrad.addColorStop(0.5, '#2a2a55');
+                    nameGrad.addColorStop(1, clrDark);
+                    ctx.fillStyle = nameGrad;
+                    ctx.font = 'bold ' + (64 * dpr) + 'px "Georgia", "PingFang SC", "Microsoft YaHei", serif';
+                    ctx.fillText(userName, L, nameY);
+
+                    ctx.fillStyle = clrLight;
+                    ctx.font = (28 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('已完成7天心智蜕变之旅', L, nameY + 45 * dpr);
+
+                    ctx.fillStyle = 'rgba(20,20,40,0.3)';
+                    ctx.font = (22 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天重塑人生  ·  光芒新生', L, nameY + 80 * dpr);
+
+                    // 左侧底部
+                    ctx.fillStyle = 'rgba(20,20,40,0.35)';
+                    ctx.font = 'italic ' + (24 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('" Stars can\'t shine', L, H - 120 * dpr);
+                    ctx.fillText('  without darkness. "', L, H - 85 * dpr);
+
+                    // ===== 6. 右侧内容 =====
+                    const R = midX + pad;
+                    const rw = W - midX - pad * 2;
+
+                    // 金句大字
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (52 * dpr) + 'px "PingFang SC", "Microsoft YaHei", serif';
+                    ctx.fillText('熬过至暗', R, 200 * dpr);
+                    ctx.fillText('你终将光芒万丈', R, 275 * dpr);
+
+                    // 装饰点
+                    ctx.fillStyle = 'rgba(0,245,212,0.5)';
+                    const dotY = 300 * dpr;
+                    [R, R + 25 * dpr, R + 50 * dpr].forEach(function(x) {
+                        ctx.beginPath(); ctx.arc(x, dotY, 3 * dpr, 0, Math.PI * 2); ctx.fill();
+                    });
+
+                    // 右侧小窗 — poster2 预览
+                    const iw = rw * 0.9, ih = iw * 0.58;
+                    const ix = R, iy = 340 * dpr;
+                    // 小窗上方青绿装饰线
+                    ctx.strokeStyle = 'rgba(0,245,212,0.5)';
+                    ctx.lineWidth = 2.5 * dpr;
+                    ctx.beginPath(); ctx.moveTo(ix, iy - 6 * dpr); ctx.lineTo(ix + 100 * dpr, iy - 6 * dpr); ctx.stroke();
+                    // 图片
+                    ctx.drawImage(img, ix, iy, iw, ih);
+                    // 细边框
+                    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+                    ctx.lineWidth = 0.8 * dpr;
+                    ctx.strokeRect(ix, iy, iw, ih);
+
+                    // 七日寄语
+                    const qY = iy + ih + 50 * dpr;
+                    ctx.fillStyle = 'rgba(0,245,212,0.9)';
+                    ctx.font = (38 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天仅仅是开始，一生都在向光而行', R, qY);
+
+                    // 七日关键词
+                    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+                    ctx.font = (28 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('沉潜  |  破茧  |  淬炼  |  蓄力', R, qY + 55 * dpr);
+                    ctx.fillText('绽放  |  闪耀  |  永恒', R, qY + 95 * dpr);
+
+                    // 底部英文引言
+                    const bY = qY + 180 * dpr;
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.font = 'italic ' + (32 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('" The wound is where', R, bY);
+                    ctx.fillText('  the light enters you. "', R, bY + 42 * dpr);
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    ctx.font = (26 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('伤口是光进入你内心的地方', R, bY + 85 * dpr);
+
+                    // 底部分隔线
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.lineWidth = 0.6 * dpr;
+                    ctx.beginPath(); ctx.moveTo(L, H - 50 * dpr); ctx.lineTo(W - L, H - 50 * dpr); ctx.stroke();
+
+                    // 品牌
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                    ctx.font = (28 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('© You 捻光', W / 2, H - 22 * dpr);
+
+                    finishOffscreen(off, 2);
+                };
+            }
+            else if (id === 3) {
+                // ===== 海报3：向光而行 =====
+                img.src = 'poster3.webp';
+                img.onload = function () {
+                    const W = width, H = height;
+                    const pad = 110 * dpr;
+                    const gap = 55 * dpr;  // 统一大间距
+
+                    // === 1. 全幅背景 ===
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = W / H;
+                    let sw, sh, sx, sy;
+                    if (imgRatio > canvasRatio) {
+                        sh = img.naturalHeight; sw = sh * canvasRatio;
+                        sx = (img.naturalWidth - sw) / 2; sy = 0;
+                    } else {
+                        sw = img.naturalWidth; sh = sw / canvasRatio;
+                        sx = 0; sy = (img.naturalHeight - sh) / 2;
+                    }
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
+
+                    // === 2. 深色叠层 ===
+                    var ov = ctx.createLinearGradient(0,0,0,H);
+                    ov.addColorStop(0,'rgba(0,0,0,0.40)');
+                    ov.addColorStop(0.3,'rgba(0,0,0,0.55)');
+                    ov.addColorStop(0.6,'rgba(0,0,0,0.65)');
+                    ov.addColorStop(0.85,'rgba(0,0,0,0.72)');
+                    ov.addColorStop(1,'rgba(0,0,0,0.80)');
+                    ctx.fillStyle = ov; ctx.fillRect(0,0,W,H);
+
+                    function S(){ctx.shadowColor='rgba(0,0,0,0.65)';ctx.shadowBlur=6*dpr;ctx.shadowOffsetY=2*dpr;}
+                    function C(){ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;}
+
+                    // === 3. 顶部 ===
+                    S(); ctx.textAlign='left';
+                    ctx.fillStyle='#fff'; ctx.font='bold '+(22*dpr)+'px "Georgia",serif';
+                    ctx.fillText('◆  YOU You 捻光',pad,80*dpr);
+                    C(); ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=0.7*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad,93*dpr); ctx.lineTo(pad+160*dpr,93*dpr); ctx.stroke();
+
+                    S(); ctx.textAlign='right';
+                    ctx.fillStyle='#fff'; ctx.font=(16*dpr)+'px "Georgia",serif';
+                    ctx.fillText('NO.03  /  7 DAYS  REBIRTH',W-pad,80*dpr);
+
+                    // === 4. 标题 ===
+                    var Y = 190*dpr;
+                    C(); ctx.strokeStyle='rgba(0,245,212,0.35)'; ctx.lineWidth=1.5*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad,Y); ctx.lineTo(pad+110*dpr,Y); ctx.stroke();
+
+                    S(); ctx.textAlign='left'; Y+=45*dpr;
+                    ctx.fillStyle='rgba(0,245,212,0.70)'; ctx.font='bold '+(18*dpr)+'px "Georgia",serif';
+                    ctx.fillText('AWAKEN  ·  SHINE  ·  BECOME',pad,Y);
+
+                    Y+=70*dpr;
+                    ctx.fillStyle='#fff'; ctx.font='bold '+(52*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('向光而行',pad,Y);
+
+                    Y+=80*dpr;
+                    ctx.fillText('自有万丈光芒',pad,Y);
+
+                    Y+=70*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.40)'; ctx.font='italic '+(22*dpr)+'px "Georgia",serif';
+                    ctx.fillText('Walk toward the light, and you shall shine',pad,Y);
+
+                    // === 5. 图片 ===
+                    C(); Y+=85*dpr;
+                    var iw=520*dpr, ih=330*dpr, ix=(W-iw)/2, iy=Y;
+                    ctx.fillStyle='rgba(0,200,170,0.04)'; ctx.fillRect(ix-14*dpr,iy-14*dpr,iw+28*dpr,ih+28*dpr);
+                    ctx.strokeStyle='rgba(0,245,212,0.20)'; ctx.lineWidth=1*dpr;
+                    ctx.strokeRect(ix-8*dpr,iy-8*dpr,iw+16*dpr,ih+16*dpr);
+                    ctx.drawImage(img,ix,iy,iw,ih);
+                    ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=0.7*dpr;
+                    ctx.strokeRect(ix,iy,iw,ih);
+                    ctx.strokeStyle='rgba(0,245,212,0.45)'; ctx.lineWidth=2*dpr;
+                    ctx.beginPath(); ctx.moveTo(ix,iy-5*dpr); ctx.lineTo(ix+120*dpr,iy-5*dpr); ctx.stroke();
+                    var Lz=15*dpr; ctx.strokeStyle='rgba(0,245,212,0.26)'; ctx.lineWidth=1.3*dpr;
+                    [[ix,iy,1,1],[ix+iw,iy,-1,1],[ix,iy+ih,1,-1],[ix+iw,iy+ih,-1,-1]].forEach(function(a){
+                        ctx.beginPath();ctx.moveTo(a[0],a[1]-a[3]*Lz);ctx.lineTo(a[0],a[1]);ctx.lineTo(a[0]+a[2]*Lz,a[1]);ctx.stroke();
+                    });
+                    Y=iy+ih;
+
+                    // === 6. 金句 ===
+                    Y+=85*dpr; ctx.textAlign='center';
+                    C(); ctx.fillStyle='rgba(0,245,212,0.36)';
+                    [W/2-15*dpr,W/2,W/2+15*dpr].forEach(function(dx){ctx.beginPath();ctx.arc(dx,Y-10*dpr,2.5*dpr,0,Math.PI*2);ctx.fill();});
+
+                    S(); Y+=18*dpr;
+                    ctx.fillStyle='#fff'; ctx.font='bold italic '+(38*dpr)+'px "Georgia","PingFang SC",serif';
+                    ctx.fillText('" 心有光芒，必有远方 "',W/2,Y);
+
+                    Y+=65*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.58)'; ctx.font=(26*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('7天仅仅是开始，追光的人终会光芒万丈',W/2,Y);
+
+                    // === 7. 关键词 ===
+                    Y+=70*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.36)'; ctx.font=(22*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('觉察  |  接纳  |  行动  |  坚持  |  突破  |  成长  |  向光',W/2,Y);
+
+                    // === 8. 7天数据 ===
+                    Y+=75*dpr;
+                    ctx.fillStyle='#ffd54f'; ctx.font='bold '+(60*dpr)+'px "Georgia","PingFang SC",serif';
+                    ctx.fillText('7',W/2-20*dpr,Y);
+                    ctx.fillStyle='#fff'; ctx.font='bold '+(32*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('天',W/2+25*dpr,Y);
+
+                    Y+=70*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.44)'; ctx.font=(23*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('心智蜕变之旅',W/2,Y);
+
+                    // === 9. 用户名 ===
+                    Y+=110*dpr; C();
+                    ctx.save();
+                    ctx.shadowColor='rgba(255,200,60,0.38)'; ctx.shadowBlur=18*dpr;
+                    var nG=ctx.createLinearGradient(W*0.25,0,W*0.75,0);
+                    nG.addColorStop(0,'#FFD700'); nG.addColorStop(0.4,'#FFF5C0');
+                    nG.addColorStop(0.6,'#FFA500'); nG.addColorStop(1,'#FFD700');
+                    ctx.fillStyle=nG; ctx.font='bold '+(60*dpr)+'px "Georgia","PingFang SC","Microsoft YaHei",serif';
+                    ctx.fillText(userName,W/2,Y); ctx.restore();
+
+                    S(); Y+=55*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.48)'; ctx.font=(25*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('已完成7天心智蜕变之旅',W/2,Y);
+
+                    Y+=40*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.22)'; ctx.font=(18*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('7天重塑人生  ·  向光而行',W/2,Y);
+
+                    // === 10. 底部 ===
+                    Y+=120*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.36)'; ctx.font='italic '+(26*dpr)+'px "Georgia",serif';
+                    ctx.fillText('" Light is always within — you just need to see it. "',W/2,Y);
+                    Y+=38*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.20)'; ctx.font=(20*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('光一直在你心里，只需看见它',W/2,Y);
+
+                    C();
+                    ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=0.6*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad,H-60*dpr); ctx.lineTo(W-pad,H-60*dpr); ctx.stroke();
+
+                    ctx.fillStyle='rgba(255,255,255,0.33)'; ctx.font=(24*dpr)+'px "Georgia",serif';
+                    ctx.fillText('© You 捻光',W/2,H-28*dpr);
+                    ctx.fillStyle='rgba(0,245,212,0.20)';
+                    ctx.beginPath(); ctx.arc(W/2,H-12*dpr,2*dpr,0,Math.PI*2); ctx.fill();
+
+                    finishOffscreen(off, 3);
+                };
+            }
+            else if (id === 4) {
+                // ===== 海报4：破茧 · 明暗共生 =====
+                img.src = 'poster4.webp';
+                img.onload = function () {
+                    const W = width, H = height;
+                    const pad = 110*dpr;
+                    const zone = W*0.08;  // 中间过渡带宽度
+
+                    // === 1. 全幅背景 ===
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = W / H;
+                    let sw, sh, sx, sy;
+                    if (imgRatio > canvasRatio) {
+                        sh = img.naturalHeight; sw = sh * canvasRatio;
+                        sx = (img.naturalWidth - sw) / 2; sy = 0;
+                    } else {
+                        sw = img.naturalWidth; sh = sw / canvasRatio;
+                        sx = 0; sy = (img.naturalHeight - sh) / 2;
+                    }
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
+
+                    // === 2. 叠层 — 左暗右较暗，确保所有文字可读 ===
+                    var fullOv = ctx.createLinearGradient(0, 0, W, 0);
+                    fullOv.addColorStop(0, 'rgba(0,0,0,0.68)');
+                    fullOv.addColorStop(0.30, 'rgba(0,0,0,0.58)');
+                    fullOv.addColorStop(0.46, 'rgba(0,0,0,0.42)');
+                    fullOv.addColorStop(0.50, 'rgba(0,0,0,0.32)');
+                    fullOv.addColorStop(0.54, 'rgba(0,0,0,0.28)');
+                    fullOv.addColorStop(0.7, 'rgba(0,0,0,0.24)');
+                    fullOv.addColorStop(1, 'rgba(0,0,0,0.20)');
+                    ctx.fillStyle = fullOv; ctx.fillRect(0,0,W,H);
+
+                    var vOv = ctx.createLinearGradient(0,H*0.7,0,H);
+                    vOv.addColorStop(0,'rgba(0,0,0,0)');
+                    vOv.addColorStop(0.4,'rgba(0,0,0,0.25)');
+                    vOv.addColorStop(1,'rgba(0,0,0,0.55)');
+                    ctx.fillStyle = vOv; ctx.fillRect(0,0,W,H);
+
+                    function S(){ctx.shadowColor='rgba(0,0,0,0.65)';ctx.shadowBlur=6*dpr;ctx.shadowOffsetY=2*dpr;}
+                    function C(){ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;}
+
+                    // === 3. 顶部 ===
+                    S(); ctx.textAlign='left';
+                    ctx.fillStyle='#fff'; ctx.font='bold '+(22*dpr)+'px "Georgia",serif';
+                    ctx.fillText('◆  YOU You 捻光',pad,80*dpr);
+                    C(); ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=0.7*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad,93*dpr); ctx.lineTo(pad+160*dpr,93*dpr); ctx.stroke();
+
+                    S(); ctx.textAlign='right';
+                    ctx.fillStyle='rgba(255,255,255,0.26)'; ctx.font=(16*dpr)+'px "Georgia",serif';
+                    ctx.fillText('NO.04  /  7 DAYS  REBIRTH',W-pad,80*dpr);
+
+                    // === 4. 左侧 — 沉潜 ===
+                    var Lx = pad;
+                    var Y = 220*dpr;
+                    ctx.textAlign='left';
+
+                    S();
+                    ctx.fillStyle='rgba(255,255,255,0.48)'; ctx.font=(15*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('旧 我  ·  沉 潜  ·  蓄 力',Lx,Y);
+
+                    Y+=110*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.78)'; ctx.font='bold '+(80*dpr)+'px "PingFang SC","Microsoft YaHei","SimSun",serif';
+                    ctx.fillText('沉',Lx,Y);
+
+                    Y+=135*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.font='bold '+(28*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('向下扎根',Lx,Y);
+                    Y+=45*dpr;
+                    ctx.fillText('积蓄力量',Lx,Y);
+
+                    Y+=50*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font=(22*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('在黑暗中沉淀',Lx,Y);
+                    Y+=35*dpr;
+                    ctx.fillText('在寂静中生长',Lx,Y);
+
+                    Y+=55*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.28)'; ctx.font=(19*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('觉察  ·  接纳  ·  行动',Lx,Y);
+                    Y+=35*dpr;
+                    ctx.fillText('坚持  ·  突破  ·  成长',Lx,Y);
+
+                    // === 5. 右侧 — 绽放 ===
+                    var Rx = W - pad;
+                    var rY = 220*dpr;
+                    ctx.textAlign='right';
+
+                    S();
+                    ctx.fillStyle='rgba(0,245,212,0.72)'; ctx.font='bold '+(15*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('新 我  ·  绽 放  ·  闪 耀',Rx,rY);
+
+                    rY+=110*dpr;
+                    var rg=ctx.createLinearGradient(W*0.5,rY-80*dpr,Rx,rY);
+                    rg.addColorStop(0,'#00d4b8'); rg.addColorStop(0.6,'#ffffff'); rg.addColorStop(1,'#00d4b8');
+                    ctx.fillStyle=rg; ctx.font='bold '+(80*dpr)+'px "PingFang SC","Microsoft YaHei","SimSun",serif';
+                    ctx.fillText('绽',Rx,rY);
+
+                    rY+=135*dpr;
+                    ctx.fillStyle='#fff'; ctx.font='bold '+(28*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('向阳而生',Rx,rY);
+                    rY+=45*dpr;
+                    ctx.fillText('光芒万丈',Rx,rY);
+
+                    rY+=50*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.46)'; ctx.font=(22*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('在阳光下绽放',Rx,rY);
+                    rY+=35*dpr;
+                    ctx.fillText('在风雨后闪耀',Rx,rY);
+
+                    rY+=55*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.36)'; ctx.font=(19*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('蜕变  ·  新生  ·  绽放',Rx,rY);
+                    rY+=35*dpr;
+                    ctx.fillText('闪耀  ·  永恒  ·  光芒',Rx,rY);
+
+                    // === 6. 底部共享区 ===
+                    var botTop = Math.max(Y,rY) + 100*dpr;
+                    ctx.textAlign='center';
+
+                    C();
+                    ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=0.6*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad,botTop); ctx.lineTo(W-pad,botTop); ctx.stroke();
+
+                    S();
+                    var qy = botTop + 55*dpr;
+                    ctx.fillStyle='#fff'; ctx.font='bold italic '+(42*dpr)+'px "Georgia","PingFang SC",serif';
+                    ctx.fillText('" 每一次破碎，都是为了更好地重塑 "',W/2,qy);
+
+                    var qy2 = qy + 65*dpr;
+                    ctx.fillStyle='#fff'; ctx.font=(26*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('7天仅仅是开始，裂变之后即是新生',W/2,qy2);
+
+                    var dy = qy2 + 72*dpr;
+                    ctx.fillStyle='#ffd54f'; ctx.font='bold '+(58*dpr)+'px "Georgia","PingFang SC",serif';
+                    ctx.fillText('7',W/2-16*dpr,dy);
+                    ctx.fillStyle='#fff'; ctx.font='bold '+(28*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('天',W/2+18*dpr,dy);
+
+                    var dy2 = dy + 65*dpr;
+                    ctx.fillStyle='#fff'; ctx.font=(23*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('心智蜕变之旅',W/2,dy2);
+
+                    var ny = dy2 + 95*dpr; C();
+                    ctx.save();
+                    ctx.shadowColor='rgba(255,200,60,0.35)'; ctx.shadowBlur=16*dpr;
+                    var nG=ctx.createLinearGradient(W*0.25,0,W*0.75,0);
+                    nG.addColorStop(0,'#FFD700'); nG.addColorStop(0.4,'#FFF5C0');
+                    nG.addColorStop(0.6,'#FFA500'); nG.addColorStop(1,'#FFD700');
+                    ctx.fillStyle=nG; ctx.font='bold '+(56*dpr)+'px "Georgia","PingFang SC","Microsoft YaHei",serif';
+                    ctx.fillText(userName,W/2,ny); ctx.restore();
+
+                    S(); var ny2=ny+50*dpr;
+                    ctx.fillStyle='#fff'; ctx.font=(23*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('已完成7天心智蜕变之旅',W/2,ny2);
+
+                    var ny3=ny2+36*dpr;
+                    ctx.fillStyle='rgba(255,255,255,0.50)'; ctx.font=(17*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('7天重塑人生  ·  裂变新生',W/2,ny3);
+
+                    var botY=ny3+115*dpr;
+                    ctx.fillStyle='#fff'; ctx.font='italic '+(24*dpr)+'px "Georgia",serif';
+                    ctx.fillText('" Rock bottom became the solid foundation on which I rebuilt. "',W/2,botY);
+                    ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.font=(18*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('谷底，成了我重建的基石',W/2,botY+38*dpr);
+
+                    C();
+                    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=0.6*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad,H-60*dpr); ctx.lineTo(W-pad,H-60*dpr); ctx.stroke();
+                    ctx.fillStyle='rgba(255,255,255,0.30)'; ctx.font=(23*dpr)+'px "Georgia",serif';
+                    ctx.fillText('© You 捻光',W/2,H-28*dpr);
+                    ctx.fillStyle='rgba(0,245,212,0.18)';
+                    ctx.beginPath(); ctx.arc(W/2,H-12*dpr,2*dpr,0,Math.PI*2); ctx.fill();
+
+                    finishOffscreen(off, 4);
+                };
+            }
+            img.onerror = function(){
+                ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);
+                ctx.fillStyle='#000';ctx.font=`60px sans-serif`;
+                ctx.textAlign='center';ctx.fillText('图片加载失败',width/2,height/2);
+            };
+            // 预加载已完成则立即绘制
+            if (img.complete && img.naturalWidth > 0 && img.onload) img.onload();
+        }
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentPoster = Number(tab.dataset.id);
+                if (posterCache[currentPoster]) {
+                    showCached(currentPoster);
+                } else {
+                    document.getElementById('tabLoading').style.display = 'block';
+                    drawPoster(currentPoster);
+                }
+            });
+        });
+        saveBtn.onclick = () => {
+            if (!posterCache[currentPoster]) return;
+            const tmp = document.createElement('canvas');
+            tmp.width = width; tmp.height = height;
+            tmp.getContext('2d').drawImage(posterCache[currentPoster], 0, 0);
+            const link = document.createElement('a');
+            link.download = `7天重塑人生-${userName}.png`;
+            link.href = tmp.toDataURL('image/png', 1.0);
+            link.click();
+        };
+        showDate();
+    </script>
+<script>
+(function(){
+var n=performance.getEntriesByType('navigation')[0];
+if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
+var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,965 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>致每一位不断挑战自我的你｜特别献声</title>
+<link rel="preload" as="image" href="xuejing.webp" fetchpriority="high">
+<meta name="view-transition" content="same-origin">
+    <style>
+        :root {
+            --bg:#0a0a14;
+            --text:#ffffff;
+            --text-secondary:rgba(255,255,255,0.8);
+            --vibrant-blue: #0436FE;
+            --spring-bud: #B7F700;
+            --transition:0.4s ease;
+        }
+        * {
+            margin:0; padding:0; box-sizing:border-box;
+            -webkit-font-smoothing:antialiased;
+        }
+        html, body {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a14;
+        }
+        body {
+            /* 文字阴影增强背景图上的可读性 */
+            text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--text);
+            /* background-attachment: fixed; removed for mobile performance */
+        }
+        .page-bg {
+            position: fixed; inset:0; z-index:-2;
+            background: rgba(10,10,20,0.3);
+        }
+        #particleCanvas {
+            position:fixed; inset:0; z-index:-1;
+            pointer-events:none;
+        }
+        .scroll {
+            position:fixed; inset:0;
+            overflow-y:auto; overflow-x:hidden;
+            padding: 20px;
+        }
+        .container {
+            max-width: 720px;
+            margin: 60px auto;
+            position:relative; z-index:1;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .tag {
+            color: var(--spring-bud);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        h1 {
+            font-size: 1.4rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00f5d4, #0099ff, #00f5d4);
+            background-size: 300% 100%;
+            animation: brandFlow 6s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            margin-bottom: 10px;
+            text-shadow: none;
+        }
+        .personal-tag {
+            color: var(--spring-bud);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            opacity: 0.85;
+        }
+        .desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .audio-tip {
+            text-align: center;
+            color: var(--spring-bud);
+            font-size: 1rem;
+            margin: 20px 0 30px;
+            opacity: 0.9;
+        }
+        .player {
+            background: transparent;
+            padding: 0;
+            margin: 0 0 30px 0;
+            border: none;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .play-btn {
+            width: 38px;
+            height: 38px;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: var(--text);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+            margin-top: -1px;
+        }
+        .play-btn:hover {
+            color: var(--spring-bud);
+            transform: scale(1.08);
+        }
+        .progress-bar {
+            flex:1;
+            height:6px;
+            background: rgba(255,255,255,0.1);
+            border-radius:99px;
+            overflow:hidden;
+            cursor:pointer;
+            position: relative;
+        }
+        .progress {
+            height:100%;
+            background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+            width:0%;
+            transition: width 0.05s linear;
+            position: absolute;
+            left:0; top:0;
+        }
+        .time-group {
+            display: flex;
+            gap:6px;
+            color:var(--text-secondary);
+            font-size:0.85rem;
+            min-width: 80px;
+            justify-content: flex-end;
+            align-items: center;
+            flex-shrink: 0;
+            transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .time-group:hover {
+            color: var(--spring-bud);
+        }
+        .script-box {
+            margin: 40px 0 50px;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 24px 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .script-title {
+            font-size: 1.1rem;
+            color: var(--spring-bud);
+            margin-bottom: 20px;
+        }
+        .line {
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 2px solid transparent;
+        }
+        .en {
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+        .line:hover {
+            background: rgba(183,247,0,0.05);
+            transform: translateX(4px);
+            border-left-color: var(--spring-bud);
+        }
+        .cn {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .back-btn {
+            position: fixed;
+            top: 24px; left:20px;
+            width:44px; height:44px;
+            border-radius:50%;
+            background: rgba(20,20,35,0.7);
+            border:1px solid rgba(255,255,255,0.1);
+            color:#fff;
+            display:grid; place-items:center;
+            cursor:pointer;
+            z-index:10;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            border-color: var(--spring-bud);
+            color: var(--spring-bud);
+        }
+        .footer-center {
+            width: 100%;
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .brand-name {
+            font-size: 1.4rem; /* 缩小一点 */
+            font-weight: bold;
+            background: linear-gradient(90deg, #00f5d4, #0099ff, #00f5d4);
+            background-size: 300% 100%;
+            animation: brandFlow 6s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+        }
+        @keyframes brandFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+        .date-text {
+            font-size: 0.9rem;
+            color: #a0a0b0;
+            margin-top: 8px;
+        }
+/* === Enhanced Interactions === */
+.scroll { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+.scroll::-webkit-scrollbar { width: 4px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: rgba(183,247,0,0.2); border-radius: 10px; }
+.scroll::-webkit-scrollbar-thumb:hover { background: rgba(183,247,0,0.4); }
+#particleCanvas { will-change: transform, opacity; }
+h1 { will-change: transform; }
+.play-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.play-btn:hover { color: var(--spring-bud); transform: scale(1.15); }
+.play-btn:active { transform: scale(0.9); }
+.play-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; border-radius: 50%; }
+.back-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.back-btn:hover { background: rgba(183,247,0,0.15); border-color: var(--spring-bud); color: var(--spring-bud); transform: scale(1.1); box-shadow: 0 0 15px rgba(183,247,0,0.25); }
+.back-btn:active { transform: scale(0.95); }
+.back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+.progress-bar { transition: box-shadow 0.3s ease; cursor: pointer; }
+.progress-bar:hover { box-shadow: 0 0 12px rgba(183,247,0,0.2); }
+.line { transition: all 0.3s ease; border-radius: 8px; padding: 8px 12px; margin-left: -12px; margin-right: -12px; }
+.line:hover { background: rgba(255,255,255,0.025); transform: translateX(4px); }
+@keyframes subtleFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.tag { animation: subtleFloat 3s ease-in-out infinite; }
+body { animation: pageIn 0.1s ease; will-change: transform, opacity; }
+body.no-page-anim { animation: none !important; }
+@keyframes pageIn { from { opacity: 0.7; transform: translate3d(15px,0,0); } }
+    
+/* 背景图模糊加载：瞬间显示极小占位符→清晰图淡入 */
+.bg-loader {
+  position: fixed;
+  filter: brightness(1);
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  filter: blur(20px);
+  transform: scale(1.1);
+  transition: filter 0.8s ease-out, transform 0.8s ease-out;
+  background: linear-gradient(135deg, #101020 0%, #0f0f1c 50%, #0a0a14 100%);
+}
+.bg-loader.loaded {
+  filter: brightness(1) blur(0);
+  transform: scale(1);
+}
+
+</style>
+
+<!-- 极速图片加载：双重预加载 -->
+
+</head>
+<body style="background-color:#0a0a14;">
+<!-- 背景图：先显示极小的模糊占位符（0网络请求），清晰WebP加载后自动淡入 -->
+<img class="bg-loader" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAVAB4DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDMKVGYyaveQx7U4W59K3uSZpiNN8s1rG346VEbf2piuaqIp7U7YvpRRWYxSi46VCyDNFFAH//Z" data-src="xuejing.webp" alt="" fetchpriority="high">
+<div class="page-bg"></div>
+<canvas id="particleCanvas"></canvas>
+<!-- 返回跳转到 day7.html -->
+<button class="back-btn" onclick="location.href='day7.html'" aria-label="返回成长大厅">←</button>
+
+<div class="scroll">
+<div class="container">
+
+<header>
+    <div class="tag">SPECIAL MESSAGE</div>
+    <div class="personal-tag" id="personalTag"></div>
+	    <h1>致每一位不断挑战自我的你</h1>
+    <p class="desc">特别献声 · 勇气 · 坚韧 · 永不放弃</p>
+</header>
+
+<div class="audio-tip">这段献给坚持到这里的你，请认真聆听</div>
+
+<div class="player">
+    <div class="controls">
+        <button class="play-btn" id="toggleBtn" aria-label="播放音频">
+            <svg id="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"></path>
+            </svg>
+        </button>
+        <div class="progress-bar" id="progressBar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="time-group">
+            <span id="current">0:00</span>
+            <span>/</span>
+            <span id="total">0:00</span>
+        </div>
+    </div>
+    <audio id="audio" preload="auto" src="https://lf9-music-east.douyinstatic.com/obj/ies-music-hj/7425853384474807097.mp3"></audio>
+</div>
+
+<div class="script-box">
+    <div class="script-title">励志音频｜完整英文对照</div>
+
+    <div class="line">
+        <div class="en">Thank you.</div>
+        <div class="cn">谢谢你。</div>
+    </div>
+    <div class="line">
+        <div class="en">So lovely to be here at TEDx in the mountains as well.</div>
+        <div class="cn">能在山间的TEDx活动上，我也感到非常开心。</div>
+    </div>
+    <div class="line">
+        <div class="en">So awesome.</div>
+        <div class="cn">太棒了。</div>
+    </div>
+    <div class="line">
+        <div class="en">Also, thank you for such a kind introduction.</div>
+        <div class="cn">另外，也感谢你们如此友好的介绍。</div>
+    </div>
+    <div class="line">
+        <div class="en">I'm kind of often backstage listening.</div>
+        <div class="cn">我经常在后台听着。</div>
+    </div>
+    <div class="line">
+        <div class="en">It's always nice to have the best side of ourselves put forward at the beginning, but there's always a little part of me that's back there also.</div>
+        <div class="cn">一开始就展现出自己最好的一面总是不错的，但我内心总有一部分还在后面。</div>
+    </div>
+    <div class="line">
+        <div class="en">Though mindful of the truth that actually the guy stood in front of you here today is often full of nerves and a no struggle.</div>
+        <div class="cn">尽管我也清楚地意识到，今天站在你们面前的这个人其实经常充满紧张，也经历着挣扎。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I've experienced many moments in my life of real self doubt.</div>
+        <div class="cn">在我的生活中，我也经历过许多真正自我怀疑的时刻。</div>
+    </div>
+    <div class="line">
+        <div class="en">So many of these moments for me when I look back on those sort of times, those close shapes and when I look at actually what I believe has really made the difference, what I see are two clear things, two clear words that I believe define so much of my journey.</div>
+        <div class="cn">当我回顾那些时光，那些熟悉的片段，当我审视真正让我与众不同的东西时，我看到了两个清晰的点，两个清晰的词，我认为它们定义了我人生旅程的很大一部分。</div>
+    </div>
+    <div class="line">
+        <div class="en">But it's been learning how to master those two things that has changed change everything.</div>
+        <div class="cn">但学会如何掌握这两样东西，彻底改变了一切。</div>
+    </div>
+    <div class="line">
+        <div class="en">And it's this that I want to speak about with you guys today.</div>
+        <div class="cn">而这就是我今天想和你们分享的。</div>
+    </div>
+    <div class="line">
+        <div class="en">First, arguably the most important word.</div>
+        <div class="cn">首先，大概是最重要的一个词。</div>
+    </div>
+    <div class="line">
+        <div class="en">And this is where I want to start.</div>
+        <div class="cn">我想从这里开始讲。</div>
+    </div>
+    <div class="line">
+        <div class="en">Stood in the rain at the foot of a wind swept peak in the Welsh mountains back in the UK, soaked, shivering, sick with nerves about what lay ahead over the next 11 months.</div>
+        <div class="cn">回到英国，站在威尔士山脉一座被风吹袭的山峰脚下，浑身湿透，瑟瑟发抖，因为接下来11个月的未知而紧张不安。</div>
+    </div>
+    <div class="line">
+        <div class="en">And this was now day one of British special forces selection to try and join 21 SAS.</div>
+        <div class="cn">这是英国特种部队选拔的第一天，目的是加入第21特别空勤团（SAS）。</div>
+    </div>
+    <div class="line">
+        <div class="en">We were a band of I think it was some 90 odd recruits at this point or volunteers as we always called.</div>
+        <div class="cn">当时我们是一群大概90名左右的新兵，或者我们通常称之为志愿者。</div>
+    </div>
+    <div class="line">
+        <div class="en">And if I'm honest, I never felt just so out of place.</div>
+        <div class="cn">说实话，我从未感到如此格格不入。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know, surrounded by these muscle bound huge soldiers and I had that dreadful feeling that I'd actually volunteered for something that was just way beyond my capabilities.</div>
+        <div class="cn">周围都是肌肉发达的高大士兵，我有一种可怕的感觉，觉得自己志愿参加了一项远远超出自己能力范围的事情。</div>
+    </div>
+    <div class="line">
+        <div class="en">The first time that I tried for the SAS after six months of beat up, I was failed or returned to unit as they called it.</div>
+        <div class="cn">我第一次参加SAS选拔，在经历了六个月的折磨后，我失败了，或者说被遣返回原单位，就像他们说的那样。</div>
+    </div>
+    <div class="line">
+        <div class="en">And the raw truth is simple.</div>
+        <div class="cn">而赤裸裸的事实很简单。</div>
+    </div>
+    <div class="line">
+        <div class="en">I wasn't fast enough.</div>
+        <div class="cn">我不够快。</div>
+    </div>
+    <div class="line">
+        <div class="en">I wasn't smart enough.</div>
+        <div class="cn">我不够聪明。</div>
+    </div>
+    <div class="line">
+        <div class="en">I wasn't good enough.</div>
+        <div class="cn">我不够优秀。</div>
+    </div>
+    <div class="line">
+        <div class="en">And that truth hurt.</div>
+        <div class="cn">这个事实很伤人。</div>
+    </div>
+    <div class="line">
+        <div class="en">People often don't know that I failed special forces selection first time.</div>
+        <div class="cn">人们常常不知道我第一次参加特种部队选拔就失败了。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know, we would like to gloss over our failures a little bit, but the truth is for me, my failures in my life far outweigh the successes.</div>
+        <div class="cn">你知道，我们都喜欢在一定程度上掩饰自己的失败，但对我来说，事实是我生活中的失败远远多于成功。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know, many times over.</div>
+        <div class="cn">很多很多次。</div>
+    </div>
+    <div class="line">
+        <div class="en">Whether it's failed expeditions or failed projects or even just those near death moments that definitely still come to me in the night sometimes.</div>
+        <div class="cn">无论是失败的探险，失败的项目，甚至只是那些偶尔在夜里让我想起的濒死时刻。</div>
+    </div>
+    <div class="line">
+        <div class="en">But here's the thing.</div>
+        <div class="cn">但关键是。</div>
+    </div>
+    <div class="line">
+        <div class="en">Those failures have also made me and they've built the resilience and they've forced me to adapt and to get stronger inside as well as as well as out.</div>
+        <div class="cn">这些失败也塑造了我，它们培养了我的韧性，迫使我去适应，让我在内心和外在都变得更强大。</div>
+    </div>
+    <div class="line">
+        <div class="en">Because as you guys know, there's no shortcut.</div>
+        <div class="cn">因为正如你们所知，没有捷径。</div>
+    </div>
+    <div class="line">
+        <div class="en">There's no shortcut to our goals in our life that somehow magically bypass this failure.</div>
+        <div class="cn">在我们的人生目标中，没有某种神奇的捷径可以绕过失败。</div>
+    </div>
+    <div class="line">
+        <div class="en">Failures not like that.</div>
+        <div class="cn">失败不是那样的。</div>
+    </div>
+    <div class="line">
+        <div class="en">Failures are doorway.</div>
+        <div class="cn">失败是一扇门。</div>
+    </div>
+    <div class="line">
+        <div class="en">It's a doorway that you've got to go through if you're gonna get to where you really are aiming for.</div>
+        <div class="cn">如果你要到达你真正瞄准的地方，这是一扇你必须穿过的门。</div>
+    </div>
+    <div class="line">
+        <div class="en">And as a young soldier, I was determined that I was gonna I was gonna retry for the SAS to go through that notorious selection process once more.</div>
+        <div class="cn">作为一名年轻的士兵，我下定决心要再次尝试参加SAS选拔，再经历一次那臭名昭著的选拔过程。</div>
+    </div>
+    <div class="line">
+        <div class="en">And such a such a big part of me dreaded it.</div>
+        <div class="cn">我内心很大一部分都很害怕。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know, I dreaded the pain, the blisters, that fatigue.</div>
+        <div class="cn">你知道，我害怕疼痛、水泡和疲惫。</div>
+    </div>
+    <div class="line">
+        <div class="en">But I reapplied, went through, went through all again.</div>
+        <div class="cn">但我重新申请，再次经历了这一切。</div>
+    </div>
+    <div class="line">
+        <div class="en">And this time by the end, all those many months later, from those 90 volunteers, only four of us were still standing.</div>
+        <div class="cn">这一次，几个月后，在那90名志愿者中，只有我们4人坚持到了最后。</div>
+    </div>
+    <div class="line">
+        <div class="en">And here's the thing.</div>
+        <div class="cn">关键是。</div>
+    </div>
+    <div class="line">
+        <div class="en">The interesting part of so now the four of us there at the end cut down to that three of us.</div>
+        <div class="cn">有趣的是，最后我们四个人中，有三个人。</div>
+    </div>
+    <div class="line">
+        <div class="en">Three of those four had failed at our first attempt but we've got it second time round.</div>
+        <div class="cn">这四个人中有三个人第一次尝试失败了，但第二次成功了。</div>
+    </div>
+    <div class="line">
+        <div class="en">In other words, without that first devastating failure in here there would have been no success here.</div>
+        <div class="cn">换句话说，没有第一次毁灭性的失败，就不会有这里的成功。</div>
+    </div>
+    <div class="line">
+        <div class="en">And the message for me has always been clear.</div>
+        <div class="cn">对我来说，这个信息一直很明确。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know, you've got to you've got to embrace faith.</div>
+        <div class="cn">你得，你得拥抱失败。</div>
+    </div>
+    <div class="line">
+        <div class="en">Don't run from them.</div>
+        <div class="cn">不要逃避它们。</div>
+    </div>
+    <div class="line">
+        <div class="en">Look at them and know their role.</div>
+        <div class="cn">正视它们，了解它们的作用。</div>
+    </div>
+    <div class="line">
+        <div class="en">Now look at them as essential markers as I said, those doorways that you you gotta pass through.</div>
+        <div class="cn">现在，把它们看作是我所说的重要标志，那些你必须穿过的门。</div>
+    </div>
+    <div class="line">
+        <div class="en">Stepping stones to the good stuff.</div>
+        <div class="cn">是通往美好事物的垫脚石。</div>
+    </div>
+    <div class="line">
+        <div class="en">Because one thing that failure isn't is the end.</div>
+        <div class="cn">因为失败不是终点。</div>
+    </div>
+    <div class="line">
+        <div class="en">It's really the beginning.</div>
+        <div class="cn">它其实是开始。</div>
+    </div>
+    <div class="line">
+        <div class="en">Or as Winston Churchill put it way better than I can.</div>
+        <div class="cn">或者正如温斯顿·丘吉尔说得比我好得多的那样。</div>
+    </div>
+    <div class="line">
+        <div class="en">Success is really going from one failure to the next failure with no loss of enthusiasm.</div>
+        <div class="cn">成功实际上是在不丧失热情的情况下，从一次失败走向另一次失败。</div>
+    </div>
+    <div class="line">
+        <div class="en">So that's the first thing.</div>
+        <div class="cn">这是第一件事。</div>
+    </div>
+    <div class="line">
+        <div class="en">Understanding that role of failure in our lives.</div>
+        <div class="cn">理解失败在我们生活中的作用。</div>
+    </div>
+    <div class="line">
+        <div class="en">But it's only half the story.</div>
+        <div class="cn">但这只是故事的一半。</div>
+    </div>
+    <div class="line">
+        <div class="en">Now we're gonna turn it into something meaningful, something powerful.</div>
+        <div class="cn">现在我们要把它变成有意义、有力量的东西。</div>
+    </div>
+    <div class="line">
+        <div class="en">And that's where the fire comes in.</div>
+        <div class="cn">这就是“火焰”的意义所在。</div>
+    </div>
+    <div class="line">
+        <div class="en">The fire to keep moving against the odds, to hang on, to endure beyond what is maybe considered normal.</div>
+        <div class="cn">这种火焰让我们在逆境中继续前进，坚持下去，忍受超出常规的东西。</div>
+    </div>
+    <div class="line">
+        <div class="en">And the question always is, well how do you do that?</div>
+        <div class="cn">问题总是，你怎么做到这一点？</div>
+    </div>
+    <div class="line">
+        <div class="en">How do we how do we access this fire inside in those big moments?</div>
+        <div class="cn">我们如何在那些关键时刻激发内心的这种火焰？</div>
+    </div>
+    <div class="line">
+        <div class="en">Because sometimes in life as you know, that fire inside gets beaten and sometimes it's hidden.</div>
+        <div class="cn">因为有时候，正如你所知，内心的火焰会被打压，有时候它会被隐藏起来。</div>
+    </div>
+    <div class="line">
+        <div class="en">Sometimes it's barely like an imp.</div>
+        <div class="cn">有时候它就像余烬一样微弱。</div>
+    </div>
+    <div class="line">
+        <div class="en">But the fire will always be there.</div>
+        <div class="cn">但火焰永远都在。</div>
+    </div>
+    <div class="line">
+        <div class="en">And the fire in our lives can change everything.</div>
+        <div class="cn">我们生活中的火焰可以改变一切。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I remember when I was on Mount Everest.</div>
+        <div class="cn">我记得我在珠穆朗玛峰的时候。</div>
+    </div>
+    <div class="line">
+        <div class="en">It was a it was a year that the mountain claimed four climbers lives whilst were up there too.</div>
+        <div class="cn">那一年，这座山夺走了四名登山者的生命，我们在山上的时候也是如此。</div>
+    </div>
+    <div class="line">
+        <div class="en">Too diet of the cold too fell to their death.</div>
+        <div class="cn">两人死于寒冷，两人坠崖身亡。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know, it's just what high mountains do.</div>
+        <div class="cn">你知道，这就是高山的本性。</div>
+    </div>
+    <div class="line">
+        <div class="en">They kick the hell out of you.</div>
+        <div class="cn">它们会把你打得落花流水。</div>
+    </div>
+    <div class="line">
+        <div class="en">They ask that question, what are you made of when you're hurting?</div>
+        <div class="cn">它们会问你，当你受伤时，你是什么做的？</div>
+    </div>
+    <div class="line">
+        <div class="en">And I'll never forget the final hours on this mountain.</div>
+        <div class="cn">我永远不会忘记在这座山上的最后几个小时。</div>
+    </div>
+    <div class="line">
+        <div class="en">We were at 28000 feet.</div>
+        <div class="cn">我们在海拔28000英尺的地方。</div>
+    </div>
+    <div class="line">
+        <div class="en">We've been climbing now for over 55 days up there.</div>
+        <div class="cn">我们已经在那里攀登了55天多了。</div>
+    </div>
+    <div class="line">
+        <div class="en">Minus 40 degrees.</div>
+        <div class="cn">零下40度。</div>
+    </div>
+    <div class="line">
+        <div class="en">The dark ice face of the final two thousand feet of the peak looms above and I'm terrified.</div>
+        <div class="cn">峰顶最后两千英尺的黑色冰面赫然耸现，我吓坏了。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know, the next 24 hours I know it's gonna change my life one way or the other.</div>
+        <div class="cn">你知道，接下来的24小时，我知道它会以这样或那样的方式改变我的生活。</div>
+    </div>
+    <div class="line">
+        <div class="en">I know that.</div>
+        <div class="cn">我知道。</div>
+    </div>
+    <div class="line">
+        <div class="en">But after so long at high altitude, all those many weeks at this stage also know I'm weak.</div>
+        <div class="cn">但在高海拔待了这么久，这么多个星期，我也知道自己很虚弱。</div>
+    </div>
+    <div class="line">
+        <div class="en">I know I can feel it mentally as well.</div>
+        <div class="cn">我知道，我在精神上也能感觉到。</div>
+    </div>
+    <div class="line">
+        <div class="en">Just just shocked.</div>
+        <div class="cn">只是很震惊。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I reach this point I'm in this chest deep powder snow.</div>
+        <div class="cn">我到了一个地方，齐胸深的粉雪。</div>
+    </div>
+    <div class="line">
+        <div class="en">This steep cool water.</div>
+        <div class="cn">这片陡峭冰冷的区域。</div>
+    </div>
+    <div class="line">
+        <div class="en">There's just you know just never ending.</div>
+        <div class="cn">你知道，它永无止境。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I remember I keep sliding back every step keep sliding back and I reach a point where I'm no longer sure I'm no longer sure I can do this really really am not.</div>
+        <div class="cn">我记得我每走一步都在下滑，一直下滑，我到了一个不确定自己能否继续下去的地步，我真的不确定。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I've got this voice in my head just keeps telling me this.</div>
+        <div class="cn">我脑海里有个声音一直跟我说这些。</div>
+    </div>
+    <div class="line">
+        <div class="en">And slowly slowly I'm bowing to that voice.</div>
+        <div class="cn">我慢慢地向那个声音屈服。</div>
+    </div>
+    <div class="line">
+        <div class="en">But remember sometimes it's an ember.</div>
+        <div class="cn">但请记住，有时候它只是余烬。</div>
+    </div>
+    <div class="line">
+        <div class="en">Ember is all it takes.</div>
+        <div class="cn">一点余烬就够了。</div>
+    </div>
+    <div class="line">
+        <div class="en">So I keep going.</div>
+        <div class="cn">所以我继续前进。</div>
+    </div>
+    <div class="line">
+        <div class="en">I make this decision that I'm just gonna I'm gonna keep going to never give up.</div>
+        <div class="cn">我做了一个决定，我要继续前进，永不放弃。</div>
+    </div>
+    <div class="line">
+        <div class="en">And gee you write it in here. Write it in here. Move.</div>
+        <div class="cn">天哪，你把它写在这里。写在这里。前进。</div>
+    </div>
+    <div class="line">
+        <div class="en">Finally eventually that summer came and I just remember collapsing to my knees as a wreck.</div>
+        <div class="cn">终于，那个时刻来了，我记得自己瘫倒在地，狼狈不堪。</div>
+    </div>
+    <div class="line">
+        <div class="en">But I've made it.</div>
+        <div class="cn">但我成功了。</div>
+    </div>
+    <div class="line">
+        <div class="en">And we watched a dawn rise up over Tibet and I was just aware I was standing somewhere truly special.</div>
+        <div class="cn">我们看着西藏上空的黎明升起，我意识到自己站在一个真正特别的地方。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know truly special is that that icy roof of the world as they call it.</div>
+        <div class="cn">你知道，那就是他们所说的“世界屋脊”。</div>
+    </div>
+    <div class="line">
+        <div class="en">But even though it was ice that was that was up there the truth is it was it was the fire that got me there.</div>
+        <div class="cn">尽管那里是冰，但事实是，是火焰让我到达了那里。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I lookin my life it's the fire that's been my most valuable weapon.</div>
+        <div class="cn">回顾我的生活，火焰是我最宝贵的武器。</div>
+    </div>
+    <div class="line">
+        <div class="en">Yeah not not talent limited not skills growing not knowledge.</div>
+        <div class="cn">不是天赋有限，不是技能增长，不是知识。</div>
+    </div>
+    <div class="line">
+        <div class="en">The resilience.</div>
+        <div class="cn">是韧性。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know resilience and if all you take from you know this session together know it know the power in your life of unrelenting unwavering resilience.</div>
+        <div class="cn">你要知道韧性，如果你从这次演讲中只学到一点，那就是要知道你生命中不屈不挠、坚定不移的韧性的力量。</div>
+    </div>
+    <div class="line">
+        <div class="en">Because when the storms come and they do come they always come.</div>
+        <div class="cn">因为当风暴来临时，它们确实会来，总会来。</div>
+    </div>
+    <div class="line">
+        <div class="en">When the storms of life come it's those fairy storms that actually make us strong.</div>
+        <div class="cn">当生活的风暴来临时，正是那些可怕的风暴让我们变得强大。</div>
+    </div>
+    <div class="line">
+        <div class="en">And as with all dark nights when we go through them sometimes you just gotta hang on in.</div>
+        <div class="cn">就像所有的黑夜一样，当我们经历它们时，有时候你只需要坚持下去。</div>
+    </div>
+    <div class="line">
+        <div class="en">Hang on in there doggedly.</div>
+        <div class="cn">顽强地坚持下去。</div>
+    </div>
+    <div class="line">
+        <div class="en">Will always come the light.</div>
+        <div class="cn">光明总会到来。</div>
+    </div>
+    <div class="line">
+        <div class="en">Always wins.</div>
+        <div class="cn">总会胜利。</div>
+    </div>
+    <div class="line">
+        <div class="en">And the fire as you guys know in nature fire or path.</div>
+        <div class="cn">正如你们所知，自然界中的火焰，或者说（它是）一条路。</div>
+    </div>
+    <div class="line">
+        <div class="en">Two words that if we can master them can truly empower our lives.</div>
+        <div class="cn">如果我们能掌握这两个词，它们就能真正赋予我们生活力量。</div>
+    </div>
+    <div class="line">
+        <div class="en">How to deal with those failures and how to find and use and harness and drive that fire.</div>
+        <div class="cn">如何应对那些失败，以及如何找到、利用、驾驭和驱动那股火焰。</div>
+    </div>
+    <div class="line">
+        <div class="en">And I guess really what I'm trying to say through simple stories is pretty straightforward.</div>
+        <div class="cn">我想，通过这些简单的故事，我真正想说的其实很直白。</div>
+    </div>
+    <div class="line">
+        <div class="en">First of all first of all is that I'm no hero truly.</div>
+        <div class="cn">首先，首先，我真的不是英雄。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know I really I like I said at the beginning I struggle often.</div>
+        <div class="cn">你知道，就像我一开始说的，我经常挣扎。</div>
+    </div>
+    <div class="line">
+        <div class="en">I'm no stranger to the doubts no stranger to the fears.</div>
+        <div class="cn">我对怀疑和恐惧并不陌生。</div>
+    </div>
+    <div class="line">
+        <div class="en">But I know the weapons are certainly best and they always come from here.</div>
+        <div class="cn">但我知道最适合我的武器，它们总是来自内心。</div>
+    </div>
+    <div class="line">
+        <div class="en">You know we did not not not without.</div>
+        <div class="cn">你知道，它不在外面，而在里面。</div>
+    </div>
+    <div class="line">
+        <div class="en">So for you guys remember you are made amazing.</div>
+        <div class="cn">所以，你们要记住，你们生来就很了不起。</div>
+    </div>
+    <div class="line">
+        <div class="en">You truly are.</div>
+        <div class="cn">你们真的很了不起。</div>
+    </div>
+    <div class="line">
+        <div class="en">You're capable of so much.</div>
+        <div class="cn">你们能做很多事。</div>
+    </div>
+    <div class="line">
+        <div class="en">So stand tall own it and nge.</div>
+        <div class="cn">所以，昂首挺胸，掌控它，永不放弃。</div>
+    </div>
+    <div class="line">
+        <div class="en">Thank you.</div>
+        <div class="cn">谢谢。</div>
+    </div>
+
+</div>
+
+<!-- 底部居中品牌名 + 日期 -->
+<div class="footer-center">
+    <div class="brand-name">You 捻光</div>
+    <div class="date-text" id="dateDisplay"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* 背景图模糊加载：LQIP占位符瞬间显示，WebP加载完成后清晰淡入 */
+(function(){
+  var img = document.querySelector('.bg-loader');
+  if (!img) return;
+  var webp = img.getAttribute('data-src');
+  if (!webp) return;
+  img.onload = function(){
+    // 只响应真实图片的加载（跳过初始LQIP base64）
+    if (img.src.indexOf('base64') === -1) {
+      img.classList.add('loaded');
+    }
+  };
+  img.onerror = function(){
+    if (img.src.indexOf('.webp') > -1) {
+      img.src = img.getAttribute('data-src').replace('.webp','.png');
+    }
+  };
+  img.src = webp;
+  // 缓存命中时 onload 可能不触发
+  if (img.complete && img.src.indexOf('base64') === -1) {
+    img.classList.add('loaded');
+  }
+})();
+
+const audio = document.getElementById('audio');
+const toggleBtn = document.getElementById('toggleBtn');
+const icon = document.getElementById('icon');
+const progress = document.getElementById('progress');
+const current = document.getElementById('current');
+const total = document.getElementById('total');
+const progressBar = document.getElementById('progressBar');
+
+const playSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>`;
+const pauseSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"></path></svg>`;
+
+function fmt(t) {
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60).toString().padStart(2, '0');
+    return m + ':' + s;
+}
+
+audio.addEventListener('loadedmetadata', () => {
+    total.innerText = fmt(audio.duration);
+});
+
+toggleBtn.addEventListener('click', () => {
+    if (audio.paused) {
+        audio.play();
+        icon.innerHTML = pauseSvg;
+    } else {
+        audio.pause();
+        icon.innerHTML = playSvg;
+    }
+});
+
+audio.addEventListener('timeupdate', () => {
+    current.innerText = fmt(audio.currentTime);
+    progress.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+});
+
+let isDragging = false;
+function seekToPosition(e) {
+    e.preventDefault();
+    const rect = progressBar.getBoundingClientRect();
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    const percent = (clientX - rect.left) / rect.width;
+    const seekTime = audio.duration * Math.max(0, Math.min(1, percent));
+    
+    audio.currentTime = seekTime;
+    progress.style.width = (seekTime / audio.duration) * 100 + '%';
+    current.innerText = fmt(seekTime);
+}
+
+progressBar.addEventListener('mousedown', (e) => { isDragging = true; seekToPosition(e); });
+document.addEventListener('mousemove', (e) => { if(isDragging) seekToPosition(e); });
+document.addEventListener('mouseup', () => { isDragging = false; });
+
+progressBar.addEventListener('touchstart', (e) => { isDragging = true; seekToPosition(e); });
+document.addEventListener('touchmove', (e) => { if(isDragging) seekToPosition(e); });
+document.addEventListener('touchend', () => { isDragging = false; });
+
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let w = innerWidth, h = innerHeight;
+canvas.width = w; canvas.height = h;
+class Particle{
+  constructor(){
+    this.x=Math.random()*w;
+    this.y=Math.random()*h;
+    this.s=Math.random()*1.5+0.3;
+    this.vx=(Math.random()-0.5)*0.3;
+    this.vy=(Math.random()-0.5)*0.3;
+    this.o=Math.random()*0.4+0.1;
+    this.hue = Math.random() > 0.5 ? 220 + Math.random()*20 : 90 + Math.random()*20;
+  }
+  update(){
+    this.x+=this.vx;
+    this.y+=this.vy;
+    if(this.x<0||this.x>w)this.vx*=-1;
+    if(this.y<0||this.y>h)this.vy*=-1;
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.s,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${this.hue}, 90%, 65%, ${this.o})`;
+    ctx.fill();
+  }
+}
+const particles=Array.from({length:80},()=>new Particle());
+function anim(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach(p=>{p.update();p.draw()});
+  requestAnimationFrame(anim);
+}
+anim();
+
+const week = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const now = new Date();
+document.getElementById('dateDisplay').innerText = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} · ${week[now.getDay()]}`;
+</script>
+<script>
+(function(){
+var n=performance.getEntriesByType('navigation')[0];
+if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
+var pn=localStorage.getItem('playerName');if(pn)document.getElementById('personalTag').innerText=pn+'，这份礼物是给你的';
+var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
+})();
+</script>
+</body>
+</html>

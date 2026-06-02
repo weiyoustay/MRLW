@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7天重塑人生 | 7天心智蜕变体系</title>
+<link rel="preload" as="image" href="zhuling.webp" fetchpriority="high">
+<meta name="view-transition" content="same-origin">
+<style>
+:root {
+  --bg:#0a0a14;
+  --surface:#12121f;
+  --card-bg:#1a1a2e;
+  --text:#e0e0e8;
+  --text-secondary:#a0a0b8;
+  --vibrant-blue: #0436FE;
+  --spring-bud: #B7F700;
+  --glass:rgba(255,255,255,0.03);
+  --transition:0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  --border-radius:18px;
+}
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+/* 完全和你另一个页面一样的返回按钮 */
+.back-btn {
+  position: fixed;
+  top: 24px; left:20px;
+  width:44px; height:44px;
+  border-radius:50%;
+  background: rgba(20,20,35,0.7);
+  border:1px solid rgba(255,255,255,0.1);
+  color:#fff;
+  display:grid; place-items:center;
+  cursor:pointer;
+  z-index:10;
+  transition: all 0.3s;
+}
+.back-btn:hover {
+  border-color: var(--spring-bud);
+  color: var(--spring-bud);
+}
+
+body {
+  font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background: linear-gradient(135deg, #101020 0%, #0f0f1c 50%, #0a0a14 100%);
+  color:var(--text);
+  min-height:100vh;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(4, 54, 254, 0.08) 0%, rgba(183, 247, 0, 0.08) 30%, transparent 55%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+#particleCanvas {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  z-index:0;
+  pointer-events:none;
+}
+.container {
+  position:relative;
+  z-index:1;
+  max-width:500px;
+  margin:0 auto;
+  padding:20px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap: 12px;
+}
+.hero-badge {
+  display:inline-block;
+  padding:8px 20px;
+  border-radius:50px;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.15);
+  font-size:0.85rem;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--spring-bud);
+  margin-bottom:10px;
+  backdrop-filter:blur(10px);
+  animation: badgePulse 3s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 10px rgba(183, 247, 0, 0.3); }
+  50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(183, 247, 0, 0.5); }
+}
+
+.hero-title {
+  font-size:clamp(2.2rem,6vw,4rem);
+  font-weight:700;
+  letter-spacing:-1px;
+  background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud), var(--vibrant-blue));
+  background-size: 300% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation: shimmer 10s linear infinite;
+}
+@keyframes shimmer {
+  to { background-position: -300% center; }
+}
+
+.hero-subtitle {
+  font-size:1rem;
+  color: #ffffff;
+  line-height:1.6;
+  max-width:380px;
+  animation: fadeIn 1.5s ease forwards;
+  opacity:0;
+  animation-delay:0.5s;
+}
+@keyframes fadeIn {
+  to { opacity:1; }
+}
+
+.hero-desc {
+  font-size: 0.95rem;
+  color: #ffffff;
+  opacity: 0.9;
+  max-width: 340px;
+  line-height: 1.5;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.welcome-back {
+  font-size: 0.95rem;
+  color: var(--spring-bud);
+  margin-top: 10px;
+  opacity: 0;
+  animation: fadeIn 1s ease 0.3s forwards;
+}
+.btn-wrapper {
+  position:relative;z-index:5;
+  display: flex;
+  align-items:center;
+  gap: 12px;
+  margin-top: 10px;
+}
+.guide-text {
+  font-size: 0.9rem;
+  color: var(--spring-bud);
+  opacity: 0;
+  animation: fadeIn 1.2s ease 1.2s forwards;
+  white-space: nowrap;
+}
+
+.tip-text {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: -6px;
+}
+
+.enter-btn {
+  background:linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud), var(--vibrant-blue));
+  background-size: 200% auto;
+  color:#fff;
+  border:none;
+  border-radius:30px;
+  padding:16px 40px;
+  font-size:1rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all var(--transition);
+  box-shadow:0 4px 15px rgba(4, 54, 254, 0.25);
+  animation: btnGlow 2.5s ease infinite alternate, btnBreath 3s ease-in-out infinite;
+  position:relative;
+  overflow:hidden;
+}
+@keyframes btnBreath {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+.enter-btn::before {
+  content:'';
+  position:absolute;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
+  transform: rotate(45deg);
+  animation: btnShine 3.5s linear infinite;
+  pointer-events: none;
+}
+@keyframes btnShine {
+  to { transform: rotate(45deg) translateX(100%); }
+}
+@keyframes btnGlow {
+  to { box-shadow:0 0 22px rgba(183, 247, 0, 0.35); }
+}
+.enter-btn:hover {
+  transform:translateY(-4px) scale(1.05);
+  box-shadow:0 8px 25px rgba(183, 247, 0, 0.35), 0 0 10px rgba(4, 54, 254, 0.2);
+  background-position: right center;
+}
+.enter-btn:active {
+  transform:scale(0.98);
+}
+
+.bottom-decor {
+  position:absolute;
+  bottom:100px;
+  width:80%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--spring-bud),transparent);
+  opacity:0.7;pointer-events:none;
+}
+.footer-brand {
+  position: absolute;
+  bottom: 70px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing:1px;pointer-events:none;
+  z-index: 2;
+}
+.footer-brand .brand-name {
+  background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-right: 10px;
+}
+/* === Enhanced Interactions === */
+#particleCanvas { will-change: transform, opacity; }
+.hero-title { will-change: transform; }
+.enter-btn { will-change: transform; }
+.enter-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 3px; }
+.hero-badge { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); cursor: default; }
+.hero-badge:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(183,247,0,0.4); }
+.hero-subtitle, .hero-desc { transition: all 0.3s ease; }
+.back-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.back-btn:hover { background: rgba(183,247,0,0.15); border-color: var(--spring-bud); color: var(--spring-bud); transform: scale(1.1); box-shadow: 0 0 15px rgba(183,247,0,0.25); }
+.back-btn:active { transform: scale(0.95); }
+.back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+body { animation: pageIn 0.1s ease; will-change: transform, opacity; }
+body.no-page-anim { animation: none !important; }
+@keyframes pageIn { from { opacity: 0.7; transform: translate3d(15px,0,0); } }
+
+/* 背景图模糊加载：瞬间显示极小占位符→清晰图淡入 */
+.bg-loader {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  filter: blur(20px);
+  transform: scale(1.1);
+  transition: filter 0.8s ease-out, transform 0.8s ease-out;
+  background: linear-gradient(135deg, #101020 0%, #0f0f1c 50%, #0a0a14 100%);
+}
+.bg-loader.loaded {
+  filter: blur(0);
+  transform: scale(1);
+}
+</style>
+
+<!-- 背景图极速预加载，打开页面立刻显示 -->
+</head>
+<body style="background-color:#0a0a14;">
+<!-- 背景图：WebP 38KB + preload，秒加载 -->
+<img id="bgImg" src="zhuling.webp" alt="" fetchpriority="high" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;" onerror="this.src='zhuling.png'">
+<!-- 左上角返回按钮，跳转到 index.html -->
+<button class="back-btn" onclick="location.href='index.html'" aria-label="返回首页">←</button>
+
+<canvas id="particleCanvas"></canvas>
+<div class="container">
+  <div class="hero-badge">✦ 7 DAY TRANSFORMATION ✦</div>
+  <h1 class="hero-title">7天重塑人生</h1>
+  <p class="hero-subtitle">基于7天心智蜕变体系<br>看见真相 → 重塑身份 → 游戏人生</p>
+
+  <p class="hero-desc">7天摆脱内耗、迷茫、拖延<br>每天10分钟，悄悄变厉害</p>
+
+  <div class="welcome-back" id="welcomeTip"></div>
+  <div class="btn-wrapper">
+    <button class="enter-btn" id="enterBtn" style="position:relative;z-index:9999;pointer-events:auto" onclick="location.href=localStorage.getItem('playerName')?'hall.html':'create-identity.html'">开启蜕变之旅</button>
+    <div class="guide-text" id="guideText">→ 点击开始</div>
+  </div>
+
+  <p class="tip-text">免费开始 · 无需付费 · 无需下载</p>
+
+  <div class="bottom-decor"></div>
+  <div class="footer-brand">
+    <span class="brand-name">You 捻光</span>
+    <span id="currentDate"></span>
+  </div>
+</div>
+
+<script>
+var playerName = localStorage.getItem('playerName');
+var welcomeTip = document.getElementById('welcomeTip');
+var guideText = document.getElementById('guideText');
+if (playerName) {
+  var h = new Date().getHours();
+  var greet = h < 12 ? '早上好' : h < 18 ? '下午好' : '晚上好';
+  welcomeTip.innerText = greet + '，' + playerName + '！';
+  guideText.style.display = 'none';
+}
+
+(function(){
+  const now = new Date();
+  const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+  document.getElementById('currentDate').innerText = now.toLocaleDateString('en-US', options);
+})();
+
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let w = window.innerWidth;
+let h = window.innerHeight;
+function resize(){
+  w = window.innerWidth;
+  h = window.innerHeight;
+  canvas.width = w;
+  canvas.height = h;
+}
+resize();
+window.addEventListener('resize', resize);
+let particles = [];
+const particleNum = 120;
+for(let i = 0; i < particleNum; i++){
+  particles.push({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    s: Math.random() * 1.8 + 0.2,
+    vx: (Math.random() - 0.5) * 0.6,
+    vy: (Math.random() - 0.5) * 0.6,
+    colorHue: Math.random() > 0.5 ? 220 + Math.random() * 30 : 90 + Math.random() * 30,
+    opacity: Math.random() * 0.5 + 0.15
+  });
+}
+function draw(){
+  ctx.clearRect(0, 0, w, h);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.colorHue}, 90%, 60%, ${p.opacity})`;
+    ctx.fill();
+    p.x += p.vx;
+    p.y += p.vy;
+    if(p.x < 0 || p.x > w) p.vx = -p.vx;
+    if(p.y < 0 || p.y > h) p.vy = -p.vy;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+<script>
+(function(){
+var n=performance.getEntriesByType('navigation')[0];
+if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
+var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,563 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>创建你的成长身份 | 7天重塑人生</title>
+<link rel="preconnect" href="https://images.pexels.com" crossorigin>
+<link rel="preload" as="image" href="jiguang.webp" fetchpriority="high">
+<link rel="preload" as="image" href="https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&dpr=1" fetchpriority="high">
+<style>
+:root {
+  --bg:#0a0a14;
+  --surface:#12121f;
+  --card-bg:#1a1a2e;
+  --text:#e0e0e8;
+  --text-secondary:#a0a0b8;
+  --vibrant-blue: #0436FE;
+  --spring-bud: #B7F700;
+  --glass:rgba(255,255,255,0.03);
+  --transition:0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  --border-radius:18px;
+}
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+body {
+  font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  /* background-attachment: fixed; removed for mobile performance */
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(4, 54, 254, 0.07) 0%, rgba(183, 247, 0, 0.07) 30%, transparent 65%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+#particleCanvas {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+.container {
+  position:relative;
+  z-index:1;
+  width:100%;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding:20px;
+}
+.card {
+  background:var(--card-bg);
+  border-radius:var(--border-radius);
+  padding:30px 24px;
+  width:100%;
+  max-width:360px;
+  border:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(15px);
+  animation:fadeUp 0.7s ease forwards;
+  background-image: url('https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&dpr=1');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position:relative;
+  overflow:hidden;
+}
+.card::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:linear-gradient(135deg, rgba(4, 54, 254, 0.15), rgba(183, 247, 0, 0.1), transparent 70%);
+  pointer-events:none;
+}
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.card-title {
+  font-size:1.4rem;
+  font-weight:600;
+  text-align:center;
+  margin-bottom:8px;
+  background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud), var(--vibrant-blue));
+  background-size: 300% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation: titleGradient 3s ease-in-out infinite, titleFloat 3s ease-in-out infinite;
+}
+@keyframes titleGradient {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
+}
+@keyframes titleFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.card-desc {
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.form-item {
+  margin-bottom:12px;
+  position:relative;
+}
+.form-label {
+  font-size:0.9rem;
+  color:#ffffff;
+  opacity: 0.9;
+  margin-bottom:8px;
+  display:block;
+  transition:all 0.3s ease;
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  background: transparent;
+  padding: 0 4px;
+  pointer-events: none;
+}
+.form-input {
+  width:100%;
+  padding:14px 16px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.15);
+  color:#ffffff;
+  font-size:1rem;
+  outline:none;
+  transition:all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+.form-input:focus {
+  border-color: var(--spring-bud);
+  box-shadow:0 0 15px rgba(183, 247, 0, 0.3), 0 0 5px rgba(4, 54, 254, 0.4) inset;
+  background:rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+.form-input:focus ~ .form-label,
+.form-input:not(:placeholder-shown) ~ .form-label {
+  top: -8px;
+  left: 12px;
+  font-size: 0.75rem;
+  color: var(--spring-bud);
+}
+
+.char-count {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+  text-align: right;
+  margin-top: 4px;
+  padding-right: 4px;
+}
+.error-tip {
+  font-size: 0.75rem;
+  color: #ff5252;
+  margin-top: 4px;
+  padding-left: 4px;
+  display: none;
+}
+
+.btn {
+  width:100%;
+  padding:15px;
+  border-radius:16px;
+  background:linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud), var(--vibrant-blue));
+  background-size: 200% auto;
+  color:#fff;
+  font-size:1rem;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+  transition:all var(--transition);
+  margin-top:16px;
+  box-shadow:0 4px 15px rgba(4, 54, 254, 0.25);
+  position:relative;
+  overflow:hidden;
+}
+.btn::before {
+  content:'';
+  position:absolute;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
+  transform: rotate(45deg);
+  animation: btnShine 3s linear infinite;
+}
+@keyframes btnShine {
+  to { transform: rotate(45deg) translateX(100%); }
+}
+.btn:hover:not(:disabled) {
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 6px 20px rgba(183, 247, 0, 0.35), 0 0 10px rgba(4, 54, 254, 0.2);
+  background-position: right center;
+}
+.btn:active:not(:disabled) {
+  transform:scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.privacy-tip {
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 10px;
+}
+
+.tip {
+  font-size:0.8rem;
+  color:var(--text-secondary);
+  text-align:center;
+  margin-top:16px;
+  animation: fadeIn 2s ease forwards;
+  opacity:0;
+  animation-delay:1s;
+}
+@keyframes fadeIn {
+  to { opacity:1; }
+}
+
+.back-btn {
+  position:absolute;
+  top:24px;
+  left:16px;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,0.1);
+  color:#ffffff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:2;
+  transition:all 0.3s ease;
+  font-size: 18px;
+}
+.back-btn:hover {
+  background:var(--spring-bud);
+  transform: scale(1.1);
+  box-shadow:0 0 10px rgba(183, 247, 0, 0.4);
+}
+.back-btn::after {
+  content: "返回";
+  position: absolute;
+  left: 50px;
+  font-size: 12px;
+  color: var(--spring-bud);
+  white-space: nowrap;
+}
+
+.footer-brand {
+  position: fixed;
+  bottom: 40px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 1;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 2px;
+}
+.brand-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.date-info {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  letter-spacing:1px;
+}
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(90deg, rgba(4, 54, 254, 0.9), rgba(183, 247, 0, 0.9));
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  z-index: 999;
+  opacity: 0;
+  transition: all 0.4s ease;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+.toast.show {
+  opacity: 1;
+}
+/* === Enhanced Interactions === */
+#particleCanvas { will-change: transform, opacity; }
+.card-title { will-change: transform; }
+.card { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.card:hover { border-color: rgba(183,247,0,0.15); box-shadow: 0 12px 35px rgba(0,0,0,0.4); }
+.back-btn { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.back-btn:active { transform: scale(0.92); }
+.back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+.form-input { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.form-input:hover { border-color: rgba(183,247,0,0.25); }
+.form-input:focus-visible { outline: none; }
+.btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+.toast { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+/* 背景图模糊加载：瞬间显示极小占位符→清晰图淡入 */
+.bg-loader {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  filter: blur(20px);
+  transform: scale(1.1);
+  transition: filter 0.8s ease-out, transform 0.8s ease-out;
+  background: linear-gradient(135deg, #101020 0%, #0f0f1c 50%, #0a0a14 100%);
+}
+.bg-loader.loaded {
+  filter: blur(0);
+  transform: scale(1);
+}
+
+</style>
+
+</head>
+<body style="background-color:#0a0a14;">
+<!-- 背景图：先显示极小的模糊占位符（0网络请求），清晰WebP加载后自动淡入 -->
+<img class="bg-loader" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAUAB4DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDFiTNWkizUMJANXUZQKiTIYz7OaTywtTNOoFVJZstUq7FqyopINWEY460UVbKEdjURNFFNDP/Z" data-src="jiguang.webp" alt="" fetchpriority="high">
+<canvas id="particleCanvas"></canvas>
+<div class="back-btn" onclick="back()" role="button" aria-label="返回首页" tabindex="0">&larr;</div>
+<div class="container">
+  <div class="card">
+    <h2 class="card-title">创建你的成长身份</h2>
+    <p class="card-desc">只需设置一个昵称，即可开始你的7天成长之旅</p>
+    
+    <div class="form-item">
+      <input type="text" class="form-input" id="nickname" placeholder=" " maxlength="22">
+      <label class="form-label">你的昵称</label>
+      <div class="char-count">还能输入 22 字</div>
+      <div class="error-tip" id="errorTip">请输入 2-22 个字的昵称</div>
+    </div>
+
+    <button class="btn" id="createBtn" onclick="create()" disabled>确认创建 → 进入旅程</button>
+
+    <p class="privacy-tip">仅用于个性化体验 · 不会泄露 · 无需注册</p>
+
+    <p class="tip">7天重塑人生体系</p>
+  </div>
+</div>
+
+<div class="toast" id="successToast">身份创建成功！正在进入成长大厅...</div>
+
+<div class="footer-brand">
+  <div class="brand-name">You 捻光</div>
+  <div class="date-info" id="nowDate"></div>
+</div>
+
+<script>
+
+/* 背景图模糊加载：LQIP占位符瞬间显示，WebP加载完成后清晰淡入 */
+(function(){
+  var img = document.querySelector('.bg-loader');
+  if (!img) return;
+  var webp = img.getAttribute('data-src');
+  if (!webp) return;
+  img.onload = function(){
+    // 只响应真实图片的加载（跳过初始LQIP base64）
+    if (img.src.indexOf('base64') === -1) {
+      img.classList.add('loaded');
+    }
+  };
+  img.onerror = function(){
+    if (img.src.indexOf('.webp') > -1) {
+      img.src = img.getAttribute('data-src').replace('.webp','.png');
+    }
+  };
+  img.src = webp;
+  // 缓存命中时 onload 可能不触发
+  if (img.complete && img.src.indexOf('base64') === -1) {
+    img.classList.add('loaded');
+  }
+})();
+
+// 如果是编辑模式，不跳转；否则已创建过身份则直接去大厅
+var isEdit = (new URLSearchParams(location.search)).get('edit') === '1';
+if (!isEdit && localStorage.getItem('playerName')) {
+  location.href = 'hall.html';
+}
+
+// 编辑模式：预填当前名字，修改界面文案
+if (isEdit) {
+  var currentName = localStorage.getItem('playerName') || '';
+  document.title = '修改你的成长名字 | 7天重塑人生';
+  document.querySelector('.card-title').innerText = '修改名字';
+  document.querySelector('.card-desc').innerText = '换个名字，重新出发';
+  document.getElementById('createBtn').innerText = '确认修改';
+  document.getElementById('nickname').value = currentName;
+  // event triggered below
+}
+
+const canvas=document.getElementById('particleCanvas');
+const ctx=canvas.getContext('2d');
+let w,h,particles=[];
+function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+class Particle {
+  constructor(){
+    this.x = Math.random() * w;
+    this.y = Math.random() * h;
+    this.size = Math.random() * 0.8 + 0.2;
+    this.speedY = Math.random() * 0.3 + 0.1;
+    this.speedX = (Math.random() - 0.5) * 0.25;
+    this.opacity = Math.random() * 0.5 + 0.15;
+    this.color = Math.random() > 0.35
+      ? `hsla(${220 + Math.random()*30}, 90%, 60%, ${this.opacity})`
+      : `hsla(${90 + Math.random()*30}, 90%, 60%, ${this.opacity})`;
+  }
+  update(){
+    this.y += this.speedY;
+    this.x += this.speedX;
+    if(this.y > h) this.y = 0;
+    if(this.x < 0 || this.x > w) this.x = Math.random() * w;
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = this.color.replace(/[^,]+(?=\))/, '0.08');
+    ctx.fill();
+  }
+}
+function init(){
+  particles = [];
+  for(let i=0;i<Math.floor(w*h/2200);i++){
+    particles.push(new Particle());
+  }
+}
+init();
+window.addEventListener('resize',()=>{init();});
+function anim(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(anim);
+}
+anim();
+
+function setDateText(){
+  const weekEn = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const monthEn = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const d = now.getDate();
+  const week = weekEn[now.getDay()];
+  document.getElementById('nowDate').innerText = `${week} | ${monthEn[m]} ${d}, ${y}`;
+}
+setDateText();
+
+const input = document.getElementById('nickname');
+const charCount = document.querySelector('.char-count');
+const createBtn = document.getElementById('createBtn');
+const errorTip = document.getElementById('errorTip');
+input.addEventListener('input', () => {
+  const val = input.value.trim();
+  const len = val.length;
+  charCount.textContent = `还能输入 ${22 - len} 字`;
+  
+  if (len >= 2 && len <= 22) {
+    createBtn.disabled = false;
+    errorTip.style.display = 'none';
+  } else {
+    createBtn.disabled = true;
+    if (len > 0) errorTip.style.display = 'block';
+    else errorTip.style.display = 'none';
+  }
+});
+
+// 编辑模式：激活按钮
+if (isEdit) {
+  var el = document.getElementById('nickname');
+  el.dispatchEvent(new Event('input'));
+  // 兜底：直接确保按钮可点击
+  var btn = document.getElementById('createBtn');
+  btn.disabled = false;
+  var cc = document.querySelector('.char-count');
+  if (cc) cc.textContent = '还能输入 ' + (22 - el.value.trim().length) + ' 字';
+}
+
+// 已修改：返回到 shouye.html
+function back(){location.href='shouye.html';}
+
+function create(){
+  const name = input.value.trim();
+  if (name.length < 2 || name.length > 22) {
+    errorTip.style.display = 'block';
+    return;
+  }
+  const pid='DK-'+Math.random().toString(36).substr(2,8).toUpperCase();
+  localStorage.setItem('playerName',name);
+  localStorage.setItem('playerId',pid);
+  // 编辑模式不重置解锁进度
+  if (!isEdit) {
+    localStorage.setItem('unlockedDays',JSON.stringify([1]));
+  }
+
+  const toast = document.getElementById('successToast');
+  if (isEdit) {
+    toast.innerText = '名字已更新！正在返回成长大厅...';
+  }
+  toast.classList.add('show');
+
+  setTimeout(()=>{
+    document.body.style.opacity=0;
+    document.body.style.transition='opacity 0.5s ease';
+  }, 600);
+  setTimeout(()=>{location.href='hall.html';},1100);
+}
+</script>
+</body>
+</html>
