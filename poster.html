@@ -8,6 +8,10 @@
 <link rel="preload" as="image" href="poster1.webp" fetchpriority="high">
 <link rel="preload" as="image" href="poster2.webp" fetchpriority="high">
 <link rel="preload" as="image" href="poster3.webp" fetchpriority="high">
+<link rel="preload" as="image" href="poster5.webp" fetchpriority="high">
+<link rel="preload" as="image" href="poster6.webp" fetchpriority="high">
+<link rel="preload" as="image" href="poster7.webp" fetchpriority="high">
+<link rel="preload" as="image" href="poster8.webp" fetchpriority="high">
 	<link rel="preload" as="image" href="nasa.webp" fetchpriority="high">
 <meta name="view-transition" content="same-origin">
     <style>
@@ -79,7 +83,9 @@
         }
         .tab-bar {
             display: flex;
-            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
             margin-bottom: 32px;
         }
         .tab {
@@ -195,6 +201,10 @@ body.no-page-anim { animation: none !important; }
                 <div class="tab" data-id="2">Poster Two</div>
                 <div class="tab" data-id="3">Poster Three</div>
                 <div class="tab" data-id="4">Poster Four</div>
+                <div class="tab" data-id="5">Poster Five</div>
+                <div class="tab" data-id="6">Poster Six</div>
+                <div class="tab" data-id="7">Poster Seven</div>
+                <div class="tab" data-id="8">Poster Eight</div>
             </div>
             <div class="canvas-wrapper">
                 <div id="tabLoading" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:14px;letter-spacing:2px;z-index:10;">加载中...</div>
@@ -249,8 +259,386 @@ body.no-page-anim { animation: none !important; }
             if (id === currentPoster) showCached(id);
         }
         function getUserName() {
-            try { return localStorage.getItem('playerName') || '重塑者'; } 
+            try { return localStorage.getItem('playerName') || '重塑者'; }
             catch (e) { return '重塑者'; }
+        }
+        function getUserLocation() {
+            try {
+                var p = localStorage.getItem('playerProvince') || '';
+                var c = localStorage.getItem('playerCity') || '';
+                if (p && c) return p + ' · ' + c;
+                if (p) return p;
+                return '';
+            } catch (e) { return ''; }
+        }
+        function getUserMotto(id) {
+            try {
+                var p = localStorage.getItem('playerProvince') || '';
+                // 每省8条长句，对应海报1-8，20-40字，方言+地标+文化
+                var map = {
+// ===== 直辖市 =====
+'北京市':[
+'局气转身，把过往翻篇儿，皇城根下重新出发，你扛得住所有风浪',
+'甭管多黑的夜，扛过去就是亮儿，四九城的爷们儿从不认怂',
+'奔着亮儿走别回头，长安街再长也有尽头，你的光在前头等着呢',
+'裂了缝才好，光才进得来，故宫的墙再高也挡不住春天',
+'你就是自个儿的光，不用借谁的亮，国贸顶楼的灯都没你耀眼',
+'攒够了劲儿一朝爆发，就像工体的万人呐喊，谁也拦不住你',
+'静下来听听自个儿，后海的晚风会告诉你，心里倍儿清',
+'靠谱到底恒久闪耀，像钟鼓楼站了六百年，稳得住才走得远'
+],
+'天津市':[
+'嘛都翻篇儿了，倍儿棒的你值得更好的，海河边上重新起航',
+'嘛坎儿都架不住扛，天塔那么高也是一砖一瓦垒上去的',
+'追着亮儿走准没错，就像解放桥的灯，照亮整条海河',
+'碎了再拼更好看，泥人张的泥破了重捏，才叫手艺',
+'心里有光嘛也不怕，天津之眼转到最高处，整个城市都在脚下',
+'拧成一股绳劲儿足，就像煎饼馃子卷一切，啥都能扛',
+'逗自己开心比嘛都强，相声园子里一坐，嘛烦恼都散了',
+'不急不躁慢慢来，五大道的老洋房站了百年，稳稳当当才长久'
+],
+'上海市':[
+'脱胎换骨重新来赛，黄浦江畔笃定前行，腔调拉满覅靠别人',
+'熬过夜天就亮了，外滩的钟声敲响新的一天，拎得清的人先享受世界',
+'朝光走稳得住，陆家嘴的高楼也是从地基开始的，一步一步来',
+'破开茧才有腔调，弄堂里的小店也能做成百年老字号',
+'自家发光覅靠别人，东方明珠的灯是自己亮的，你也可以',
+'一门心思深耕到底，像上海工匠打磨一只表，精细到每个齿轮',
+'静下来拎得清，在衡山路喝杯咖啡，听听自己心里的声音',
+'星辰大海笃定前行，从外滩到临港，上海滩的故事永远在继续'
+],
+'重庆市':[
+'蜕皮换骨重新雄起，朝天门下重新启程，硬是霸道活一回',
+'黑久了的夜总要亮，洪崖洞的灯一亮，整条嘉陵江都跟着闪光',
+'朝倒光走不得拐，轻轨穿楼而过，再难的路也有办法过去',
+'破茧出来硬是霸道，南山一棵树俯瞰全城，你的格局比山城还大',
+'各人发光才是真家伙，解放碑的钟声为你敲响，不靠别个靠自己',
+'攒劲聚气一哈爆发，就像重庆的夏天，热辣滚烫势不可挡',
+'悟透啰心头敞亮，磁器口的茶馆里坐一坐，啥子都通了',
+'恒心在啥子都不怕，长江索道来回百年，稳得住才是真本事'
+],
+
+// ===== 华北 =====
+'河北省':[
+'甩掉包袱轻装上路，燕赵风骨在骨子里，长城脚下每一步都踏实有力',
+'再黑也能等来亮，山海关的日出见过没？那是最硬核的新开始',
+'向光走步子迈开，白洋淀的芦苇荡里藏着路，走着走着就通了',
+'茧破了才飞得远，避暑山庄的蝴蝶年年破蛹，你也一样',
+'心里有光路自明，赵州桥上走千年，稳稳当当就是最好的节奏',
+'劲往一处势不可挡，狼牙山的风吹了多少年，燕赵人从不低头',
+'静下心啥都通透，正定古城里走走，千年历史告诉你沉得住气才是赢家',
+'燕赵风骨恒久如铁，长城砖石千年不倒，你也一样扛得住岁月'
+],
+'山西省':[
+'褪了旧壳轻装前行，太行山下重新出发，瓷瓷实实走出自己的路',
+'暗透了更看得见光，云冈石窟的佛看了千年风雨，依然面带微笑',
+'向光走步步踏实，平遥古城的老砖路走了几百年，慢就是快',
+'茧破了翅膀才硬，壶口瀑布的水冲破一切阻挡，你也能',
+'厚积薄发自有光芒，就像老陈醋越陈越香，你的沉淀终会发光',
+'聚如太行汇成山河，王家大院的砖瓦一块块垒起来，终成气势',
+'沉心静气自有答案，五台山的钟声一响，心里自然就清了',
+'如老陈醋越陈越香，晋商走了万里路，靠的就是一个恒字'
+],
+'内蒙古自治区':[
+'脱去旧袍重新驰骋，草原辽阔任你奔跑，长生天下心向远方',
+'黑夜尽头是黎明，呼伦贝尔的地平线上，太阳每天都照常升起',
+'逐光而行马蹄声急，锡林郭勒的牧人追着太阳跑，你也一样',
+'破茧一刻天地辽阔，套马杆甩出去的那一下，整个世界都是你的',
+'心里有光草原无疆，鄂尔多斯的星空比任何地方都亮，你也是',
+'聚是烈火散是星辰，那达慕大会的篝火燃起，万人同心其利断金',
+'静听风语心自澄明，在希拉穆仁草原躺着看云，啥都通了',
+'长生天下恒久守望，成吉思汗的后人从不言弃，一代代守着这片草原'
+],
+
+// ===== 东北 =====
+'辽宁省':[
+'甩掉旧的重新硬气，浑河岸边长成大树，贼拉硬气地重新来过',
+'黑到头了就是亮，鸭绿江的日出染红整条江，你的光也快到了',
+'往亮了走别回头，大连的海风吹了一百年，咸咸的但带劲儿',
+'茧子破了可劲儿飞，老铁山的鹰从来不回头看，只管往前冲',
+'自个儿发光才叫能耐，沈阳的工业灯火照亮了整个东北',
+'劲儿聚齐了谁也拦不住，就像辽篮在主场，气势压倒一切',
+'静下心想啥都明白，棒棰岛的海浪声里，藏着所有答案',
+'恒心在铁杵磨成针，鞍钢的炉火烧了百年，恒久才是真本事'
+],
+'吉林省':[
+'蜕了旧壳重新往上蹿，长白山下重新出发，像松柏一样四季长青',
+'黑到头天就亮了，吉林的雾凇再厚也挡不住太阳，你也一样',
+'朝着亮儿嘎嘎走，净月潭的冰面下藏着春天，走着走着就化了',
+'破开茧翅膀才硬，长白山的天池是火山口里长出来的，你也能从裂口中重生',
+'心里有亮前路不慌，长春的汽车城一辆辆下线，你也是自己的发动机',
+'劲儿往一块使嘎嘎猛，查干湖冬捕万人拉网，合力才能出奇迹',
+'静下来啥都明白了，在松花湖边上坐一坐，山清水秀心里透亮',
+'像松柏恒久长青，长白山的树站了几百年，稳得住才是真功夫'
+],
+'黑龙江省':[
+'嗷嗷猛地把过去甩身后，松花江畔破冰重生，冰雪纯粹如你初心',
+'再黑的天也得亮，漠河的极光都能划破夜空，你也能划破黑暗',
+'向着光嗷嗷冲，哈尔滨的冰灯零下三十度照样亮，你也扛得住',
+'茧破了飞得更高，扎龙的丹顶鹤从沼泽里起飞，一飞冲天',
+'自带光芒啥都不惧，雪乡的灯笼在暴风雪里照样红彤彤',
+'聚一起嗷嗷有劲，大庆油田万人会战，聚起来就是移山填海的力量',
+'沉心想明明白白，在松花江边看雪落下，心里干净得像刚下的雪',
+'像冰雪恒久纯粹，北极村的雪一季季下，纯粹的人走得更远'
+],
+
+// ===== 华东 =====
+'江苏省':[
+'褪去旧我重新来斯，秦淮河畔笃定从容，细水长流方能恒久致远',
+'暗夜尽头必有曙光，紫金山的日出看过没？那光照亮整座南京城',
+'向光而行稳得住，苏州园林一步一景，慢工出细活急不得',
+'破茧成蝶来斯得很，无锡太湖边的蝴蝶年年新生，你也一样漂亮',
+'你就是光照亮前路，扬州瘦西湖的月色温柔但有力量',
+'聚心凝力汇成江海，镇江三山合抱长江，聚在一起才叫气势',
+'静心悟道水到渠成，在周庄坐船听桨声，慢下来就通了',
+'细水长流恒久致远，大运河淌了两千年，最好的力量是持续的力量'
+],
+'浙江省':[
+'硬扎到底重新出发，钱塘江潮涌见证蜕变，弄潮儿向涛头立',
+'熬过至暗潮涌见光，西湖的日出从雷峰塔后升起，黑暗遮不住光明',
+'追光的人自带光芒，普陀山的佛光能照到海的最远处，你也能',
+'破开束缚展翅高飞，雁荡山的鹰从悬崖边跳下才学会飞，你也一样',
+'做自己的光无需借火，乌镇的水灯每盏都靠自己亮，你也一样',
+'聚是一团火散作满天星，义乌从鸡毛换糖到全球超市，聚的力量不可思议',
+'静水深流悟透方知，千岛湖下有千年古城，沉得住才能见真章',
+'弄潮如钱塘奔流不息，浙商走遍天下靠的就是这股子劲'
+],
+'安徽省':[
+'褪了旧皮重新来过，黄山松般挺立风雨中，熬出来的才是真本事',
+'黑到头天就该亮，新安江的晨雾散去就是晴天，再等等就好',
+'朝着光走管到底，宏村的月沼倒映着天光，你往前走光就在前面',
+'茧破了才叫本事，九华山的钟声敲响新的开始，破茧就是重生',
+'自个发光照亮前路，芜湖的铁画千锤百炼才出锋芒，你也一样',
+'攒劲聚气一举破局，徽商走南闯北靠的就是聚沙成塔',
+'静下心就悟透了，在西递的石板路上走一走，千年徽州告诉你沉得住气',
+'如黄山松恒久挺立，迎客松站了八百年，稳得住才能笑到最后'
+],
+'福建省':[
+'爱拼敢赢的少年永不认输，闽江水长土楼为证，天公会惜努力的人',
+'暗夜过后曙光必至，鼓浪屿的日出染红整片海，你等的光就要来了',
+'向着光爱拼敢赢，武夷山的茶香飘了千年，好味道都是熬出来的',
+'破茧展翅天公会惜，泉州港的船队曾征服七海，你也可以征服自己的世界',
+'心里有光自有方向，三坊七巷的灯笼一盏盏亮起，照亮千年闽都',
+'聚力凝神劈波斩浪，客家人建土楼聚族而居，聚在一起就有力量',
+'静心参悟明澈通透，南普陀的钟声一响，心如止水万物皆清',
+'如土楼般世代守望，百年土楼风雨不倒，稳得住才能传得远'
+],
+'江西省':[
+'脱胎换骨扎扎实实，庐山风雨不动摇，老表挺你到底稳稳当当',
+'暗透了才见星光，井冈山的星火可以燎原，你心里的火也能',
+'向光而行老表挺你，鄱阳湖的候鸟飞万里也要回家，你也有归处',
+'破茧一刻山河为证，三清山的石峰从地底崛起，你也能破土而出',
+'自带光芒照亮四方，景德镇的窑火烧了千年，烧出来的都是精品',
+'聚沙成塔扛得住，赣江汇百川而入长江，聚在一起才叫力量',
+'沉心静气悟出大道，龙虎山的道士一坐就是一天，静下来才有智慧',
+'如庐山立巍然不动，滕王阁毁了又建几十回，打不倒的才是真英雄'
+],
+'山东省':[
+'硬朗到底杠赛来！泰山压顶不弯腰，黄河入海势不可挡，自己发光才是正道',
+'黑到头天就亮，泰山日出天下第一，你的黎明也快来了',
+'向着光杠赛来，趵突泉的水冒了三千年不停，你也一样源源不绝',
+'破开茧飞得更高，青岛的海鸥逆着风才能飞得高，逆风才是起飞的时候',
+'自己发光才是正道，淄博的烧烤炭火自己燃，你也是自己的火种',
+'聚是一团火势不可挡，梁山好汉聚义厅里一条心，聚起来天下无敌',
+'静下来心就明了，孔庙里走一走，两千年的智慧告诉你静能生慧',
+'如泰山稳恒久不移，泰山石敢当立了千年，稳得住才是顶级的本事'
+],
+
+// ===== 华中 =====
+'河南省':[
+'中！管到底！黄河奔流见证蜕变，得劲地活出自己最亮的样子',
+'再黑的天也得亮，殷墟的甲骨文埋了三千年还能见光，你也一样',
+'朝着光走管到底，龙门石窟的佛看了千年沧桑，依然面不改色',
+'茧破了就飞吧，少林寺的武僧从扎马步开始，基本功练好了才能飞',
+'心里有光得劲！洛阳牡丹在石缝里也能开出花，你的光压不住',
+'聚在一起势不可挡，太行山的石头聚到一起就成了山，聚就是力量',
+'静心思悟出真经，老君山上一坐就是一天，静下来才有大智慧',
+'如黄河奔恒久不息，黄河九曲十八弯但从不回头，一路向东就是答案'
+],
+'湖北省':[
+'不服周！铆起搞！长江日夜奔腾见证重生，九头鸟的智慧无人能挡',
+'暗夜再长也要亮，黄鹤楼的灯亮了一千八百年，你的光也快亮了',
+'朝着光不服周，武当山的道士迎着日出练功，每天都是新开始',
+'破茧而出铆起飞，三峡大坝截断长江云雨，你的气势也能截断过往',
+'做自己的光不服周，光谷的年轻人用代码改变世界，你也可以',
+'聚气成势铆起搞，武汉三镇合成一座城，聚起来才叫大江大湖',
+'静心悟九头鸟的智慧，东湖边上吹吹风，聪明的脑袋需要静静',
+'如长江涌日夜奔腾，长江从唐古拉山到东海，不怕远就怕站'
+],
+'湖南省':[
+'吃得苦霸得蛮耐得烦，湘江奔流不息，惟楚有才你终将光芒万丈',
+'至暗之后光芒万丈，张家界的石峰从海底崛起，你的崛起也一样壮观',
+'追光的人吃得苦，浏阳河弯了九道弯还是流到了湘江，绕点路不怕',
+'破茧成蝶霸得蛮，凤凰古城的吊脚楼悬在江上百年不倒，你也一样稳',
+'自带光芒耐得烦，岳阳楼记写了千年还在传，好东西不怕等',
+'聚是一团火势不可挡，橘子洲头万人同看烟花，聚在一起才叫绚烂',
+'静下来悟出真章，岳麓书院千年学府，静能生慧是湖湘的底色',
+'心如湘江奔流不息，马王堆的千年女尸都保存完好，恒久是最强力量'
+],
+
+// ===== 华南 =====
+'广东省':[
+'顶硬上冇问题！珠江日夜奔流见证蜕变，靠自己发光唔靠人哋',
+'黑到头天光晒，广州塔的灯划破珠江夜空，你的光也能划破黑暗',
+'向住光走冇问题，潮汕人下南洋闯世界，向光的人从不问路有多远',
+'破开茧飞得更远，深圳从小渔村到国际都市，你的蜕变也可以翻天覆地',
+'自己发光唔靠人哋，佛山无影脚靠自己练出来的，真本事都是自己的',
+'聚埋一齐势不可挡，东西南北中发财到广东，聚在一起才有大格局',
+'静落来心水就清，在顺德吃碗双皮奶，慢下来才品得出滋味',
+'如珠江流日夜不息，客家人从中原走到岭南，恒久就是一代代走下去'
+],
+'广西壮族自治区':[
+'敢拼敢闯掂过碌蔗！漓江水长山歌嘹亮，刘三姐的故乡从不认输',
+'暗夜尽头总有光，龙脊梯田的晨光一层层亮起，你的光也层层而来',
+'向光而行掂过碌蔗，北海银滩的浪一波波向前，你也一样势不可挡',
+'破茧展翅山歌相伴，桂林山水从海底升起，最美的风景都是熬出来的',
+'心里有光漓江水长，阳朔的西街灯火通明，每条路都有自己的亮',
+'聚是山歌散是回响，三月三的歌圩万人同唱，聚在一起就是力量',
+'静心感悟山水之间，德天瀑布的水声里藏着千年智慧，静静听就懂了',
+'如桂林山恒久守望，千年榕树根深叶茂，稳得住才能撑起一片天'
+],
+'海南省':[
+'闯海到底硬气生！天涯海角重新出发，做自己的灯塔照亮整片南海',
+'暗夜过后海天一色，亚龙湾的日出从海平面跃起，你的黎明也一样惊艳',
+'向光而行乘风破浪，南海观音面朝大海，心向光明自有无边法力',
+'破茧而出海阔天空，万泉河从五指山奔向大海，再小的河也有大海的梦',
+'做自己的灯塔照亮航程，三沙的灯塔照亮千里海疆，你也能照亮前路',
+'聚沙成岛坚韧不拔，海南岛是火山喷发堆出来的，聚沙也能成岛',
+'静听海韵心自澄明，在蜈支洲岛听潮起潮落，大海的节奏就是人生的节奏',
+'如南海阔波澜不惊，椰子树台风中弯下腰又直起来，韧性比刚强更持久'
+],
+
+// ===== 西南 =====
+'四川省':[
+'雄起到底不虚火！川江奔腾不息，巴山蜀水见证蜕变，硬是巴适得板',
+'黑到头了天要亮，峨眉金顶的日出云海翻涌，你的黎明也一样壮观',
+'朝光走不虚火，都江堰的水分了两千年还是那么稳，方向对了就不怕慢',
+'破茧而出硬是巴适，大熊猫从濒危到国宝，你的逆袭也可以载入史册',
+'各人发光不靠别个，川剧变脸一瞬间换了天地，你也可以一秒切换人生',
+'攒劲聚气雄起到底，乐山大佛用九十年凿成，聚沙成塔的耐心最可贵',
+'静下来心头敞亮，青城山下泡杯茶，道法自然，心静了啥都通透',
+'如川江涌奔腾不息，九寨沟震后重生美得更震撼，打不倒的终将更强大'
+],
+'贵州省':[
+'攒劲得很拼出来！万峰成林见证坚韧，苗岭深处飞出金凤凰',
+'暗到尽头就见光，梵净山的金顶从云海中升起，你的高峰也在云开处',
+'向光而行攒劲得很，荔波的水在石缝里流了万年，没什么能挡住向前的力',
+'破开茧飞出大山，遵义会议在至暗时刻找到方向，你的转折点也快到了',
+'点亮自己照亮黔程，西江千户苗寨的万家灯火，每盏都是自己点亮的',
+'聚是万峰散是繁星，黄果树的瀑布聚千溪而成巨流，聚起来势不可挡',
+'静心思悟出大道，镇远古镇的舞阳河流了千年，静水流深才是真智慧',
+'如苗岭立坚韧不拔，FAST天眼在深山里仰望宇宙，你的眼界也可以穿越星辰'
+],
+'云南省':[
+'板扎得很样样成！苍山洱海为证，七彩云南重新绽放，做自己的光照亮四方',
+'暗夜尽头自有光，梅里雪山的日照金山只给等得够久的人，你值得最好的光',
+'追光而行板扎得很，红河的梯田一层层攀上云端，每一步都算数',
+'破茧成蝶七彩绽放，蝴蝶泉边千万只蝴蝶同时破茧，你的绽放也在倒计时',
+'做自己的光照亮四方，丽江古城的每盏灯都照亮一条巷子，你的光也有专属的路',
+'聚如苍山沉稳有力，大理三塔千年不倒，聚在一起就有不动如山的底气',
+'静下来心就通了，在洱海边骑一圈单车，风会告诉你所有答案',
+'如洱海清恒久明澈，抚仙湖的水清澈了几万年，纯粹的人走得最远'
+],
+'西藏自治区':[
+'心向光明步步升，雪山巍峨见证坚韧，格桑花开在最高处，扎西德勒',
+'至暗之后终见天光，纳木错的星空是世界上最亮的，暗透了才能看见最美的星光',
+'向着光明步步攀升，布达拉宫一级级台阶通向天际，你的每一步都在向上',
+'破茧而出心向苍穹，珠穆朗玛峰从海底崛起为世界之巅，你的高度没有上限',
+'你就是光照亮前路，大昭寺的酥油灯千年不灭，微小的光也有永恒的力量',
+'聚是一心万念归一，冈仁波齐转山的人来自四方，聚在一起只为同一个信仰',
+'静修内观心自澄明，羊卓雍措像一面镜子映照天空，静下来才能照见自己',
+'如雪山立万古不变，喜马拉雅山脉经历了亿万年造山运动，恒久是最伟大的力量'
+],
+
+// ===== 西北 =====
+'陕西省':[
+'嫽扎咧往前闯！秦岭巍然屹立千年，城墙根下重新出发，嫽得很活一回',
+'黑到头了天就明，华山的日出从东峰升起，险峰之上才有最美的光',
+'向着光嫽扎咧，兵马俑在地下等了两千年才见天日，你等的时机也快到了',
+'破茧而出展翅高飞，大雁塔前玄奘西行万里求法，你的征程也可以跨越山海',
+'心里有光嫽得很，西安城墙上骑一圈单车，千年古都的光辉就是你的底气',
+'聚是一团火势不可挡，延安窑洞里曾聚起改天换地的力量，聚是最大的势能',
+'静心思悟厚德载物，终南山上隐士一坐就是几年，静下来才有真境界',
+'如秦岭屹立千年，黄帝陵的古柏活了五千年，恒久是最深沉的力量'
+],
+'甘肃省':[
+'攒劲拼到底！丝路驼铃穿越千年，敦煌壁画见证辉煌，飞越关山自有天地',
+'暗夜尽头曙光必至，鸣沙山的日出把整片沙漠染成金色，你的光也会铺天盖地',
+'向光而行攒劲到底，河西走廊走了两千年的商队，一步一步走出了丝绸之路',
+'破茧而出飞越关山，月牙泉在沙漠中千年不涸，最不可能的地方也有生机',
+'你就是光照亮丝路，莫高窟的壁画在黑暗中保存了千年，你的光也能穿透时间',
+'聚沙成塔坚韧不拔，嘉峪关的城墙用黄土夯成，聚沙成塔就是最实在的力量',
+'静心悟道天地宽广，在张掖丹霞看大地色彩，天地之大心自然就宽了',
+'如敦煌久千年不朽，麦积山的石窟看了一千六百年风雨，恒久的人最美丽'
+],
+'青海省':[
+'硬气坚韧走得稳，青海湖水清澈如初心，三江源头重新出发，天地澄明任你行',
+'黑夜尽头必见天光，茶卡盐湖的星空倒映在水中，天地之间全是你的光',
+'追光而行踏雪而上，可可西里的藏羚羊穿越千里荒原，向着生命的光奔跑',
+'破茧成蝶高原飞翔，塔尔寺的酥油花在寒冷中绽放，最美的花都开在最难的地方',
+'做自己的光照亮前路，三江源的细流最终汇成江河，你的光芒终将汇成大势',
+'聚水成湖浩瀚无边，青海湖是百川汇聚而成，你今天攒的每滴力都会聚成湖海',
+'静心感悟天地澄明，在祁连山下仰望星空，天大地大你的心也可以一样大',
+'如青海湖恒久清澈，察尔汗盐湖的盐沉积了亿万年，纯净的力量最恒久'
+],
+'宁夏回族自治区':[
+'实在有劲拼出头！塞上江南贺兰山为证，黄河金岸重新出发，瓷实到底',
+'暗夜尽头自有光，沙湖的日出从芦苇荡升起，温和而坚定就是你的力量',
+'向光而行实在有劲，西夏王陵的土堆站了千年，最朴素的东西最持久',
+'破茧而出展翅高飞，贺兰山岩画里的太阳万年后还在照耀，你的光芒也一样',
+'心里有光照亮前路，镇北堡的月亮门洞穿了时光，你的光也能穿越困境',
+'聚力凝心塞上江南，黄河在宁夏拐了个弯滋养了万亩良田，聚水成河利万物',
+'静心自省豁然开朗，在须弥山石窟前静坐片刻，千年的智慧会告诉你答案',
+'如贺兰山屹立不倒，贺兰山挡住了腾格里沙漠，你的恒心也能挡住一切风沙'
+],
+'新疆维吾尔自治区':[
+'劳道得很往前冲！天山巍峨见证蜕变，大漠胡杨千年不倒，你就是光',
+'黑夜再长终将天亮，喀纳斯的晨雾散去就是仙境，你等的黎明也一样美',
+'向光而行劳道得很，帕米尔高原的雄鹰逆风飞得最高，你也一样逆风飞翔',
+'破茧而出飞越天山，伊犁的杏花从冰雪中绽放，最美的你也在解冻中',
+'你是光照亮前路，塔克拉玛干的驼队跟着星光走出沙漠，你的光也能指引方向',
+'聚在一起劳道得很，大巴扎的人潮聚成海洋，聚在一起才能汇成最热辣的烟火气',
+'静心感悟天地宽广，在那拉提草原躺着看云，天地之间全是你的舞台',
+'如天山立万古长存，天山雪莲在最冷的地方绽放，恒久的美值得最长的等待'
+],
+
+// ===== 特别行政区 + 台湾 =====
+'台湾省':[
+'打拼到底出头天！阿里山巍然屹立，同根同源血脉相连，拼出自己的光芒',
+'暗夜尽头终会见光，垦丁的日出从太平洋升起，你的光也会从最远的地方赶来',
+'向光而行出头天，太鲁阁的峡谷劈开大山，你的路也可以劈开一切阻挡',
+'破茧而出飞越海峡，澎湖的玄武岩从海底喷薄而出，你也能一飞冲天',
+'你是自己的光照亮前路，九份的灯笼照亮山城夜色，一盏灯就能温暖整条路',
+'聚是一心同根同源，妈祖绕境万人随行，聚在一起就有移山填海的力量',
+'静思悟道心自澄明，日月潭的水映着天光云影，静下来才能照见初心',
+'如阿里山巍然屹立，神木站了三千年雷劈不倒，恒久是最好的姿态'
+],
+'香港特别行政区':[
+'顶硬上撑到底！狮子山下精神不死，维港灯火永远闪耀，靠自己发光发热',
+'黑到头一定天光，太平山顶的日出把维港染成金色，你的黎明也一样璀璨',
+'向住光行撑到底，天星小轮来来回回百年不停，坚持就是最港味的态度',
+'破开茧飞得更高，南丫岛的蝴蝶从渔村飞向世界，你也可以从角落飞向舞台',
+'自己发光唔靠人哋，霓虹灯下的油麻地每盏灯都靠自己亮，你也是独立的光源',
+'聚埋一齐狮子山下，重庆大厦里住着全世界的人，聚在一起就是最生猛的力量',
+'静落来心水就清，南丫岛上吹吹海风，远离喧嚣才能听见内心的声音',
+'如维港耀永远闪亮，幻彩咏香江每晚准时亮起，恒久的光芒最动人'
+],
+'澳门特别行政区':[
+'敢搏敢赢一定得！灯塔永远指引方向，妈阁庙前重新出发，搏出个未来',
+'黑夜尽头必有光，东望洋灯塔扫过海面百年，总有一束光照到你身上',
+'向光而行一定得，大三巴牌坊烧不毁拆不掉，你的信念也可以历经风雨',
+'破茧而出展翅高飞，澳门塔上的蹦极者纵身一跃，你也敢跳下旧我飞向新生',
+'你就是光照亮前路，葡式碎石路在阳光下闪闪发光，平凡之路也能走出光彩',
+'聚在一起共创未来，议事亭前地聚满了八方来客，聚就是这座城的底色',
+'静心感悟海阔天空，路环岛上吹着海风发呆，慢下来的澳门告诉你从容的力量',
+'如灯塔照永远指引，港珠澳大桥横跨伶仃洋，恒久的梦想终将跨越不可能'
+]
+                };
+                if (map[p] && map[p][id-1]) return map[p][id-1];
+                var d = map[p];
+                if (d) return d[0]; // fallback
+                return '';
+            } catch (e) { return ''; }
         }
         function showDate() {
             const date = new Date();
@@ -258,13 +646,19 @@ body.no-page-anim { animation: none !important; }
             document.getElementById('date').innerText = date.toLocaleDateString('en-US', opt);
         }
         let userName = getUserName();
+        let userLoc = getUserLocation();
+        var userMotto = '';
 
         // 预加载所有海报图片到内存
         const posterImages = {
             1: 'poster1.webp',
             2: 'poster2.webp',
             3: 'poster3.webp',
-            4: 'poster4.webp'
+            4: 'poster4.webp',
+            5: 'poster5.webp',
+            6: 'poster6.webp',
+            7: 'poster7.webp',
+            8: 'poster8.webp'
         };
         const preloaded = {};
         let loadedCount = 0;
@@ -289,6 +683,7 @@ body.no-page-anim { animation: none !important; }
                 img.src = 'poster1.webp';
                 img.onload = function () {
                     const W = width, H = height;
+                    userMotto = getUserMotto(1);
                     const pad = 85 * dpr;
 
                     // 全幅背景图 cover
@@ -406,8 +801,8 @@ body.no-page-anim { animation: none !important; }
                     ctx.font = 'bold ' + (38 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
                     ctx.fillText('天', W / 2 + 12 * dpr, dataY);
                     ctx.fillStyle = 'rgba(255,255,255,0.55)';
-                    ctx.font = (28 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
-                    ctx.fillText('心智蜕变之旅', W / 2 + 72 * dpr, dataY);
+                    ctx.font = (26 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('心智蜕变之旅', W / 2, dataY + 52 * dpr);
                     ctx.textAlign = 'right';
                     ctx.fillStyle = 'rgba(255,255,255,0.6)';
                     ctx.font = 'bold ' + (22 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
@@ -416,7 +811,7 @@ body.no-page-anim { animation: none !important; }
                     // ===== 图片小窗 =====
                     ctx.textAlign = 'center';
                     var iw = 520 * dpr, ih = 330 * dpr;
-                    var ix = (W - iw) / 2, iy = 780 * dpr;
+                    var ix = (W - iw) / 2, iy = 800 * dpr;
                     // 外底
                     ctx.fillStyle = 'rgba(0,210,180,0.05)';
                     ctx.fillRect(ix - 16 * dpr, iy - 16 * dpr, iw + 32 * dpr, ih + 32 * dpr);
@@ -527,11 +922,24 @@ body.no-page-anim { animation: none !important; }
                     ctx.fillText('伤口是光进入你内心的地方', W / 2, botY + 42 * dpr);
 
                     // ===== 品牌 =====
+                    if (userMotto) {
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#00f5d4';
+                        ctx.font = 'bold ' + (26*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('「' + userMotto + '」', W/2, H - 280*dpr);
+                    }
+                    if (userLoc) {
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+                        ctx.font = (40 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                        ctx.fillText('◆ ' + userLoc, W - pad, H - 78 * dpr);
+                    }
+
                     ctx.strokeStyle = 'rgba(255,255,255,0.1)';
                     ctx.lineWidth = 0.6 * dpr;
                     ctx.beginPath(); ctx.moveTo(pad, H - 60 * dpr); ctx.lineTo(W - pad, H - 60 * dpr); ctx.stroke();
 
-                    ctx.fillStyle = 'rgba(255,255,255,0.40)';
+                    ctx.fillStyle = 'rgba(255,255,255,0.75)';
                     ctx.font = (26 * dpr) + 'px "Georgia", serif';
                     ctx.fillText('© You 捻光', W / 2, H - 28 * dpr);
 
@@ -547,6 +955,7 @@ body.no-page-anim { animation: none !important; }
                 img.src = 'poster2.webp';
                 img.onload = function () {
                     const W = width, H = height;
+                    userMotto = getUserMotto(2);
                     const midX = W / 2;
                     const pad = 65 * dpr;
                     const glassAlpha = 0.45;  // 【玻璃透明度】越大越白，0.45≈55%透光
@@ -784,11 +1193,25 @@ body.no-page-anim { animation: none !important; }
                     // 底部分隔线
                     ctx.strokeStyle = 'rgba(255,255,255,0.1)';
                     ctx.lineWidth = 0.6 * dpr;
+                    if (userMotto) {
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#00c8a0';
+                        ctx.font = 'bold ' + (26*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('「' + userMotto + '」', W/2, H - 280*dpr);
+                    }
+                    // 省/市
+                    if (userLoc) {
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+                        ctx.font = (38 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                        ctx.fillText('◆ ' + userLoc, W - pad, H - 68 * dpr);
+                    }
+
                     ctx.beginPath(); ctx.moveTo(L, H - 50 * dpr); ctx.lineTo(W - L, H - 50 * dpr); ctx.stroke();
 
                     // 品牌
                     ctx.textAlign = 'center';
-                    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                    ctx.fillStyle = 'rgba(255,255,255,0.75)';
                     ctx.font = (28 * dpr) + 'px "Georgia", serif';
                     ctx.fillText('© You 捻光', W / 2, H - 22 * dpr);
 
@@ -800,6 +1223,7 @@ body.no-page-anim { animation: none !important; }
                 img.src = 'poster3.webp';
                 img.onload = function () {
                     const W = width, H = height;
+                    userMotto = getUserMotto(3);
                     const pad = 110 * dpr;
                     const gap = 55 * dpr;  // 统一大间距
 
@@ -932,10 +1356,22 @@ body.no-page-anim { animation: none !important; }
                     ctx.fillText('光一直在你心里，只需看见它',W/2,Y);
 
                     C();
+                    // 省/市
+                    if (userMotto) {
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle='#00f5d4'; ctx.font='bold '+(26*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('「' + userMotto + '」', W/2, H - 280*dpr);
+                    }
+                    if (userLoc) {
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle='rgba(255,255,255,0.72)'; ctx.font=(38*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('◆ ' + userLoc, W - pad, H - 78*dpr);
+                    }
+
                     ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=0.6*dpr;
                     ctx.beginPath(); ctx.moveTo(pad,H-60*dpr); ctx.lineTo(W-pad,H-60*dpr); ctx.stroke();
 
-                    ctx.fillStyle='rgba(255,255,255,0.33)'; ctx.font=(24*dpr)+'px "Georgia",serif';
+                    ctx.fillStyle='rgba(255,255,255,0.75)'; ctx.font=(24*dpr)+'px "Georgia",serif';
                     ctx.fillText('© You 捻光',W/2,H-28*dpr);
                     ctx.fillStyle='rgba(0,245,212,0.20)';
                     ctx.beginPath(); ctx.arc(W/2,H-12*dpr,2*dpr,0,Math.PI*2); ctx.fill();
@@ -948,6 +1384,7 @@ body.no-page-anim { animation: none !important; }
                 img.src = 'poster4.webp';
                 img.onload = function () {
                     const W = width, H = height;
+                    userMotto = getUserMotto(4);
                     const pad = 110*dpr;
                     const zone = W*0.08;  // 中间过渡带宽度
 
@@ -1110,14 +1547,1246 @@ body.no-page-anim { animation: none !important; }
                     ctx.fillText('谷底，成了我重建的基石',W/2,botY+38*dpr);
 
                     C();
+                    if (userMotto) {
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle='#00f5d4'; ctx.font='bold '+(26*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('「' + userMotto + '」', W/2, H - 280*dpr);
+                    }
+                    // 省/市
+                    if (userLoc) {
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle='rgba(255,255,255,0.72)'; ctx.font=(36*dpr)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('◆ ' + userLoc, W - pad, H - 78*dpr);
+                    }
+
                     ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=0.6*dpr;
                     ctx.beginPath(); ctx.moveTo(pad,H-60*dpr); ctx.lineTo(W-pad,H-60*dpr); ctx.stroke();
-                    ctx.fillStyle='rgba(255,255,255,0.30)'; ctx.font=(23*dpr)+'px "Georgia",serif';
+                    ctx.fillStyle='rgba(255,255,255,0.75)'; ctx.font=(23*dpr)+'px "Georgia",serif';
                     ctx.fillText('© You 捻光',W/2,H-28*dpr);
                     ctx.fillStyle='rgba(0,245,212,0.18)';
                     ctx.beginPath(); ctx.arc(W/2,H-12*dpr,2*dpr,0,Math.PI*2); ctx.fill();
 
                     finishOffscreen(off, 4);
+                };
+            }
+            else if (id === 5) {
+                // ===== 海报5：光 · 时空之门 =====
+                img.src = 'poster5.webp';
+                img.onload = function () {
+                    const W = width, H = height;
+                    userMotto = getUserMotto(5);
+                    const pad = 85 * dpr;
+                    const cx = W / 2, cy = 530 * dpr;
+                    const portalR = 220 * dpr;  // portal radius
+
+                    // 1. 全幅背景 cover
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = W / H;
+                    let sw, sh, sx, sy;
+                    if (imgRatio > canvasRatio) {
+                        sh = img.naturalHeight; sw = sh * canvasRatio;
+                        sx = (img.naturalWidth - sw) / 2; sy = 0;
+                    } else {
+                        sw = img.naturalWidth; sh = sw / canvasRatio;
+                        sx = 0; sy = (img.naturalHeight - sh) / 2;
+                    }
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
+
+                    // 2. 暗色径向渐变（中心亮，边缘暗 — 隧道感）
+                    var vignette = ctx.createRadialGradient(cx, cy, portalR * 0.55, cx, cy, W * 0.85);
+                    vignette.addColorStop(0, 'rgba(0,0,0,0.0)');
+                    vignette.addColorStop(0.25, 'rgba(0,0,0,0.08)');
+                    vignette.addColorStop(0.5, 'rgba(0,0,0,0.28)');
+                    vignette.addColorStop(0.75, 'rgba(0,0,0,0.55)');
+                    vignette.addColorStop(1, 'rgba(0,0,0,0.78)');
+                    ctx.fillStyle = vignette;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // 3. 顶部品牌栏
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (24 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('◆  YOU 捻光', pad, 90 * dpr);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+                    ctx.lineWidth = 0.7 * dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, 103 * dpr); ctx.lineTo(pad + 170 * dpr, 103 * dpr); ctx.stroke();
+
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#fff';
+                    ctx.font = (17 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('NO.05  /  7 DAYS REBIRTH', W - pad, 90 * dpr);
+
+                    // ===== 4. 时空之门 — 多层几何光环 =====
+                    // 最外层：八角星形虚线
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(0,245,212,0.18)';
+                    ctx.lineWidth = 1.2 * dpr;
+                    ctx.setLineDash([16 * dpr, 22 * dpr]);
+                    var sides = 8, outerR = portalR * 1.55;
+                    ctx.beginPath();
+                    for (var i = 0; i <= sides; i++) {
+                        var angle = (i / sides) * Math.PI * 2 - Math.PI / 2;
+                        var x = cx + Math.cos(angle) * outerR;
+                        var y = cy + Math.sin(angle) * outerR;
+                        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath(); ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // 八角星顶点装饰
+                    for (var i = 0; i < sides; i++) {
+                        var angle = (i / sides) * Math.PI * 2 - Math.PI / 2;
+                        var vx = cx + Math.cos(angle) * outerR;
+                        var vy = cy + Math.sin(angle) * outerR;
+                        ctx.fillStyle = 'rgba(0,245,212,0.28)';
+                        ctx.beginPath(); ctx.arc(vx, vy, 4 * dpr, 0, Math.PI * 2); ctx.fill();
+                        ctx.strokeStyle = 'rgba(0,245,212,0.45)';
+                        ctx.lineWidth = 1 * dpr;
+                        ctx.beginPath(); ctx.arc(vx, vy, 7 * dpr, 0, Math.PI * 2); ctx.stroke();
+                    }
+                    ctx.restore();
+
+                    // 第二层：点状大圆环
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+                    ctx.lineWidth = 2.5 * dpr;
+                    ctx.setLineDash([3 * dpr, 14 * dpr]);
+                    ctx.beginPath(); ctx.arc(cx, cy, portalR * 1.18, 0, Math.PI * 2); ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.restore();
+
+                    // 第三层：实体细环
+                    ctx.strokeStyle = 'rgba(0,245,212,0.35)';
+                    ctx.lineWidth = 1 * dpr;
+                    ctx.beginPath(); ctx.arc(cx, cy, portalR * 0.92, 0, Math.PI * 2); ctx.stroke();
+
+                    // 第四层：粗光环
+                    var ringGrad = ctx.createLinearGradient(cx - portalR, cy, cx + portalR, cy);
+                    ringGrad.addColorStop(0, 'rgba(0,230,200,0.15)');
+                    ringGrad.addColorStop(0.3, 'rgba(0,245,212,0.55)');
+                    ringGrad.addColorStop(0.5, 'rgba(255,255,255,0.70)');
+                    ringGrad.addColorStop(0.7, 'rgba(0,245,212,0.55)');
+                    ringGrad.addColorStop(1, 'rgba(0,230,200,0.15)');
+                    ctx.strokeStyle = ringGrad;
+                    ctx.lineWidth = 4 * dpr;
+                    ctx.beginPath(); ctx.arc(cx, cy, portalR * 0.72, 0, Math.PI * 2); ctx.stroke();
+
+                    // ===== 5. 八道光芒 =====
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'screen';
+                    for (var i = 0; i < 8; i++) {
+                        var beamAngle = (i / 8) * Math.PI * 2;
+                        var beamGrad = ctx.createLinearGradient(
+                            cx + Math.cos(beamAngle) * portalR * 0.5, cy + Math.sin(beamAngle) * portalR * 0.5,
+                            cx + Math.cos(beamAngle) * outerR * 1.25, cy + Math.sin(beamAngle) * outerR * 1.25
+                        );
+                        beamGrad.addColorStop(0, 'rgba(0,245,212,0.30)');
+                        beamGrad.addColorStop(1, 'rgba(0,245,212,0)');
+                        ctx.fillStyle = beamGrad;
+                        ctx.beginPath();
+                        ctx.moveTo(cx + Math.cos(beamAngle - 0.035) * portalR * 0.45, cy + Math.sin(beamAngle - 0.035) * portalR * 0.45);
+                        ctx.lineTo(cx + Math.cos(beamAngle + 0.035) * portalR * 0.45, cy + Math.sin(beamAngle + 0.035) * portalR * 0.45);
+                        ctx.lineTo(cx + Math.cos(beamAngle + 0.018) * outerR * 1.25, cy + Math.sin(beamAngle + 0.018) * outerR * 1.25);
+                        ctx.lineTo(cx + Math.cos(beamAngle - 0.018) * outerR * 1.25, cy + Math.sin(beamAngle - 0.018) * outerR * 1.25);
+                        ctx.closePath(); ctx.fill();
+                    }
+                    ctx.restore();
+
+                    // ===== 6. 中心"光"字 =====
+                    var fSize = 170 * dpr;
+                    ctx.textAlign = 'center';
+                    // 外发光
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0,245,212,0.70)';
+                    ctx.shadowBlur = 80 * dpr;
+                    ctx.fillStyle = 'rgba(0,0,0,0)';
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('光', cx, cy + fSize * 0.28);
+                    ctx.restore();
+                    // 主体
+                    var lightGrad = ctx.createLinearGradient(cx - 160 * dpr, cy - fSize, cx + 160 * dpr, cy);
+                    lightGrad.addColorStop(0, '#ffe8a0');
+                    lightGrad.addColorStop(0.2, '#ffffff');
+                    lightGrad.addColorStop(0.4, '#e0fff0');
+                    lightGrad.addColorStop(0.5, '#ffffff');
+                    lightGrad.addColorStop(0.6, '#e0fff0');
+                    lightGrad.addColorStop(0.8, '#ffffff');
+                    lightGrad.addColorStop(1, '#ffe8a0');
+                    ctx.fillStyle = lightGrad;
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('光', cx, cy + fSize * 0.28);
+
+                    // ===== 7. 轨道粒子 =====
+                    var particleCount = 40;
+                    for (var i = 0; i < particleCount; i++) {
+                        var pAngle = (i / particleCount) * Math.PI * 2 + 0.3;
+                        var pR = portalR * (0.95 + Math.sin(i * 1.7) * 0.22);
+                        var px = cx + Math.cos(pAngle) * pR;
+                        var py = cy + Math.sin(pAngle) * pR;
+                        var pAlpha = 0.25 + Math.sin(i * 2.3) * 0.2;
+                        var pSize = (1.2 + Math.sin(i * 3.1) * 0.8) * dpr;
+                        ctx.fillStyle = 'rgba(255,255,255,' + pAlpha + ')';
+                        ctx.beginPath(); ctx.arc(px, py, pSize, 0, Math.PI * 2); ctx.fill();
+                    }
+
+                    // ===== 8. 散落星点 =====
+                    for (var i = 0; i < 60; i++) {
+                        var sx2 = cx + (Math.random() - 0.5) * W * 1.1;
+                        var sy2 = cy + (Math.random() - 0.5) * H * 0.9;
+                        var dist = Math.sqrt((sx2 - cx) ** 2 + (sy2 - cy) ** 2);
+                        if (dist < portalR * 0.6) continue;
+                        var starAlpha = 0.15 + Math.random() * 0.45;
+                        var starSize = (0.4 + Math.random() * 2.2) * dpr;
+                        ctx.fillStyle = 'rgba(255,255,255,' + starAlpha + ')';
+                        ctx.beginPath(); ctx.arc(sx2, sy2, starSize, 0, Math.PI * 2); ctx.fill();
+                    }
+
+                    // ===== 9. 副标题 =====
+                    var subY = cy + portalR * 1.7;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (42 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('穿越至暗 · 即是光明', W / 2, subY);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.48)';
+                    ctx.font = 'italic ' + (26 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('Through the portal of transformation', W / 2, subY + 42 * dpr);
+
+                    // ===== 10. 7天数据 =====
+                    var dataY = subY + 110 * dpr;
+                    ctx.strokeStyle = 'rgba(0,245,212,0.25)';
+                    ctx.lineWidth = 0.8 * dpr;
+                    ctx.beginPath(); ctx.moveTo(W * 0.20, dataY); ctx.lineTo(W * 0.35, dataY); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(W * 0.65, dataY); ctx.lineTo(W * 0.80, dataY); ctx.stroke();
+                    ctx.fillStyle = '#ffd54f';
+                    ctx.font = 'bold ' + (72 * dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('7', W / 2 - 48 * dpr, dataY);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (36 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('天', W / 2 + 14 * dpr, dataY);
+                    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+                    ctx.font = (25 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('心智蜕变之旅', W / 2, dataY + 48 * dpr);
+
+                    // ===== 11. 七日历程弧线排列 =====
+                    var stepY = dataY + 90 * dpr;
+                    var steps = ['觉察','接纳','行动','坚持','突破','成长','蜕变'];
+                    var stepGap = 110 * dpr;
+                    var stepTotalW = steps.length * stepGap;
+                    var stepStartX = (W - stepTotalW) / 2 + stepGap / 2;
+                    steps.forEach(function(s, i){
+                        var sx3 = stepStartX + i * stepGap;
+                        if (i < steps.length - 1) {
+                            ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                            ctx.lineWidth = 0.8 * dpr;
+                            ctx.beginPath();
+                            ctx.moveTo(sx3 + 20 * dpr, stepY);
+                            ctx.lineTo(sx3 + stepGap - 20 * dpr, stepY);
+                            ctx.stroke();
+                        }
+                        var isLast = (i === steps.length - 1);
+                        ctx.fillStyle = isLast ? '#00f5d4' : 'rgba(255,255,255,0.12)';
+                        ctx.beginPath(); ctx.arc(sx3, stepY, 16 * dpr, 0, Math.PI * 2); ctx.fill();
+                        if (isLast) {
+                            ctx.strokeStyle = 'rgba(0,245,212,0.45)';
+                            ctx.lineWidth = 1.8 * dpr;
+                            ctx.beginPath(); ctx.arc(sx3, stepY, 16 * dpr, 0, Math.PI * 2); ctx.stroke();
+                        }
+                        ctx.fillStyle = isLast ? '#000' : 'rgba(255,255,255,0.55)';
+                        ctx.font = 'bold ' + (14 * dpr) + 'px "Georgia",sans-serif';
+                        ctx.fillText(i + 1, sx3, stepY + 5 * dpr);
+                        ctx.fillStyle = isLast ? '#00f5d4' : 'rgba(255,255,255,0.42)';
+                        ctx.font = (19 * dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText(s, sx3, stepY + 42 * dpr);
+                    });
+
+                    // ===== 12. 金句区 =====
+                    var qY = stepY + 100 * dpr;
+                    ctx.fillStyle = 'rgba(0,245,212,0.38)';
+                    [W/2 - 18*dpr, W/2, W/2 + 18*dpr].forEach(function(dx){ctx.beginPath();ctx.arc(dx, qY - 12*dpr, 2.2*dpr, 0, Math.PI*2);ctx.fill();});
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold italic ' + (40 * dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('" 你就是自己的光 "', W / 2, qY + 18 * dpr);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+                    ctx.font = (30 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天仅仅是开始，光明从此而生', W / 2, qY + 68 * dpr);
+
+                    // ===== 13. 用户名 =====
+                    var nY = qY + 140 * dpr;
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(255,200,60,0.40)';
+                    ctx.shadowBlur = 22 * dpr;
+                    var nGrad = ctx.createLinearGradient(W * 0.25, 0, W * 0.75, 0);
+                    nGrad.addColorStop(0, '#FFD700');
+                    nGrad.addColorStop(0.4, '#FFF5C0');
+                    nGrad.addColorStop(0.6, '#FFA500');
+                    nGrad.addColorStop(1, '#FFD700');
+                    ctx.fillStyle = nGrad;
+                    ctx.font = 'bold ' + (70 * dpr) + 'px "Georgia", "PingFang SC", "Microsoft YaHei", serif';
+                    ctx.fillText(userName, W / 2, nY);
+                    ctx.restore();
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+                    ctx.font = (27 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('已完成7天心智蜕变之旅', W / 2, nY + 50 * dpr);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+                    ctx.font = (22 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天重塑人生  ·  逐光新生', W / 2, nY + 82 * dpr);
+
+                    // ===== 14. 底部英文 =====
+                    var botY = nY + 160 * dpr;
+                    ctx.fillStyle = 'rgba(255,255,255,0.38)';
+                    ctx.font = 'italic ' + (28 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('" You are the light the world needs. "', W / 2, botY);
+                    ctx.fillStyle = 'rgba(255,255,255,0.22)';
+                    ctx.font = (22 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('你就是这个世界需要的光', W / 2, botY + 40 * dpr);
+
+                    if (userMotto) {
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#00f5d4';
+                        ctx.font = 'bold ' + (26*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('「' + userMotto + '」', W/2, H - 280*dpr);
+                    }
+                    // 省/市
+                    if (userLoc) {
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+                        ctx.font = (38 * dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                        ctx.fillText('◆ ' + userLoc, W - pad, H - 78 * dpr);
+                    }
+
+                    // 品牌
+                    ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+                    ctx.lineWidth = 0.6 * dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, H - 60 * dpr); ctx.lineTo(W - pad, H - 60 * dpr); ctx.stroke();
+                    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+                    ctx.font = (26 * dpr) + 'px "Georgia", serif';
+                    ctx.fillText('© You 捻光', W / 2, H - 28 * dpr);
+                    ctx.fillStyle = 'rgba(0,245,212,0.28)';
+                    ctx.beginPath(); ctx.arc(W/2, H - 12*dpr, 2*dpr, 0, Math.PI*2); ctx.fill();
+
+                    finishOffscreen(off, 5);
+                };
+            }
+            else if (id === 6) {
+                // ===== 海报6：聚 · 棱镜折射 =====
+                img.src = 'poster6.webp';
+                img.onload = function () {
+                    const W = width, H = height;
+                    userMotto = getUserMotto(6);
+                    const pad = 80 * dpr;
+
+                    // 1. 全幅背景 cover
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = W / H;
+                    let sw, sh, sx2, sy2;
+                    if (imgRatio > canvasRatio) {
+                        sh = img.naturalHeight; sw = sh * canvasRatio;
+                        sx2 = (img.naturalWidth - sw) / 2; sy2 = 0;
+                    } else {
+                        sw = img.naturalWidth; sh = sw / canvasRatio;
+                        sx2 = 0; sy2 = (img.naturalHeight - sh) / 2;
+                    }
+                    ctx.drawImage(img, sx2, sy2, sw, sh, 0, 0, W, H);
+
+                    // 2. 整体暗色叠层
+                    var baseOv = ctx.createLinearGradient(0, 0, W, H);
+                    baseOv.addColorStop(0, 'rgba(5,5,20,0.72)');
+                    baseOv.addColorStop(0.5, 'rgba(5,5,20,0.45)');
+                    baseOv.addColorStop(1, 'rgba(5,5,20,0.72)');
+                    ctx.fillStyle = baseOv;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // 3. 对角线几何分割系统
+                    var diags = [
+                        { x1: 0, y1: H*0.18, x2: W*0.48, y2: 0 },
+                        { x1: W*0.52, y1: 0, x2: W, y2: H*0.22 },
+                        { x1: 0, y1: H*0.85, x2: W*0.45, y2: H },
+                        { x1: W*0.55, y1: H, x2: W, y2: H*0.82 },
+                    ];
+                    diags.forEach(function(d){
+                        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                        ctx.lineWidth = 0.6 * dpr;
+                        ctx.beginPath(); ctx.moveTo(d.x1, d.y1); ctx.lineTo(d.x2, d.y2); ctx.stroke();
+                    });
+
+                    // 4. 几何碎片区 — 三角/菱形透明色块
+                    var facets = [
+                        { x: W*0.08, y: H*0.22, w: W*0.38, h: H*0.13, a: 0.06, c: 'rgba(0,245,212,' },
+                        { x: W*0.52, y: H*0.10, w: W*0.44, h: H*0.16, a: 0.05, c: 'rgba(0,153,255,' },
+                        { x: W*0.05, y: H*0.72, w: W*0.42, h: H*0.16, a: 0.05, c: 'rgba(0,153,255,' },
+                        { x: W*0.50, y: H*0.68, w: W*0.46, h: H*0.18, a: 0.06, c: 'rgba(0,245,212,' },
+                    ];
+                    facets.forEach(function(f){
+                        ctx.fillStyle = f.c + f.a + ')';
+                        ctx.fillRect(f.x, f.y, f.w, f.h);
+                        ctx.strokeStyle = f.c + (f.a*2.5) + ')';
+                        ctx.lineWidth = 0.7 * dpr;
+                        ctx.strokeRect(f.x, f.y, f.w, f.h);
+                    });
+
+                    // 5. 浮动菱形装饰
+                    ctx.save();
+                    var diamonds = [
+                        { cx: W*0.22, cy: H*0.32, r: 18*dpr },
+                        { cx: W*0.78, cy: H*0.38, r: 14*dpr },
+                        { cx: W*0.30, cy: H*0.78, r: 16*dpr },
+                        { cx: W*0.72, cy: H*0.80, r: 20*dpr },
+                        { cx: W*0.15, cy: H*0.55, r: 10*dpr },
+                        { cx: W*0.85, cy: H*0.58, r: 12*dpr },
+                    ];
+                    diamonds.forEach(function(d){
+                        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+                        ctx.strokeStyle = 'rgba(0,245,212,0.22)';
+                        ctx.lineWidth = 1*dpr;
+                        ctx.beginPath();
+                        ctx.moveTo(d.cx, d.cy - d.r);
+                        ctx.lineTo(d.cx + d.r*0.7, d.cy);
+                        ctx.lineTo(d.cx, d.cy + d.r);
+                        ctx.lineTo(d.cx - d.r*0.7, d.cy);
+                        ctx.closePath();
+                        ctx.fill(); ctx.stroke();
+                    });
+                    ctx.restore();
+
+                    // 6. 顶部品牌
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (24*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('◆  YOU 捻光', pad, 88*dpr);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+                    ctx.lineWidth = 0.7*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, 101*dpr); ctx.lineTo(pad + 170*dpr, 101*dpr); ctx.stroke();
+
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#fff';
+                    ctx.font = (17*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('NO.06  /  7 DAYS REBIRTH', W - pad, 88*dpr);
+
+                    // 7. 大字 "聚" — 棱镜水晶质感
+                    ctx.textAlign = 'center';
+                    var fSize = 280*dpr;
+                    var cY = 450*dpr;
+                    // 深色投影
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+                    ctx.shadowBlur = 30*dpr;
+                    ctx.shadowOffsetX = 4*dpr;
+                    ctx.shadowOffsetY = 6*dpr;
+                    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('聚', W/2, cY);
+                    ctx.restore();
+                    // 水晶渐变主体
+                    var cryGrad = ctx.createLinearGradient(W/2 - 250*dpr, cY - fSize, W/2 + 250*dpr, cY);
+                    cryGrad.addColorStop(0, '#4ae0ff');
+                    cryGrad.addColorStop(0.15, '#c0f0ff');
+                    cryGrad.addColorStop(0.3, '#ffffff');
+                    cryGrad.addColorStop(0.5, '#80e8ff');
+                    cryGrad.addColorStop(0.7, '#ffffff');
+                    cryGrad.addColorStop(0.85, '#c0f0ff');
+                    cryGrad.addColorStop(1, '#4ae0ff');
+                    ctx.fillStyle = cryGrad;
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('聚', W/2, cY);
+                    // 顶部高光
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'screen';
+                    var hlGrad = ctx.createLinearGradient(0, cY - fSize*0.65, 0, cY);
+                    hlGrad.addColorStop(0, 'rgba(255,255,255,0.40)');
+                    hlGrad.addColorStop(1, 'rgba(255,255,255,0)');
+                    ctx.fillStyle = hlGrad;
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('聚', W/2, cY);
+                    ctx.restore();
+
+                    // 8. 副标题
+                    var subY = cY + 70*dpr;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (44*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('聚焦能量 · 重构新生', W/2, subY);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.48)';
+                    ctx.font = 'italic ' + (26*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('Refract · Refocus · Reborn', W/2, subY + 42*dpr);
+
+                    // 9. 关键词行
+                    var kwY = subY + 80*dpr;
+                    ctx.fillStyle = 'rgba(255,255,255,0.38)';
+                    ctx.font = (23*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('觉察觉知  |  聚焦当下  |  整合自我  |  凝聚力量  |  重构人生', W/2, kwY);
+
+                    // 10. 7天数据
+                    var dataY = kwY + 70*dpr;
+                    ctx.strokeStyle = 'rgba(0,245,212,0.22)';
+                    ctx.lineWidth = 0.7*dpr;
+                    ctx.beginPath(); ctx.moveTo(W*0.22, dataY); ctx.lineTo(W*0.38, dataY); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(W*0.62, dataY); ctx.lineTo(W*0.78, dataY); ctx.stroke();
+                    ctx.fillStyle = '#ffd54f';
+                    ctx.font = 'bold ' + (70*dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('7', W/2 - 44*dpr, dataY);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (34*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('天', W/2 + 16*dpr, dataY);
+                    ctx.fillStyle = 'rgba(255,255,255,0.52)';
+                    ctx.font = (24*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('心智蜕变之旅', W/2, dataY + 44 * dpr);
+
+                    // 11. 图片小窗 — 右侧几何裁剪
+                    var iw = 340*dpr, ih = 240*dpr;
+                    var ix = W - pad - iw, iy = dataY + 72*dpr;
+                    // 棱镜外框
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(0,245,212,0.30)';
+                    ctx.lineWidth = 1*dpr;
+                    ctx.beginPath();
+                    ctx.moveTo(ix - 6*dpr, iy - 6*dpr);
+                    ctx.lineTo(ix + iw + 6*dpr, iy - 6*dpr);
+                    ctx.lineTo(ix + iw + 6*dpr - 20*dpr, iy + ih + 6*dpr);
+                    ctx.lineTo(ix - 6*dpr + 20*dpr, iy + ih + 6*dpr);
+                    ctx.closePath();
+                    ctx.stroke();
+                    // 图片
+                    ctx.beginPath();
+                    ctx.moveTo(ix, iy);
+                    ctx.lineTo(ix + iw, iy);
+                    ctx.lineTo(ix + iw - 16*dpr, iy + ih);
+                    ctx.lineTo(ix + 16*dpr, iy + ih);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(img, ix - 30*dpr, iy - 20*dpr, iw + 60*dpr, ih + 40*dpr);
+                    ctx.restore();
+                    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+                    ctx.lineWidth = 0.6*dpr;
+                    ctx.strokeRect(ix, iy, iw, ih);
+
+                    // 12. 左侧文字区
+                    var lx = pad;
+                    var ltY = iy + 20*dpr;
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (32*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('分散的终将汇聚', lx, ltY);
+                    ctx.fillText('破碎的终将完整', lx, ltY + 45*dpr);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.52)';
+                    ctx.font = (22*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('每一片碎片都是', lx, ltY + 105*dpr);
+                    ctx.fillText('完整自我的组成部分', lx, ltY + 138*dpr);
+
+                    // 13. 七日节点 — 菱形串联
+                    var stepY2 = iy + ih + 80*dpr;
+                    var steps = ['觉察','接纳','行动','坚持','突破','成长','蜕变'];
+                    var sGap = 105*dpr;
+                    var sTotal = steps.length * sGap;
+                    var sStart = (W - sTotal) / 2 + sGap/2;
+                    steps.forEach(function(s, i){
+                        var sx4 = sStart + i * sGap;
+                        if (i < steps.length - 1) {
+                            ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                            ctx.lineWidth = 0.7*dpr;
+                            ctx.beginPath();
+                            ctx.moveTo(sx4 + 16*dpr, stepY2);
+                            ctx.lineTo(sx4 + sGap - 16*dpr, stepY2);
+                            ctx.stroke();
+                        }
+                        var isLast = (i === steps.length - 1);
+                        // 菱形节点
+                        var dr = 14*dpr;
+                        ctx.fillStyle = isLast ? '#00f5d4' : 'rgba(255,255,255,0.08)';
+                        ctx.strokeStyle = isLast ? 'rgba(0,245,212,0.6)' : 'rgba(255,255,255,0.18)';
+                        ctx.lineWidth = 1.2*dpr;
+                        ctx.beginPath();
+                        ctx.moveTo(sx4, stepY2 - dr);
+                        ctx.lineTo(sx4 + dr*0.55, stepY2);
+                        ctx.lineTo(sx4, stepY2 + dr);
+                        ctx.lineTo(sx4 - dr*0.55, stepY2);
+                        ctx.closePath();
+                        ctx.fill(); ctx.stroke();
+                        ctx.fillStyle = isLast ? '#000' : 'rgba(255,255,255,0.50)';
+                        ctx.font = 'bold ' + (12*dpr) + 'px "Georgia",sans-serif';
+                        ctx.fillText(i+1, sx4, stepY2 + 4*dpr);
+                        ctx.fillStyle = isLast ? '#00f5d4' : 'rgba(255,255,255,0.38)';
+                        ctx.font = (18*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText(s, sx4, stepY2 + 38*dpr);
+                    });
+
+                    // 14. 金句
+                    var qY2 = stepY2 + 100*dpr;
+                    ctx.fillStyle = 'rgba(0,245,212,0.35)';
+                    [W/2-16*dpr, W/2, W/2+16*dpr].forEach(function(dx){ctx.beginPath();ctx.arc(dx, qY2-10*dpr, 2*dpr, 0, Math.PI*2);ctx.fill();});
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold italic ' + (38*dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('" 聚是一团火，散是满天星 "', W/2, qY2 + 20*dpr);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.60)';
+                    ctx.font = (28*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天仅仅是开始，汇聚所有力量成为更好的自己', W/2, qY2 + 65*dpr);
+
+                    // 15. 用户名
+                    var nY2 = qY2 + 130*dpr;
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(100,220,255,0.40)';
+                    ctx.shadowBlur = 20*dpr;
+                    var nGrad2 = ctx.createLinearGradient(W*0.25, 0, W*0.75, 0);
+                    nGrad2.addColorStop(0, '#80e8ff');
+                    nGrad2.addColorStop(0.3, '#ffffff');
+                    nGrad2.addColorStop(0.5, '#c0f8ff');
+                    nGrad2.addColorStop(0.7, '#ffffff');
+                    nGrad2.addColorStop(1, '#80e8ff');
+                    ctx.fillStyle = nGrad2;
+                    ctx.font = 'bold ' + (66*dpr) + 'px "Georgia", "PingFang SC", "Microsoft YaHei", serif';
+                    ctx.fillText(userName, W/2, nY2);
+                    ctx.restore();
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.52)';
+                    ctx.font = (26*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('已完成7天心智蜕变之旅', W/2, nY2 + 48*dpr);
+                    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+                    ctx.font = (21*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天重塑人生  ·  聚力新生', W/2, nY2 + 80*dpr);
+
+                    // 16. 底部
+                    var botY2 = nY2 + 150*dpr;
+                    ctx.fillStyle = 'rgba(255,255,255,0.36)';
+                    ctx.font = 'italic ' + (26*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('" The whole is greater than the sum of its parts. "', W/2, botY2);
+                    ctx.fillStyle = 'rgba(255,255,255,0.20)';
+                    ctx.font = (21*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('整体大于部分之和', W/2, botY2 + 38*dpr);
+
+                    if (userMotto) {
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#00f5d4';
+                        ctx.font = 'bold ' + (26*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('「' + userMotto + '」', W/2, H - 280*dpr);
+                    }
+                    // 省/市
+                    if (userLoc) {
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+                        ctx.font = (36*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                        ctx.fillText('◆ ' + userLoc, W - pad, H - 78*dpr);
+                    }
+
+                    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+                    ctx.lineWidth = 0.6*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, H - 60*dpr); ctx.lineTo(W - pad, H - 60*dpr); ctx.stroke();
+                    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+                    ctx.font = (26*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('© You 捻光', W/2, H - 28*dpr);
+                    ctx.fillStyle = 'rgba(0,245,212,0.22)';
+                    ctx.beginPath(); ctx.arc(W/2, H - 12*dpr, 2*dpr, 0, Math.PI*2); ctx.fill();
+
+                    finishOffscreen(off, 6);
+                };
+            }
+            else if (id === 7) {
+                // ===== 海报7：悟 · 墨韵禅心 =====
+                img.src = 'poster7.webp';
+                img.onload = function () {
+                    const W = width, H = height;
+                    userMotto = getUserMotto(7);
+                    const pad = 90 * dpr;
+                    const leftZone = W * 0.48;
+
+                    // 1. 全幅背景 cover
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = W / H;
+                    let sw, sh, sx3, sy3;
+                    if (imgRatio > canvasRatio) {
+                        sh = img.naturalHeight; sw = sh * canvasRatio;
+                        sx3 = (img.naturalWidth - sw) / 2; sy3 = 0;
+                    } else {
+                        sw = img.naturalWidth; sh = sw / canvasRatio;
+                        sx3 = 0; sy3 = (img.naturalHeight - sh) / 2;
+                    }
+                    ctx.drawImage(img, sx3, sy3, sw, sh, 0, 0, W, H);
+
+                    // 2. 柔光宣纸叠层 — 暖米色基调
+                    var paperGrad = ctx.createLinearGradient(0, 0, W, 0);
+                    paperGrad.addColorStop(0, 'rgba(30,24,18,0.82)');
+                    paperGrad.addColorStop(0.35, 'rgba(30,24,18,0.55)');
+                    paperGrad.addColorStop(0.5, 'rgba(30,24,18,0.30)');
+                    paperGrad.addColorStop(0.65, 'rgba(30,24,18,0.18)');
+                    paperGrad.addColorStop(1, 'rgba(30,24,18,0.10)');
+                    ctx.fillStyle = paperGrad;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // 3. 纵向水墨渐变 — 模拟墨色从上到下
+                    var inkWash = ctx.createLinearGradient(0, 0, 0, H);
+                    inkWash.addColorStop(0, 'rgba(10,8,5,0.45)');
+                    inkWash.addColorStop(0.4, 'rgba(10,8,5,0.18)');
+                    inkWash.addColorStop(0.7, 'rgba(10,8,5,0.06)');
+                    inkWash.addColorStop(1, 'rgba(10,8,5,0.0)');
+                    ctx.fillStyle = inkWash;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // 4. 墨点纹理 — 散落墨渍
+                    ctx.save();
+                    var inkSpots = [
+                        {x:W*0.12, y:H*0.58, r:35*dpr, a:0.06},
+                        {x:W*0.08, y:H*0.72, r:22*dpr, a:0.08},
+                        {x:W*0.18, y:H*0.88, r:28*dpr, a:0.05},
+                        {x:W*0.35, y:H*0.50, r:15*dpr, a:0.07},
+                        {x:W*0.82, y:H*0.78, r:20*dpr, a:0.04},
+                        {x:W*0.75, y:H*0.25, r:12*dpr, a:0.06},
+                    ];
+                    inkSpots.forEach(function(s){
+                        var ig = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
+                        ig.addColorStop(0, 'rgba(20,15,10,' + (s.a*1.8) + ')');
+                        ig.addColorStop(0.5, 'rgba(20,15,10,' + s.a + ')');
+                        ig.addColorStop(1, 'rgba(20,15,10,0)');
+                        ctx.fillStyle = ig;
+                        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+                    });
+                    ctx.restore();
+
+                    // 5. 顶部品牌
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#e8dcc8';
+                    ctx.font = 'bold ' + (22*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('◆  YOU 捻光', pad, 85*dpr);
+                    ctx.strokeStyle = 'rgba(220,200,170,0.25)';
+                    ctx.lineWidth = 0.6*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, 97*dpr); ctx.lineTo(pad + 155*dpr, 97*dpr); ctx.stroke();
+
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = 'rgba(220,200,170,0.55)';
+                    ctx.font = (15*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('NO.07  /  7 DAYS REBIRTH', W - pad, 85*dpr);
+
+                    // 6. 大字 "悟" — 水墨书法质感
+                    var charY = 400*dpr;
+                    var fSize = 250*dpr;
+                    ctx.textAlign = 'center';
+
+                    // 墨色渐变主体
+                    var inkGrad = ctx.createLinearGradient(W*0.15, charY - fSize, W*0.55, charY + fSize*0.3);
+                    inkGrad.addColorStop(0, '#030201');
+                    inkGrad.addColorStop(0.25, '#0d0703');
+                    inkGrad.addColorStop(0.5, '#5a3d1a');
+                    inkGrad.addColorStop(0.75, '#0d0703');
+                    inkGrad.addColorStop(1, '#030201');
+                    ctx.fillStyle = inkGrad;
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", "STKaiti", "KaiTi", serif';
+                    ctx.fillText('悟', W*0.30, charY);
+
+                    // 枯笔飞白纹理 — 覆盖微细透明条纹
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'destination-out';
+                    for (var b = 0; b < 25; b++) {
+                        var bx = W*0.08 + Math.random() * W*0.45;
+                        var by = charY - fSize*0.6 + Math.random() * fSize*1.0;
+                        ctx.strokeStyle = 'rgba(0,0,0,' + (0.04 + Math.random()*0.08) + ')';
+                        ctx.lineWidth = (0.3 + Math.random()*1.2) * dpr;
+                        ctx.beginPath();
+                        ctx.moveTo(bx, by);
+                        ctx.lineTo(bx + (Math.random()-0.5)*30*dpr, by + (Math.random()-0.5)*20*dpr);
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+
+                    // 7. 红色印章
+                    var sealX = W*0.22, sealY = charY + fSize*0.35;
+                    ctx.fillStyle = 'rgba(180,40,40,0.75)';
+                    ctx.beginPath();
+                    ctx.arc(sealX, sealY, 22*dpr, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(180,40,40,0.85)';
+                    ctx.lineWidth = 1.5*dpr;
+                    ctx.beginPath();
+                    ctx.arc(sealX, sealY, 22*dpr, 0, Math.PI*2);
+                    ctx.stroke();
+                    ctx.fillStyle = 'rgba(240,220,200,0.85)';
+                    ctx.font = 'bold ' + (14*dpr) + 'px "PingFang SC", "SimSun", serif';
+                    ctx.fillText('悟', sealX, sealY + 5*dpr);
+
+                    // 8. 右侧竖排诗行
+                    ctx.textAlign = 'left';
+                    var rX = W * 0.58;
+                    var rStartY = 200*dpr;
+                    var lineH = 55*dpr;
+                    ctx.fillStyle = 'rgba(220,200,170,0.75)';
+                    ctx.font = (32*dpr) + 'px "PingFang SC", "SimSun", "STKaiti", "KaiTi", serif';
+                    var poem = ['静坐常思己过','向内观照本心','万物皆备于我','一念觉悟即明'];
+                    poem.forEach(function(l, i){
+                        ctx.fillText(l, rX, rStartY + i * lineH);
+                    });
+
+                    // 9. 英文诗意翻译
+                    ctx.fillStyle = 'rgba(200,180,155,0.50)';
+                    ctx.font = 'italic ' + (16*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('In stillness, I find myself', rX, rStartY + poem.length * lineH + 25*dpr);
+                    ctx.fillText('In silence, I become whole', rX, rStartY + poem.length * lineH + 50*dpr);
+
+                    // 10. 竹叶装饰
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(180,160,130,0.22)';
+                    ctx.lineWidth = 1.6*dpr;
+                    var leafBaseX = W*0.78, leafBaseY = H*0.52;
+                    for (var lf = 0; lf < 5; lf++) {
+                        var lAngle = -0.7 + lf * 0.35;
+                        var lLen = (30 + lf*12) * dpr;
+                        ctx.beginPath();
+                        ctx.moveTo(leafBaseX, leafBaseY);
+                        ctx.quadraticCurveTo(
+                            leafBaseX + Math.cos(lAngle)*lLen*0.6, leafBaseY + Math.sin(lAngle)*lLen*0.6 - 10*dpr,
+                            leafBaseX + Math.cos(lAngle)*lLen, leafBaseY + Math.sin(lAngle)*lLen
+                        );
+                        ctx.stroke();
+                        // 小叶
+                        ctx.beginPath();
+                        ctx.moveTo(leafBaseX + lf*6*dpr, leafBaseY + 8*dpr);
+                        ctx.quadraticCurveTo(
+                            leafBaseX + Math.cos(lAngle+0.3)*lLen*0.5, leafBaseY + Math.sin(lAngle+0.3)*lLen*0.5,
+                            leafBaseX + Math.cos(lAngle+0.3)*lLen*0.8, leafBaseY + Math.sin(lAngle+0.3)*lLen*0.8 + 5*dpr
+                        );
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+
+                    // 11. 远山剪影
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(30,25,18,0.18)';
+                    ctx.beginPath();
+                    ctx.moveTo(0, H);
+                    var mtnPoints = [
+                        {x:0, y:H*0.78}, {x:W*0.12, y:H*0.72}, {x:W*0.22, y:H*0.76},
+                        {x:W*0.30, y:H*0.68}, {x:W*0.38, y:H*0.73}, {x:W*0.45, y:H*0.70},
+                        {x:W*0.52, y:H*0.75}, {x:W*0.60, y:H*0.69}, {x:W*0.68, y:H*0.74},
+                        {x:W*0.75, y:H*0.67}, {x:W*0.85, y:H*0.72}, {x:W, y:H*0.70},
+                    ];
+                    mtnPoints.forEach(function(p){ ctx.lineTo(p.x, p.y); });
+                    ctx.lineTo(W, H);
+                    ctx.closePath();
+                    ctx.fill();
+                    // 第二层
+                    ctx.fillStyle = 'rgba(20,16,10,0.25)';
+                    ctx.beginPath();
+                    ctx.moveTo(0, H);
+                    [{x:0,y:H*0.84},{x:W*0.15,y:H*0.78},{x:W*0.28,y:H*0.82},{x:W*0.40,y:H*0.76},{x:W*0.55,y:H*0.80},{x:W*0.70,y:H*0.75},{x:W*0.85,y:H*0.79},{x:W,y:H*0.77}].forEach(function(p){
+                        ctx.lineTo(p.x, p.y);
+                    });
+                    ctx.lineTo(W, H);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+
+                    // 12. 7天数据
+                    var dataY2 = H*0.58;
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = 'rgba(220,200,170,0.70)';
+                    ctx.font = 'bold ' + (52*dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('7', W - pad - 48*dpr, dataY2);
+                    ctx.fillStyle = 'rgba(200,180,155,0.70)';
+                    ctx.font = (28*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('天', W - pad, dataY2);
+
+                    ctx.fillStyle = 'rgba(200,180,155,0.52)';
+                    ctx.font = (21*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('心智蜕变之旅', W - pad, dataY2 + 38*dpr);
+
+                    // 13. 关键词
+                    ctx.fillStyle = 'rgba(200,180,155,0.42)';
+                    ctx.font = (20*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('觉察  ·  内观  ·  觉悟  ·  通透', W - pad, dataY2 + 80*dpr);
+                    ctx.fillText('静心  ·  明澈  ·  自在', W - pad, dataY2 + 110*dpr);
+
+                    // 14. 金句
+                    var qY3 = dataY2 + 170*dpr;
+                    ctx.fillStyle = 'rgba(220,200,170,0.60)';
+                    ctx.font = 'bold italic ' + (34*dpr) + 'px "Georgia", "PingFang SC", "STKaiti", serif';
+                    ctx.fillText('" 万般烦恼皆因执，一念放下天地宽 "', W - pad, qY3);
+
+                    ctx.fillStyle = 'rgba(200,180,155,0.48)';
+                    ctx.font = (24*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天仅仅是开始，觉醒即是永恒', W - pad, qY3 + 50*dpr);
+
+                    // 15. 用户名
+                    var nY3 = qY3 + 120*dpr;
+                    var nGrad3 = ctx.createLinearGradient(W*0.5, 0, W, 0);
+                    nGrad3.addColorStop(0, '#d4c098');
+                    nGrad3.addColorStop(0.5, '#f0e8d0');
+                    nGrad3.addColorStop(1, '#b8a878');
+                    ctx.fillStyle = nGrad3;
+                    ctx.font = 'bold ' + (60*dpr) + 'px "Georgia", "PingFang SC", "Microsoft YaHei", serif';
+                    ctx.fillText(userName, W - pad, nY3);
+
+                    ctx.fillStyle = 'rgba(200,180,155,0.52)';
+                    ctx.font = (24*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('已完成7天心智蜕变之旅', W - pad, nY3 + 46*dpr);
+                    ctx.fillStyle = 'rgba(200,180,155,0.28)';
+                    ctx.font = (20*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天重塑人生  ·  觉悟新生', W - pad, nY3 + 78*dpr);
+
+                    // 16. 底部
+                    var botY3 = nY3 + 150*dpr;
+                    ctx.fillStyle = 'rgba(200,180,155,0.48)';
+                    ctx.font = 'italic ' + (25*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('" Knowing others is intelligence; ', W - pad, botY3);
+                    ctx.fillText('  knowing yourself is true wisdom. "', W - pad, botY3 + 35*dpr);
+                    ctx.fillStyle = 'rgba(200,180,155,0.30)';
+                    ctx.font = (20*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('知人者智，自知者明', W - pad, botY3 + 68*dpr);
+
+                    if (userMotto) {
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#00c8a0';
+                        ctx.font = 'bold ' + (26*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('「' + userMotto + '」', W/2, H - 280*dpr);
+                    }
+                    // 省/市
+                    if (userLoc) {
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+                        ctx.font = (34*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                        ctx.fillText('◆ ' + userLoc, W - pad, H - 78*dpr);
+                    }
+
+                    ctx.strokeStyle = 'rgba(200,180,155,0.12)';
+                    ctx.lineWidth = 0.6*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, H - 60*dpr); ctx.lineTo(W - pad, H - 60*dpr); ctx.stroke();
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+                    ctx.font = (25*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('© You 捻光', W/2, H - 28*dpr);
+                    ctx.fillStyle = 'rgba(180,40,40,0.28)';
+                    ctx.beginPath(); ctx.arc(W/2, H - 12*dpr, 2*dpr, 0, Math.PI*2); ctx.fill();
+
+                    finishOffscreen(off, 7);
+                };
+            }
+            else if (id === 8) {
+                // ===== 海报8：恒 · 星图永恒 =====
+                img.src = 'poster8.webp';
+                img.onload = function () {
+                    const W = width, H = height;
+                    userMotto = getUserMotto(8);
+                    const pad = 80 * dpr;
+                    const cx = W / 2, cy = 520 * dpr;
+
+                    // 1. 全幅背景 cover
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = W / H;
+                    let sw, sh, sx4, sy4;
+                    if (imgRatio > canvasRatio) {
+                        sh = img.naturalHeight; sw = sh * canvasRatio;
+                        sx4 = (img.naturalWidth - sw) / 2; sy4 = 0;
+                    } else {
+                        sw = img.naturalWidth; sh = sw / canvasRatio;
+                        sx4 = 0; sy4 = (img.naturalHeight - sh) / 2;
+                    }
+                    ctx.drawImage(img, sx4, sy4, sw, sh, 0, 0, W, H);
+
+                    // 2. 深空叠层 — 靛蓝基底
+                    var spaceOv = ctx.createRadialGradient(cx, cy, 0, cx, cy, W*0.8);
+                    spaceOv.addColorStop(0, 'rgba(8,6,28,0.05)');
+                    spaceOv.addColorStop(0.3, 'rgba(8,6,28,0.25)');
+                    spaceOv.addColorStop(0.6, 'rgba(8,6,28,0.55)');
+                    spaceOv.addColorStop(1, 'rgba(8,6,28,0.82)');
+                    ctx.fillStyle = spaceOv;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // 星云色块
+                    var nebula1 = ctx.createRadialGradient(W*0.22, H*0.30, 0, W*0.22, H*0.30, W*0.35);
+                    nebula1.addColorStop(0, 'rgba(80,60,160,0.12)');
+                    nebula1.addColorStop(1, 'rgba(80,60,160,0)');
+                    ctx.fillStyle = nebula1;
+                    ctx.fillRect(0, 0, W, H);
+
+                    var nebula2 = ctx.createRadialGradient(W*0.78, H*0.65, 0, W*0.78, H*0.65, W*0.32);
+                    nebula2.addColorStop(0, 'rgba(30,100,140,0.10)');
+                    nebula2.addColorStop(1, 'rgba(30,100,140,0)');
+                    ctx.fillStyle = nebula2;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // ===== 3. 星场 — 程序生成数百颗星星 =====
+                    var starColors = [
+                        'rgba(255,255,255,', 'rgba(200,220,255,', 'rgba(255,240,200,',
+                        'rgba(180,200,255,', 'rgba(255,255,220,', 'rgba(200,210,255,',
+                    ];
+                    for (var si = 0; si < 280; si++) {
+                        var stX = Math.random() * W;
+                        var stY = Math.random() * H;
+                        var stR = Math.random() * 2.8 * dpr;
+                        var stAlpha = 0.12 + Math.random() * 0.70;
+                        var stColor = starColors[Math.floor(Math.random() * starColors.length)];
+                        ctx.fillStyle = stColor + stAlpha + ')';
+                        ctx.beginPath(); ctx.arc(stX, stY, stR, 0, Math.PI*2); ctx.fill();
+                        // 亮星十字光芒
+                        if (stR > 1.8*dpr && Math.random() > 0.65) {
+                            ctx.strokeStyle = stColor + (stAlpha*0.4) + ')';
+                            ctx.lineWidth = 0.3*dpr;
+                            var crossLen = stR * 3;
+                            ctx.beginPath();
+                            ctx.moveTo(stX - crossLen, stY); ctx.lineTo(stX + crossLen, stY);
+                            ctx.moveTo(stX, stY - crossLen); ctx.lineTo(stX, stY + crossLen);
+                            ctx.stroke();
+                        }
+                    }
+
+                    // ===== 4. 轨道环系统 =====
+                    var orbits = [
+                        { r: 155*dpr, angle: 0.15, a: 0.12 },
+                        { r: 210*dpr, angle: -0.3, a: 0.10 },
+                        { r: 275*dpr, angle: 0.5, a: 0.08 },
+                    ];
+                    orbits.forEach(function(o){
+                        ctx.save();
+                        ctx.translate(cx, cy);
+                        ctx.rotate(o.angle);
+                        ctx.strokeStyle = 'rgba(255,255,255,' + o.a + ')';
+                        ctx.lineWidth = 0.5*dpr;
+                        ctx.setLineDash([2*dpr, 18*dpr]);
+                        ctx.beginPath(); ctx.ellipse(0, 0, o.r, o.r*0.55, 0, 0, Math.PI*2);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                        // 轨道上的光点
+                        for (var p = 0; p < 5; p++) {
+                            var pAngle = (p / 5) * Math.PI * 2 + o.angle;
+                            var px2 = Math.cos(pAngle) * o.r;
+                            var py2 = Math.sin(pAngle) * o.r * 0.55;
+                            ctx.fillStyle = 'rgba(0,245,212,0.55)';
+                            ctx.beginPath(); ctx.arc(px2, py2, 3*dpr, 0, Math.PI*2); ctx.fill();
+                            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+                            ctx.beginPath(); ctx.arc(px2, py2, 1.5*dpr, 0, Math.PI*2); ctx.fill();
+                        }
+                        ctx.restore();
+                    });
+
+                    // ===== 5. 星座连线 — 连接关键概念 =====
+                    var constellationNodes = [
+                        { label: '觉察', x: cx-200*dpr, y: cy-180*dpr },
+                        { label: '接纳', x: cx-80*dpr, y: cy-220*dpr },
+                        { label: '行动', x: cx+110*dpr, y: cy-140*dpr },
+                        { label: '坚持', x: cx+200*dpr, y: cy-20*dpr },
+                        { label: '突破', x: cx+130*dpr, y: cy+150*dpr },
+                        { label: '成长', x: cx-40*dpr, y: cy+200*dpr },
+                        { label: '蜕变', x: cx-180*dpr, y: cy+100*dpr },
+                    ];
+                    // 连线
+                    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+                    ctx.lineWidth = 0.6*dpr;
+                    for (var ci = 0; ci < constellationNodes.length; ci++) {
+                        for (var cj = ci+1; cj < constellationNodes.length; cj++) {
+                            var dist2 = (constellationNodes[ci].x - constellationNodes[cj].x)**2 + (constellationNodes[ci].y - constellationNodes[cj].y)**2;
+                            if (dist2 < (350*dpr)**2) {
+                                ctx.beginPath();
+                                ctx.moveTo(constellationNodes[ci].x, constellationNodes[ci].y);
+                                ctx.lineTo(constellationNodes[cj].x, constellationNodes[cj].y);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    // 节点
+                    constellationNodes.forEach(function(n, ni){
+                        var isLast2 = (ni === constellationNodes.length - 1);
+                        ctx.fillStyle = isLast2 ? '#00f5d4' : 'rgba(255,255,255,0.18)';
+                        ctx.beginPath(); ctx.arc(n.x, n.y, isLast2 ? 8*dpr : 5*dpr, 0, Math.PI*2); ctx.fill();
+                        if (isLast2) {
+                            ctx.strokeStyle = 'rgba(0,245,212,0.5)';
+                            ctx.lineWidth = 1.5*dpr;
+                            ctx.beginPath(); ctx.arc(n.x, n.y, 12*dpr, 0, Math.PI*2); ctx.stroke();
+                        }
+                        ctx.fillStyle = isLast2 ? '#000' : 'rgba(255,255,255,0.55)';
+                        ctx.font = (15*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText(n.label, n.x, n.y + (isLast2 ? 30 : 22)*dpr);
+                    });
+
+                    // ===== 6. 顶部品牌 =====
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (23*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('◆  YOU 捻光', pad, 85*dpr);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+                    ctx.lineWidth = 0.6*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, 97*dpr); ctx.lineTo(pad + 165*dpr, 97*dpr); ctx.stroke();
+
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#fff';
+                    ctx.font = (16*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('NO.08  /  7 DAYS REBIRTH', W - pad, 85*dpr);
+
+                    // ===== 7. 大字 "恒" — 星芒构成 =====
+                    var fSize = 200*dpr;
+                    ctx.textAlign = 'center';
+                    // 深空投影
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0,0,0,0.30)';
+                    ctx.shadowBlur = 18*dpr;
+                    ctx.shadowOffsetY = 4*dpr;
+                    ctx.fillStyle = 'rgba(10,8,30,0.22)';
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('恒', cx, cy + fSize*0.28);
+                    ctx.restore();
+                    // 星光渐变主体
+                    var starGrad = ctx.createLinearGradient(cx - 180*dpr, cy - fSize, cx + 180*dpr, cy);
+                    starGrad.addColorStop(0, '#8090e0');
+                    starGrad.addColorStop(0.15, '#d0d8ff');
+                    starGrad.addColorStop(0.3, '#ffffff');
+                    starGrad.addColorStop(0.5, '#a0b8ff');
+                    starGrad.addColorStop(0.7, '#ffffff');
+                    starGrad.addColorStop(0.85, '#d0d8ff');
+                    starGrad.addColorStop(1, '#8090e0');
+                    ctx.fillStyle = starGrad;
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('恒', cx, cy + fSize*0.28);
+                    // 外发光
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(100,140,255,0.45)';
+                    ctx.shadowBlur = 70*dpr;
+                    ctx.fillStyle = 'rgba(0,0,0,0)';
+                    ctx.font = 'bold ' + fSize + 'px "PingFang SC", "Microsoft YaHei", "SimSun", serif';
+                    ctx.fillText('恒', cx, cy + fSize*0.28);
+                    ctx.restore();
+
+                    // ===== 8. 彗星轨迹 =====
+                    ctx.save();
+                    for (var cm = 0; cm < 3; cm++) {
+                        var cmStartX = W*0.15 + cm*W*0.3;
+                        var cmStartY = H*0.10 + cm*H*0.08;
+                        var cmAngle = 0.55 + cm*0.15;
+                        var cmLen = (80 + cm*25)*dpr;
+                        var trailGrad = ctx.createLinearGradient(
+                            cmStartX, cmStartY,
+                            cmStartX + Math.cos(cmAngle)*cmLen, cmStartY + Math.sin(cmAngle)*cmLen
+                        );
+                        trailGrad.addColorStop(0, 'rgba(255,255,255,0.30)');
+                        trailGrad.addColorStop(1, 'rgba(255,255,255,0)');
+                        ctx.strokeStyle = trailGrad;
+                        ctx.lineWidth = (2.5 - cm*0.6)*dpr;
+                        ctx.beginPath();
+                        ctx.moveTo(cmStartX, cmStartY);
+                        ctx.lineTo(cmStartX + Math.cos(cmAngle)*cmLen, cmStartY + Math.sin(cmAngle)*cmLen);
+                        ctx.stroke();
+                        // 彗星头
+                        ctx.fillStyle = 'rgba(255,255,255,0.65)';
+                        ctx.beginPath(); ctx.arc(cmStartX, cmStartY, (3.5-cm*0.7)*dpr, 0, Math.PI*2); ctx.fill();
+                    }
+                    ctx.restore();
+
+                    // ===== 9. 角度刻度 — 天文仪风格 =====
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+                    ctx.lineWidth = 0.4*dpr;
+                    for (var deg = 0; deg < 360; deg += 6) {
+                        var rad = (deg * Math.PI) / 180;
+                        var innerR = 300*dpr, outerR = deg % 30 === 0 ? 320*dpr : 308*dpr;
+                        ctx.beginPath();
+                        ctx.moveTo(Math.cos(rad)*innerR, Math.sin(rad)*innerR);
+                        ctx.lineTo(Math.cos(rad)*outerR, Math.sin(rad)*outerR);
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+
+                    // ===== 10. 副标题 =====
+                    var subY3 = cy + 260*dpr;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (42*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('恒久闪耀 · 自成宇宙', cx, subY3);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                    ctx.font = 'italic ' + (25*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('Eternal radiance, infinite becoming', cx, subY3 + 40*dpr);
+
+                    // ===== 11. 7天数据 =====
+                    var dataY3 = subY3 + 80*dpr;
+                    ctx.strokeStyle = 'rgba(0,245,212,0.20)';
+                    ctx.lineWidth = 0.7*dpr;
+                    ctx.beginPath(); ctx.moveTo(W*0.22, dataY3); ctx.lineTo(W*0.38, dataY3); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(W*0.62, dataY3); ctx.lineTo(W*0.78, dataY3); ctx.stroke();
+                    ctx.fillStyle = '#ffd54f';
+                    ctx.font = 'bold ' + (68*dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('7', cx - 42*dpr, dataY3);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + (32*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('天', cx + 18*dpr, dataY3);
+                    ctx.fillStyle = 'rgba(255,255,255,0.50)';
+                    ctx.font = (23*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('心智蜕变之旅', cx, dataY3 + 42 * dpr);
+
+                    // ===== 12. 关键词 =====
+                    var kwY2 = dataY3 + 82*dpr;
+                    ctx.fillStyle = 'rgba(255,255,255,0.32)';
+                    ctx.font = (21*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('像恒星一样燃烧  ·  像宇宙一样辽阔  ·  像时间一样永恒', cx, kwY2);
+
+                    // ===== 13. 金句 =====
+                    var qY4 = kwY2 + 65*dpr;
+                    ctx.fillStyle = 'rgba(0,245,212,0.32)';
+                    [cx-16*dpr, cx, cx+16*dpr].forEach(function(dx){ctx.beginPath();ctx.arc(dx, qY4-8*dpr, 2*dpr, 0, Math.PI*2);ctx.fill();});
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold italic ' + (36*dpr) + 'px "Georgia", "PingFang SC", serif';
+                    ctx.fillText('" 你的存在，就是永恒的意义 "', cx, qY4 + 22*dpr);
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.58)';
+                    ctx.font = (27*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天仅仅是开始，蜕变的光辉将永恒闪耀', cx, qY4 + 65*dpr);
+
+                    // ===== 14. 用户名 =====
+                    var nY4 = qY4 + 130*dpr;
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(180,200,255,0.40)';
+                    ctx.shadowBlur = 22*dpr;
+                    var nGrad4 = ctx.createLinearGradient(W*0.25, 0, W*0.75, 0);
+                    nGrad4.addColorStop(0, '#c0d0ff');
+                    nGrad4.addColorStop(0.3, '#ffffff');
+                    nGrad4.addColorStop(0.5, '#e0e8ff');
+                    nGrad4.addColorStop(0.7, '#ffffff');
+                    nGrad4.addColorStop(1, '#c0d0ff');
+                    ctx.fillStyle = nGrad4;
+                    ctx.font = 'bold ' + (64*dpr) + 'px "Georgia", "PingFang SC", "Microsoft YaHei", serif';
+                    ctx.fillText(userName, cx, nY4);
+                    ctx.restore();
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.50)';
+                    ctx.font = (25*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('已完成7天心智蜕变之旅', cx, nY4 + 46*dpr);
+                    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+                    ctx.font = (20*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('7天重塑人生  ·  永恒新生', cx, nY4 + 78*dpr);
+
+                    // ===== 15. 底部 =====
+                    var botY4 = nY4 + 145*dpr;
+                    ctx.fillStyle = 'rgba(255,255,255,0.36)';
+                    ctx.font = 'italic ' + (27*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('" We are made of star-stuff, ', cx, botY4);
+                    ctx.fillText('  and to the stars we return. "', cx, botY4 + 38*dpr);
+                    ctx.fillStyle = 'rgba(255,255,255,0.20)';
+                    ctx.font = (21*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    ctx.fillText('我们由星辰所铸，终将归于星辰', cx, botY4 + 70*dpr);
+
+                    if (userMotto) {
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#00f5d4';
+                        ctx.font = 'bold ' + (26*dpr) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('「' + userMotto + '」', W/2, H - 280*dpr);
+                    }
+                    // 省/市
+                    if (userLoc) {
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+                        ctx.font = (34*dpr) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                        ctx.fillText('◆ ' + userLoc, W - pad, H - 78*dpr);
+                    }
+
+                    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+                    ctx.lineWidth = 0.6*dpr;
+                    ctx.beginPath(); ctx.moveTo(pad, H - 60*dpr); ctx.lineTo(W - pad, H - 60*dpr); ctx.stroke();
+                    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+                    ctx.font = (25*dpr) + 'px "Georgia", serif';
+                    ctx.fillText('© You 捻光', cx, H - 28*dpr);
+                    ctx.fillStyle = 'rgba(0,245,212,0.22)';
+                    ctx.beginPath(); ctx.arc(cx, H - 12*dpr, 2*dpr, 0, Math.PI*2); ctx.fill();
+
+                    finishOffscreen(off, 8);
                 };
             }
             img.onerror = function(){

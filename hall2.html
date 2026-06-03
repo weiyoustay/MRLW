@@ -242,8 +242,31 @@
             color: var(--text); position:relative; z-index:1;
             letter-spacing:0.3px; padding-top:3px;
         }
+        .card.selected .img-area {
+            outline: 3px solid var(--accent);
+            outline-offset: 3px;
+            box-shadow: 0 0 22px var(--accent), 0 0 44px rgba(183,247,0,0.25);
+            transform: scale(1.05);
+        }
+        .card.selected .label { color: var(--accent); font-weight: 800; }
         .card:hover { transform: translateY(-4px); }
         .card:active { transform:scale(0.95); transition:all 0.06s ease; }
+
+        /* ============ 点亮按钮 ============ */
+        .light-btn-wrap { text-align:center; width:100%; max-width:240px; margin-top:2px; }
+        .light-btn {
+            width:100%; padding:14px 20px; border-radius:16px;
+            background: linear-gradient(135deg, var(--btn1-from), var(--btn1-to));
+            border:none; color:#fff; font-size:1rem; font-weight:700;
+            letter-spacing:2px; cursor:pointer;
+            box-shadow: 0 4px 18px var(--btn1-glow);
+            transition: all 0.35s var(--spring);
+            opacity:0.45; pointer-events:none;
+        }
+        .light-btn.active { opacity:1; pointer-events:auto; }
+        .light-btn.active:hover { transform:translateY(-3px); box-shadow:0 6px 26px var(--btn1-glow); }
+        .light-btn.active:active { transform:scale(0.95); }
+        .light-btn .hint { font-size:0.7rem; font-weight:400; letter-spacing:1px; opacity:0.7; display:block; margin-top:2px; }
 
         /* 每张卡片背景图 */
         .img-1 { background-image: url('未来.webp'); }
@@ -370,34 +393,41 @@
         <p class="desc">每种焦虑背后，都藏着一个等待被你看见的自己。<br>选一个困扰，一起解开它。</p>
     </div>
 
-    <div class="grid">
-        <a class="card rise" href="jiaolv1.html" style="animation-delay:.02s">
+    <div class="grid" id="cardGrid">
+        <div class="card rise" data-href="jiaolv1.html" data-label="未来" style="animation-delay:.02s">
             <div class="img-area img-1"></div><span class="label">未来</span>
-        </a>
-        <a class="card rise" href="jiaolv2.html" style="animation-delay:.05s">
+        </div>
+        <div class="card rise" data-href="jiaolv2.html" data-label="前途未卜" style="animation-delay:.05s">
             <div class="img-area img-2"></div><span class="label">前途未卜</span>
-        </a>
-        <a class="card rise" href="jiaolv3.html" style="animation-delay:.08s">
+        </div>
+        <div class="card rise" data-href="jiaolv3.html" data-label="学业" style="animation-delay:.08s">
             <div class="img-area img-3"></div><span class="label">学业</span>
-        </a>
-        <a class="card rise" href="jiaolv4.html" style="animation-delay:.11s">
+        </div>
+        <div class="card rise" data-href="jiaolv4.html" data-label="职场" style="animation-delay:.11s">
             <div class="img-area img-4"></div><span class="label">职场</span>
-        </a>
-        <a class="card rise" href="jiaolv5.html" style="animation-delay:.14s">
+        </div>
+        <div class="card rise" data-href="jiaolv5.html" data-label="同辈" style="animation-delay:.14s">
             <div class="img-area img-5"></div><span class="label">同辈</span>
-        </a>
-        <a class="card rise" href="jiaolv6.html" style="animation-delay:.17s">
+        </div>
+        <div class="card rise" data-href="jiaolv6.html" data-label="社交" style="animation-delay:.17s">
             <div class="img-area img-6"></div><span class="label">社交</span>
-        </a>
-        <a class="card rise" href="jiaolv7.html" style="animation-delay:.20s">
+        </div>
+        <div class="card rise" data-href="jiaolv7.html" data-label="自我价值" style="animation-delay:.20s">
             <div class="img-area img-7"></div><span class="label">自我价值</span>
-        </a>
-        <a class="card rise" href="jiaolv8.html" style="animation-delay:.23s">
+        </div>
+        <div class="card rise" data-href="jiaolv8.html" data-label="容貌身材" style="animation-delay:.23s">
             <div class="img-area img-8"></div><span class="label">容貌身材</span>
-        </a>
-        <a class="card rise" href="jiaolv9.html" style="animation-delay:.26s">
+        </div>
+        <div class="card rise" data-href="jiaolv9.html" data-label="情绪内耗" style="animation-delay:.26s">
             <div class="img-area img-9"></div><span class="label">情绪内耗</span>
-        </a>
+        </div>
+    </div>
+
+    <div class="light-btn-wrap">
+        <button class="light-btn" id="lightBtn" disabled>
+            点亮它
+            <span class="hint">先选一个困扰，再点这里</span>
+        </button>
     </div>
 
     <div class="b-section">
@@ -421,6 +451,29 @@
 </div>
 
 <script>
+// ===== 卡片选择 + 点亮按钮 =====
+var selectedCard = null;
+var cards = document.querySelectorAll('#cardGrid .card');
+var lightBtn = document.getElementById('lightBtn');
+
+cards.forEach(function(card) {
+    card.addEventListener('click', function() {
+        cards.forEach(function(c) { c.classList.remove('selected'); });
+        card.classList.add('selected');
+        selectedCard = card;
+        lightBtn.classList.add('active');
+        lightBtn.disabled = false;
+        lightBtn.querySelector('.hint').innerText = '面对「' + card.dataset.label + '」，光就会进来';
+    });
+});
+
+lightBtn.addEventListener('click', function() {
+    if (selectedCard) {
+        var href = selectedCard.dataset.href;
+        if (href) location.href = href;
+    }
+});
+
 function setTheme(t) {
     document.body.className = 'theme-' + t;
     document.getElementById('dotGreen').classList.toggle('active', t==='green');
