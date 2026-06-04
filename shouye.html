@@ -112,12 +112,12 @@ body::before {
   font-size:clamp(2.2rem,6vw,4rem);
   font-weight:700;
   letter-spacing:-1px;
-  background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud), var(--vibrant-blue));
-  background-size: 300% auto;
+  background: linear-gradient(90deg, #D9FF70, #29E63E, #00f5d4, #29E63E, #D9FF70);
+  background-size: 400% auto;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
-  animation: shimmer 10s linear infinite;
+  animation: shimmer 6s linear infinite;
 }
 @keyframes shimmer {
   to { background-position: -300% center; }
@@ -175,7 +175,7 @@ body::before {
 }
 
 .enter-btn {
-  background:linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud), var(--vibrant-blue));
+  background:linear-gradient(90deg, #D9FF70, #29E63E, #D9FF70);
   background-size: 200% auto;
   color:#fff;
   border:none;
@@ -226,7 +226,7 @@ body::before {
   bottom:100px;
   width:80%;
   height:1px;
-  background:linear-gradient(90deg,transparent,var(--spring-bud),transparent);
+  background:linear-gradient(90deg,transparent,#29E63E,transparent);
   opacity:0.7;pointer-events:none;
 }
 .footer-brand {
@@ -241,7 +241,7 @@ body::before {
   z-index: 2;
 }
 .footer-brand .brand-name {
-  background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+  background: linear-gradient(90deg, #D9FF70, #29E63E);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   margin-right: 10px;

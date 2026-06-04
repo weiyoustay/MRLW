@@ -141,9 +141,18 @@
             width: 100%;
             animation: fadeIn 1.2s ease forwards;
         }
+        .mantra-section {
+            width: 100%;
+            min-height: 75vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 24px;
+        }
         .hero-divider {
             width: 100%;
-            padding: 20px 0 10px;
+            max-width: 520px;
             text-align: center;
         }
         .mantra-line {
@@ -197,9 +206,6 @@
             filter: brightness(0.45) blur(2px);
         }
         .explore-btn {
-            position: absolute; z-index: 3;
-            left: 50%; top: 78%;
-            transform: translate(-50%, -50%);
             padding: 7px 18px; border-radius: 20px;
             background: rgba(255,255,255,0.92);
             color: #1a1a1a; font-size: 0.7rem; font-weight: 600;
@@ -210,13 +216,69 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             white-space: nowrap;
         }
-        .explore-btn:active { transform: translate(-50%, -50%) scale(0.95); }
+        .explore-btn:active { transform: scale(0.95); }
         .explore-btn.locked {
             background: rgba(255,255,255,0.2);
             color: rgba(255,255,255,0.25);
             box-shadow: none;
             pointer-events: none;
         }
+        .explore-row {
+            position: absolute; z-index: 3;
+            left: 50%; top: 78%;
+            transform: translate(-50%, -50%);
+            display: flex; gap: 8px; align-items: center;
+        }
+        .inspiring-btn {
+            padding: 7px 14px; border-radius: 20px;
+            background: linear-gradient(90deg, #D9FF70, #29E63E);
+            border: none; color: #1a3a00; font-size: 0.65rem; font-weight: 700;
+            letter-spacing: 1px; cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            white-space: nowrap;
+        }
+        .inspiring-btn:active { transform: scale(0.95); }
+
+        /* ===== 弹窗卡片 ===== */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 999;
+            background: rgba(0,0,0,0.7);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-card {
+            background: linear-gradient(135deg, #D9FF70, #29E63E);
+            border-radius: 22px;
+            padding: 32px 26px 24px;
+            max-width: 380px; width: 88%;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+            transform: translateY(20px);
+            transition: transform 0.35s ease;
+        }
+        .modal-overlay.show .modal-card { transform: translateY(0); }
+        .modal-quote {
+            font-family: 'Georgia','Times New Roman',serif;
+            font-size: 1.1rem; font-style: italic;
+            color: #1a3a00; line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .modal-date {
+            font-family: 'Georgia','Times New Roman',serif;
+            font-size: 0.8rem; color: rgba(26,58,0,0.6);
+            letter-spacing: 0.5px;
+        }
+        .modal-close {
+            position: absolute; top: 12px; right: 18px;
+            background: none; border: none;
+            font-size: 1.4rem; color: rgba(26,58,0,0.5);
+            cursor: pointer; padding: 4px 8px;
+        }
+        .modal-close:hover { color: rgba(26,58,0,0.8); }
+
         .poster-tagline {
             position: absolute; z-index: 2;
             left: 50%; top: 88%;
@@ -274,25 +336,25 @@
             display: inline-block;
             padding: 8px 20px;
             border-radius: 50px;
-            background: var(--glass);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: linear-gradient(90deg, rgba(217,255,112,0.12), rgba(41,230,62,0.1));
+            border: 1px solid rgba(41,230,62,0.2);
             font-size: 0.85rem;
             letter-spacing: 3px;
             text-transform: uppercase;
-            color: var(--spring-bud);
+            color: #29E63E;
             margin-bottom: 16px;
             backdrop-filter: blur(10px);
             animation: badgePulse 3s ease-in-out infinite;
             transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
             cursor: default;
         }
+        @keyframes badgePulse {
+            0%,100% { box-shadow: 0 0 10px rgba(41,230,62,0.2); }
+            50% { box-shadow: 0 0 20px rgba(41,230,62,0.4); }
+        }
         .badge:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(183,247,0,0.4);
-        }
-        @keyframes badgePulse {
-            0%,100% { transform: scale(1); box-shadow: 0 0 10px rgba(183,247,0,0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(183,247,0,0.5); }
+            box-shadow: 0 0 20px rgba(41,230,62,0.4);
         }
         .welcome-text {
             font-size: 1.1rem;
@@ -347,6 +409,22 @@
             color: #ffffff;
             opacity: 0.9;
         }
+        .hero-en-line {
+            font-family: 'Georgia','Times New Roman',serif;
+            font-style: italic; font-size: 0.78rem;
+            color: rgba(0,245,212,0.55); line-height: 1.7;
+            margin: 6px 0 12px; letter-spacing: 0.3px;
+        }
+        .hero-cn-line {
+            font-size: 0.85rem; color: rgba(183,247,0,0.55);
+            margin-top: 4px; letter-spacing: 1px;
+        }
+        .progress-cheer {
+            font-family: 'Georgia','Times New Roman',serif;
+            font-style: italic; font-size: 0.7rem;
+            color: rgba(0,245,212,0.4);
+            margin-top: 10px; letter-spacing: 0.4px;
+        }
         .progress-box {
             width: 90%;
             max-width: 400px;
@@ -371,8 +449,7 @@
         }
         .progress-fill {
             height: 100%;
-            /* 进度条恢复原深蓝色 */
-            background: linear-gradient(90deg, var(--vibrant-blue), var(--spring-bud));
+            background: linear-gradient(90deg, #D9FF70, #29E63E);
             border-radius: 99px;
             transition: width 0.8s ease;
             position: relative;
@@ -536,63 +613,73 @@
 
 .poster-card {
     display: none;
-    background: url('图8.webp');
-    background-size: cover;
-    background-position: center;
-    background-blend-mode: overlay;
-    border-radius: var(--border-radius);
-    padding: 24px 28px;
-    border: 1px solid rgba(183, 247, 0, 0.2);
-    backdrop-filter: blur(12px);
-    transition: var(--transition);
+    width: 100%; max-width: 380px;
+    border-radius: 20px;
+    padding: 0;
     cursor: pointer;
     text-decoration: none;
-    color: inherit;
     position: relative;
-    text-align: center;
-    margin-top: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
-    will-change: background-image;
-    transform: translateZ(0);
-    filter: none;
+    margin-top: 24px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #D9FF70, #29E63E);
+    border: none;
+    transition: all 0.35s ease;
+    box-shadow: 0 4px 20px rgba(41,230,62,0.2);
 }
-.poster-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(4, 54, 254, 0.15), rgba(183, 247, 0, 0.1), transparent 70%);
-    border-radius: var(--border-radius);
+.poster-card-inner {
+    position: relative; z-index: 1;
+    padding: 22px 24px;
+    display: flex; align-items: center; gap: 14px;
+}
+.poster-card-glow {
+    position: absolute; top: -20px; right: -20px;
+    width: 100px; height: 100px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
     pointer-events: none;
+}
+.poster-card-stars {
+    position: absolute; top: 10px; right: 18px;
+    color: rgba(26,58,0,0.3); font-size: 0.65rem; letter-spacing: 3px;
+    pointer-events: none; z-index: 1;
 }
 .poster-card.show {
     display: block;
     animation: fadeUp 0.8s ease forwards;
 }
 .poster-card:hover {
-    transform: translateY(-4px);
-    background: url('图8.webp');
-    background-size: cover;
-    background-position: center;
-    background-blend-mode: overlay;
-    border-color: var(--spring-bud);
-    box-shadow: 0 8px 25px rgba(183, 247, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(41,230,62,0.35);
 }
+.poster-card:active { transform: scale(0.97); }
 .poster-title {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--spring-bud);
-    margin-bottom: 4px;
-    position: relative;
-    z-index: 1;
+    font-size: 1rem; font-weight: 700;
+    color: #1a3a00; margin-bottom: 2px;
+    letter-spacing: 0.5px;
 }
 .poster-desc {
-    font-size: 0.85rem;
-    color: #ffffff;
-    position: relative;
-    z-index: 1;
+    font-size: 0.72rem; color: rgba(26,58,0,0.65);
+    line-height: 1.4;
+}
+.poster-arrow {
+    flex-shrink: 0; margin-left: auto;
+    color: rgba(26,58,0,0.5); font-size: 1.2rem; font-weight: 600;
+}
+.poster-subtitle {
+    font-family: 'Georgia',serif; font-size: 0.56rem;
+    font-style: italic; letter-spacing: 1.5px;
+    color: rgba(26,58,0,0.4); margin-bottom: 6px;
+}
+.poster-badge {
+    position: absolute; top: 9px; left: 20px; z-index: 1;
+    font-family: 'Georgia',serif; font-size: 0.48rem; font-weight: 700;
+    letter-spacing: 2px; color: rgba(26,58,0,0.32);
+    border: 1px solid rgba(26,58,0,0.18);
+    padding: 3px 10px; border-radius: 20px;
+}
+.poster-line {
+    position: absolute; bottom: 0; left: 20px; right: 20px;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(26,58,0,0.15), transparent);
 }
 
         .brand-footer {
@@ -655,7 +742,7 @@
         @media (max-width:600px) {
             .wrapper { padding: 0 16px; }
             .hero-section { padding: 50px 0 20px; }
-            .hero-divider { padding: 12px 0 8px; }
+            .mantra-section { min-height: 65vh; padding: 20px 16px; }
             .mantra-line { font-size: 0.7rem; line-height: 2; }
             .poster-stage { max-width: 340px; aspect-ratio: 2/3; border-radius: 16px; }
             .poster-body { padding: 20px 18px 16px; }
@@ -669,7 +756,7 @@
             .hero-section {
                 padding: 20px 24px;
             }
-            .hero-divider { padding: 6px 0 4px; }
+            .mantra-section { min-height: 60vh; padding: 12px 20px; }
             .mantra-line { font-size: 0.65rem; line-height: 1.7; }
             .hero h1 {
                 font-size: clamp(1.8rem, 5vw, 2.6rem);
@@ -697,7 +784,9 @@ body.no-page-anim { animation: none !important; }
                     <div class="welcome-text" id="welcomeText" style="cursor:pointer;" title="点击修改名字" onclick="editName()">欢迎你，旅行者！ ✎</div>
 
                     <h1><span>R</span><span>e</span><span>i</span><span>n</span><span>v</span><span>e</span><span>n</span><span>t</span> <span>y</span><span>o</span><span>u</span><span>r</span><span>s</span><span>e</span><span>l</span><span>f</span></h1>
+                    <p class="hero-en-line">The person you will be in seven days <br>begins with the choice you make today.</p>
                     <p id="journeySub">按顺序完成每一天的成长任务，逐步蜕变成为全新的自己</p>
+                    <p class="hero-cn-line">每天一小步，七天一大步</p>
 
                     <div class="progress-box">
                         <div class="progress-info">
@@ -708,28 +797,44 @@ body.no-page-anim { animation: none !important; }
                             <div class="progress-fill" id="progressFill"></div>
                         </div>
                     </div>
-                    <div class="hero-divider">
-                        <p class="mantra-line">Every day is a <b>new beginning</b>. Take a deep breath and begin again.</p>
-                        <p class="mantra-line">You are not stuck. You are just <b>preparing to bloom</b>.</p>
-                        <p class="mantra-line">The only way out is <b>through</b>. Keep moving forward.</p>
-                        <p class="mantra-line">Your future self is <b>counting on you</b> right now.</p>
-                        <p class="mantra-line">Small steps every day lead to <b>massive transformations</b>.</p>
-                        <p class="mantra-line">You didn't come this far to <b>only come this far</b>.</p>
-                        <p class="mantra-line">Discipline is choosing what you <b>want most</b> over what you want now.</p>
-                        <p class="mantra-line">The comeback is always <b>stronger than the setback</b>.</p>
-                    </div>
+                    <p class="progress-cheer" id="progressCheer"></p>
+                </div>
+            </div>
+            <div class="mantra-section">
+                <div class="hero-divider">
+                    <p class="mantra-line">Every day is a <b>new beginning</b>. Take a deep breath and begin again.</p>
+                    <p class="mantra-line">You are not stuck. You are just <b>preparing to bloom</b>.</p>
+                    <p class="mantra-line">The only way out is <b>through</b>. Keep moving forward.</p>
+                    <p class="mantra-line">Your future self is <b>counting on you</b> right now.</p>
+                    <p class="mantra-line">Small steps every day lead to <b>massive transformations</b>.</p>
+                    <p class="mantra-line">You didn't come this far to <b>only come this far</b>.</p>
+                    <p class="mantra-line">Discipline is choosing what you <b>want most</b> over what you want now.</p>
+                    <p class="mantra-line">The comeback is always <b>stronger than the setback</b>.</p>
                 </div>
             </div>
             <div class="cards-section">
                 <div class="poster-stage" id="posterStage">
                     <canvas id="posterCanvas"></canvas>
-                    <a class="explore-btn" id="exploreBtn" href="#">EXPLORE MORE</a>
+                    <div class="explore-row">
+                        <a class="explore-btn" id="exploreBtn" href="#">EXPLORE MORE</a>
+                        <button class="inspiring-btn" id="inspiringBtn">INSPIRING</button>
+                    </div>
                     <p class="poster-tagline" id="posterTagline"></p>
                 </div>
                 <div class="day-nav" id="dayNav"></div>
                 <a id="posterCard" class="poster-card" href="poster.html">
-                    <div class="poster-title">7天蜕变 · 专属结业海报</div>
-                    <div class="poster-desc">恭喜你完成全部挑战，点击领取你的成长纪念</div>
+                    <span class="poster-card-stars">✦ ✦ ✦</span>
+                    <div class="poster-card-glow"></div>
+                    <span class="poster-badge">COMPLETED</span>
+                    <div class="poster-card-inner">
+                        <div>
+                            <div class="poster-title">7天蜕变 · 专属纪念海报</div>
+                            <div class="poster-subtitle">YOUR 7-DAY TRANSFORMATION CERTIFICATE</div>
+                            <div class="poster-desc">恭喜完成全部挑战，你已蜕变新生<br>领取专属海报，纪念这段了不起的旅程</div>
+                        </div>
+                        <span class="poster-arrow">→</span>
+                    </div>
+                    <div class="poster-line"></div>
                 </a>
             </div>
             <div class="brand-footer">
@@ -870,6 +975,38 @@ function checkPosterUnlock() {
         posterCard.classList.remove('show');
     }
 }
+
+// ===== 每日励志语录（每天50句，共350句）=====
+var inspiringQuotes = {
+1:["The journey of a thousand miles begins with a single step of awareness.","Clarity is the antidote to confusion. See yourself truly.","You cannot change what you refuse to see. Look within.","The mirror of self-awareness shows both flaws and strengths.","Every act of conscious self-reflection brings you closer to freedom.","What you see in yourself is what you become. See greatness.","The first truth you must face is the one about yourself.","Awareness is like the sun. When it shines, darkness disappears.","Stop running from yourself. Turn around and meet who you are.","The unexamined life may be lived, but it will never be transformed.","Seeing clearly is not about judgment. It is about understanding.","Your blind spots hold the keys to your growth.","Truth is the foundation. Build everything else upon it.","The moment you truly see yourself is the moment change becomes possible.","Honesty with yourself is the highest form of self-respect.","Look at where you are. Only then can you choose where to go.","Self-awareness is the rarest and most valuable form of intelligence.","The truth will set you free, but first it will make you uncomfortable.","You are not your mistakes. You are the one who sees them.","Every breakthrough begins with the courage to look honestly within.","To see yourself clearly is to love yourself truly.","Your story is still being written. Read the pages you have so far.","Clarity comes not from thinking more, but from seeing more clearly.","The most important conversation you will ever have is with yourself.","Self-knowledge is the beginning of all wisdom and all change.","What you acknowledge, you can transform. What you ignore, controls you.","See the patterns. Break the cycles. Create new possibilities.","The lens through which you see yourself shapes your entire world.","Truth is not always beautiful, but it is always liberating.","Your inner world creates your outer reality. Start within.","Real growth begins the moment you stop pretending.","Awareness without action is insight. Awareness with action is transformation.","You already know what you need to change. Now have the courage to see it.","The quality of your questions determines the quality of your self-knowledge.","Seeing yourself clearly is not a destination. It is a daily practice.","Every shadow you refuse to see controls you from the dark.","The light of awareness transforms everything it touches.","You have been avoiding this truth. Now is the time to face it.","Self-deception is the enemy of growth. Radical honesty is the path.","The most courageous act is to look in the mirror and see what is real.","Clarity is power. Confusion is just clarity waiting to be found.","Your blind spots are someone else's obvious observations. Ask for feedback.","To change your life, first change how you see yourself.","The truth about who you are is far greater than who you think you are.","Awareness is not criticism. It is the first step toward freedom.","Every moment of honest self-reflection plants a seed of transformation.","You are not defined by your past. But you must see it to transcend it.","The fog of self-deception lifts only when you invite the light of truth.","See yourself with compassion, but see yourself clearly.","Today is the perfect day to finally be honest with yourself."],
+2:["You are enough. Not because of what you do, but because of who you are.","Acceptance is not resignation. It is the foundation of real change.","The parts of yourself you reject are the parts that need love most.","You cannot heal what you refuse to acknowledge exists within you.","Self-acceptance is the quiet courage of being at peace with yourself.","Every flaw you have is a feature waiting to be understood.","Stop apologizing for being human. Start celebrating it.","You are not broken. You are becoming.","The greatest gift you can give yourself is unconditional self-acceptance.","What you accept, you transcend. What you resist, persists.","You are worthy of love exactly as you are right now.","The journey to self-love begins with self-acceptance.","Every part of you deserves compassion. Even the parts you hide.","Accept your past. It brought you here. Accept your present. It is your power.","You are a masterpiece in progress. Every brushstroke matters.","Embrace your shadows. They are just light waiting to be understood.","The moment you accept yourself fully, you become unstoppable.","You are not your mistakes. You are the wisdom gained from them.","Self-acceptance is not about being perfect. It is about being whole.","The love you seek from others must first come from within.","You have always been enough. You just forgot.","Your worth is not measured by your achievements but by your existence.","Accept the journey. Trust the process. Love the person you are becoming.","Every scar tells a story of survival. Honor them all.","You are allowed to be both a work in progress and a masterpiece.","The most radical act of self-love is accepting yourself without conditions.","What if you treated yourself with the same kindness you offer others?","Acceptance opens doors that resistance keeps locked.","You belong here. You always have. You always will.","The moment you stop fighting yourself is the moment you start winning.","Your flaws are not failures. They are features of your humanity.","Self-compassion is not self-indulgence. It is self-preservation.","You are not too much. You are not too little. You are exactly right.","Accept where you are. That is the launchpad for where you are going.","The relationship with yourself sets the tone for every other relationship.","You are worthy of your own love. Start giving it today.","Every part of your story belongs. Even the chapters you wish were different.","You are allowed to be proud of how far you have come.","Self-acceptance is the quiet superpower that changes everything.","The voice of self-criticism is not the voice of truth. Listen deeper.","You are not defined by your worst day or your biggest mistake.","Embrace your uniqueness. It is your greatest gift to the world.","There is nothing wrong with you. There never was.","Acceptance is the soil in which all growth takes root.","You are a human being, not a human doing. Your being is enough.","Stop comparing your inside to everyone else's outside.","The parts of you that feel broken are actually openings for light.","You are the only person who can give yourself the acceptance you crave.","Accept yourself today. Not someday. Not when you are perfect. Now.","You are a living, breathing miracle. Never forget that."],
+3:["You are not who they said you were. You are who you decide to be.","Reinvention is not betrayal of your past. It is loyalty to your future.","Your identity is not fixed. It is a story you can rewrite at any moment.","The person you are becoming is far more important than the person you have been.","Define yourself before the world defines you.","You are the author of your own story. Pick up the pen.","Every great transformation begins with a new definition of self.","You are not stuck. You are just ready for the next version of yourself.","The labels others gave you are not your truth. Create your own.","Who you were yesterday does not limit who you can be tomorrow.","Your potential is not determined by your history.","Reinvention takes courage. You have more than you know.","The most powerful words you can speak are 'I am becoming.'","Identity is not found. It is forged through choice and action.","You are allowed to outgrow old versions of yourself.","The world will try to label you. Only you get to define you.","Every day you wake up with the power to redefine who you are.","You are not who you used to be. And that is a beautiful thing.","The greatest act of rebellion is becoming your true self.","Your identity is your most creative work. Make it extraordinary.","Stop asking the world who you are. Tell the world who you are.","Reinvent yourself as many times as necessary. Growth has no limits.","The you of tomorrow is shaped by the choices you make today.","You are a canvas. Every day is a chance to paint something new.","Do not let your past self make decisions for your future self.","Become the person you needed when you were younger.","Your identity is not a cage. It is a garden. Tend it daily.","The most important question is not 'who am I' but 'who do I want to become.'","You are the sculptor of your own character. Chisel with intention.","Every role you have played has prepared you for the one you choose next.","You are not your job, your past, or your fears. You are infinite possibility.","The story you tell yourself about yourself becomes your reality.","Your identity should be a verb, not a noun. Always becoming, never fixed.","You carry within you the seeds of every person you could become.","Redefine success. Redefine happiness. Redefine yourself.","The most authentic identity is the one you choose, not the one assigned to you.","You are a living question. Your life is the answer.","The person you will be in five years depends on the identity you embrace today.","You have already changed so much. Trust your capacity to keep changing.","Do not let anyone else hold the pen while you write your own story.","Your name is not your identity. Your actions are.","Reinvention is not a one-time event. It is a way of life.","The bravest thing you can do is become who you really are.","You are not abandoning your past self. You are graduating.","Every morning is an invitation to become a new version of yourself.","Your identity is too precious to be borrowed from others. Create your own.","The world needs the version of you that only you can become.","You are not lost. You are in the beautiful space between who you were and who you will be.","Define yourself with intention, or the world will do it for you.","You are the only one who can give yourself permission to change."],
+4:["Your soul already knows what it wants. Your job is to listen.","Passion is not found. It is uncovered beneath layers of should and must.","What makes your heart race? That is your compass.","The world needs the unique fire that only you can bring.","Desire is not distraction. It is direction.","Your deepest longings are not random. They are road signs.","Discover what you would do if no one was watching. Then do that.","The things that light you up are clues to your purpose.","Boredom is a signal. What would you rather be doing?","Your passion is where your talent meets the world's hunger.","Stop looking for your purpose. Start listening to your joy.","What you loved as a child still lives within you. Rediscover it.","The fire within you is more important than the approval around you.","Your dreams are not frivolous. They are your soul's instructions.","What would you pursue if you knew you could not fail?","The most alive version of you is the one chasing what matters.","Desire deeply. Dream boldly. Discover daily.","Your curiosity is a compass. Follow where it leads.","The things you cannot stop thinking about are the things you should pursue.","Passion is the fuel that turns ordinary effort into extraordinary results.","What stirs your soul is not a distraction from real life. It is real life.","Your life becomes meaningful when you pursue what is meaningful to you.","The world is full of people who gave up on their dreams. Do not be one of them.","Discovering your passion is not a luxury. It is a responsibility.","What would you do for free? That is your calling.","The energy you feel when doing what you love is the universe saying yes.","Your unique combination of interests is not an accident. It is a gift.","Stop waiting for permission to want what you want.","Passion is contagious. When you find yours, you light up everyone around you.","The path to fulfillment is paved with the things that make you lose track of time.","What breaks your heart? That is also part of your calling.","You were born with a purpose. Your life is the journey of discovering it.","The things that excite you are not random. They are your soul's language.","Your passion may not make sense to others. It does not need to.","The cost of not pursuing your dreams is a life of quiet regret.","Discovery requires curiosity. Curiosity requires courage.","What do you want so badly that you are afraid to admit it?","The life you want is on the other side of the discomfort of wanting it.","Your desire is valid. Your dreams are real. Your passion has a purpose.","The moment you honor your true desires, your entire life shifts.","Do not let practicality kill your passion. Find a way to make both work.","Your passion is the thread that, when pulled, unravels your destiny.","The most successful people are not the most talented. They are the most passionate.","Discovering yourself is a lifelong adventure. Enjoy every discovery.","What would your 10-year-old self be proud of you for pursuing?","The fire in your belly is not indigestion. It is inspiration. Act on it.","Your passion project could be your life's work. Give it the attention it deserves.","What makes you come alive? The world needs more people who are fully alive.","Your desires are not too big. You have just been playing too small.","Today is the day to start discovering what truly moves you."],
+5:["Courage is not the absence of fear. It is action in the presence of fear.","Fear is a door. Every great achievement lies on the other side of it.","The only way out of fear is through it.","Your fears are not walls. They are gates waiting to be opened.","Feel the fear and do it anyway. That is the definition of bravery.","Every time you face a fear, you shrink it and grow yourself.","Fear is temporary. Regret is forever. Choose courage.","The things that scare you most are often the things most worth doing.","Courage is a muscle. Every time you use it, it gets stronger.","Do not let fear make your decisions. Let courage lead the way.","The fear of failure is far worse than failure itself.","You have survived every difficult thing that has ever happened to you.","Bravery is not about being fearless. It is about being terrified and still showing up.","Your comfort zone is a beautiful place, but nothing ever grows there.","One courageous act can change the entire trajectory of your life.","Fear is excitement without the breath. Breathe and take action.","The cave you fear to enter holds the treasure you seek.","Courage starts with a single step. Then another. Then another.","What would you do if you were not afraid? Do that.","You are far braver than you give yourself credit for.","Every hero's journey begins with facing a fear. This is yours.","Fear is a liar. It tells you that you cannot when you absolutely can.","The only thing standing between you and your dreams is the fear of starting.","Courage is contagious. Your bravery inspires others to be brave.","Do something today that scares you. Even a small thing counts.","You are stronger than your fears. You always have been.","The fear will not go away. But you can learn to walk beside it.","Your ancestors survived far worse. Their strength lives in you.","Fear of failure is the number one killer of dreams. Do not let it win.","Each fear you conquer becomes a stepping stone to your highest self.","The most courageous people are not those without fear, but those who act despite it.","Courage does not always roar. Sometimes it is the quiet voice saying 'try again.'","You cannot control whether you feel fear. You can control whether fear controls you.","The only real failure is letting fear stop you from trying.","Your future self will thank you for the courage you show today.","Fear is a natural response to growth. It means you are pushing boundaries.","Bravery is being the only one who knows you are terrified.","What scares you is a map to what matters most. Follow it.","The regret of not trying will always outweigh the pain of failing.","You have the power to transform fear into fuel.","Fear is not your enemy. It is your teacher. Learn from it and move forward.","Every courageous act rewires your brain for more courage.","The world belongs to those who dare to face their fears.","Your fears are smaller than they appear. Face them and they shrink.","Courage is the bridge between where you are and where you want to be.","You never know how strong you are until being strong is the only choice.","Fear is a shadow. When you move toward it, the light follows.","The difference between who you are and who you want to be is courage.","Doubt kills more dreams than failure ever will. Choose belief.","Courage is the price that life exacts for granting peace. Pay it willingly."],
+6:["Your mind is the operating system of your life. Upgrade it regularly.","The quality of your thoughts determines the quality of your life.","Your brain is not fixed. It is plastic. Mold it with intention.","Every thought you think is shaping your future. Choose wisely.","The greatest investment you can make is in upgrading your mindset.","Your mind is a garden. Plant flowers, not weeds.","What you feed your mind becomes your reality. Feed it greatness.","You are one decision away from a completely different life.","The mind is not a vessel to be filled but a fire to be kindled.","Upgrade your beliefs. They are the software running your life.","Mental fitness is just as important as physical fitness. Train daily.","The limits you perceive are not real. They are just old programming.","Your inner dialogue creates your outer experience. Speak kindly to yourself.","Neurons that fire together wire together. Choose what you rehearse.","The most powerful tool you own is between your ears. Learn to use it.","Your potential expands as your mindset expands. Think bigger.","Old ways of thinking will not open new doors. Evolve your mind.","Your thoughts are not facts. They are habits. Change them.","The mind that opens to a new idea never returns to its original size.","You are not your thoughts. You are the thinker of your thoughts.","Growth mindset is not a buzzword. It is the foundation of all achievement.","Your mental models shape your world. Upgrade them for a better reality.","Every expert was once a beginner who refused to stop learning.","Intelligence is not fixed. It is developed through effort and learning.","The brain changes physically when you learn something new. Literally upgrade it.","Your mindset is the lens through which you see everything. Clean the lens.","What you believe you can achieve sets the ceiling for what you will achieve.","The most successful people are not the smartest. They are the most adaptable.","Your mind can be your greatest ally or your worst enemy. Train it to be the former.","Metacognition is the superpower of successful people. Think about your thinking.","The stories you tell yourself become your life. Tell better stories.","Your brain believes what you tell it most often. Tell it empowering truths.","Every skill you admire in others can be learned. Start learning today.","The difference between ordinary and extraordinary is often just a shift in perspective.","Your mind is capable of far more than you have asked of it so far.","Reframe challenges as opportunities. Your brain will follow your lead.","You cannot solve problems with the same thinking that created them.","The habit of continuous learning is the ultimate competitive advantage.","Your brain rewires itself based on what you repeatedly do. Practice excellence.","The most important conversations are the ones you have with yourself.","What you focus on expands. Focus on solutions, not problems.","Your potential is not predetermined. It is cultivated through mindset.","The mind is like a parachute. It works best when open.","Every moment of learning is an upgrade to your mental operating system.","You are not stuck with the brain you have. You can change it.","The quality of your attention determines the quality of your life.","A mind stretched by new ideas never returns to its original dimensions.","Your thoughts become your words, actions, habits, character, and destiny.","The most important upgrade you can make is the one between your ears.","Today is a great day to learn something that changes everything."],
+7:["Life is not a problem to be solved. It is a game to be played. Enjoy it.","The meaning of life is the meaning you give it. Make it a good one.","Play is not a break from learning. Play is the highest form of learning.","Do not take life too seriously. You will never get out of it alive.","The purpose of life is to live it fully, to taste experience to the utmost.","Life is short. Smile while you still have teeth.","Happiness is not a destination. It is a way of traveling.","The game of life is not about winning. It is about playing with joy.","Your life is your message to the world. Make it inspiring.","The best things in life are not things. They are moments, memories, and connections.","Life is what happens when you are busy making other plans. Be present.","Every day is a new level in the game of life. Play it well.","Joy is the serious business of life. Take it seriously.","The secret of life is to fall in love with the process of living.","You are the main character in your own story. Make it a great one.","The purpose of life is not to be happy. It is to be useful, honorable, and compassionate.","Life is a daring adventure or nothing at all. Choose adventure.","You only live once. But if you do it right, once is enough.","The quality of your life is determined by the quality of your moments.","Life is not measured by the number of breaths you take but by the moments that take your breath away.","Your life is a reflection of what you believe about yourself and the world.","The game of life is won by those who keep playing. Never give up.","Life is too important to be taken seriously. Lighten up and enjoy the ride.","You are here to live, not just to exist. Choose aliveness every day.","The meaning of life is to find your gift. The purpose is to give it away.","Your life is not a rehearsal. This is the main performance.","The most important thing is to enjoy your life. To be happy. That is all that matters.","Life is a balance between holding on and letting go. Master both.","The purpose of life is to live a life of purpose. Find yours and pursue it.","Every day is a gift. That is why it is called the present.","Life does not have to be perfect to be wonderful.","The good life is one inspired by love and guided by knowledge.","Your life is your art. Create something beautiful.","The unexamined life is not worth living. But the unlived life is not worth examining.","Life begins at the end of your comfort zone. Step out and start living.","The most wasted of all days is one without laughter.","Life is either a daring adventure or nothing. Security does not exist in nature.","The secret to life is to put yourself in the right lighting.","Your life becomes the story you tell yourself. Tell a great one.","The best way to predict your future is to create it. One joyful step at a time.","Life is a series of thousands of tiny miracles. Notice them.","Do not go through life. Grow through life.","The purpose of life is to matter, to be productive, to have it make a difference.","Life is like a camera. Focus on what is important. Capture the good times. Develop from the negatives.","You were born with the ability to change someone's life. Do not waste it.","Life is not about finding yourself. It is about creating yourself, playfully and joyfully.","The tragedy of life is not that it ends so soon, but that we wait so long to begin it.","Your life is a gift. Unwrap it slowly and savor every moment.","Life rewards those who show up, do the work, and never stop believing.","Today, play the game of life with full presence and unlimited joy."]
+};
+function getDailyQuote(day) {
+    var q = inspiringQuotes[day]; if (!q) return '';
+    var t = new Date();
+    var seed = t.getFullYear()*10000+(t.getMonth()+1)*100+t.getDate();
+    seed = seed*31+day;
+    return q[Math.abs(Math.floor(Math.sin(seed)*100000))%q.length];
+}
+window.addEventListener('DOMContentLoaded',function(){
+inspiringBtn=document.getElementById('inspiringBtn');
+modalOverlay=document.getElementById('modalOverlay');
+modalQuote=document.getElementById('modalQuote');
+modalDate=document.getElementById('modalDate');
+modalClose=document.getElementById('modalClose');
+inspiringBtn.addEventListener('click',function(){
+    modalQuote.innerText='"'+getDailyQuote(currentPosterDay)+'"';
+    modalDate.innerText=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    modalOverlay.classList.add('show');
+});
+modalClose.addEventListener('click',function(){modalOverlay.classList.remove('show')});
+modalOverlay.addEventListener('click',function(e){if(e.target===modalOverlay)modalOverlay.classList.remove('show')});
+});
 
 var posterTaglines = [
     'See the truth. Change begins.',
@@ -1490,11 +1627,15 @@ function renderPoster(day) {
         exploreBtn.classList.remove('locked');
         exploreBtn.href = 'day' + day + '.html';
         exploreBtn.innerText = 'EXPLORE MORE';
+        inspiringBtn.style.opacity = '1';
+        inspiringBtn.style.pointerEvents = 'auto';
     } else {
         stage.classList.add('locked');
         exploreBtn.classList.add('locked');
         exploreBtn.removeAttribute('href');
         exploreBtn.innerText = '未解锁';
+        inspiringBtn.style.opacity = '0.3';
+        inspiringBtn.style.pointerEvents = 'none';
     }
 
     document.querySelectorAll('.day-dot').forEach(function(d) {
@@ -1558,6 +1699,16 @@ function renderUserInfo() {
     }
     document.getElementById('progressText').innerText = `第 ${journeyDay} 天 · ${count}/7 已完成`;
     document.getElementById('progressFill').style.width = `${(count / 7) * 100}%`;
+    var cheers = [
+        'The journey of transformation has just begun.',
+        'Two days in. You are already ahead of most.',
+        'Day three. Real change is taking root.',
+        'Halfway there. Momentum is on your side.',
+        'Five days. New habits are replacing old patterns.',
+        'Almost there. You are not the same person anymore.',
+        'Seven days complete. A new version of you has emerged.'
+    ];
+    document.getElementById('progressCheer').innerText = cheers[journeyDay-1] || cheers[6];
 }
 
 // 仅修改这里：日期星期改为英文显示
@@ -1581,5 +1732,14 @@ if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
 var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
 })();
 </script>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <p class="modal-quote" id="modalQuote"></p>
+        <p class="modal-date" id="modalDate"></p>
+    </div>
+</div>
+
 </body>
 </html>
