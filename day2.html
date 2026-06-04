@@ -587,11 +587,13 @@ function formatTime(time) {
     return `${minutes}:${seconds}`;
 }
 
-audio.addEventListener('loadedmetadata', () => {
-    total.textContent = formatTime(audio.duration);
-});
+function updateTotal() { var d = audio.duration; if (d && isFinite(d)) total.innerText = fmt(d); }
+audio.addEventListener('loadedmetadata', updateTotal);
+audio.addEventListener('durationchange', updateTotal);
+audio.addEventListener('canplay', updateTotal);
 
 toggleBtn.addEventListener('click', () => {
+    if (!audio.duration || !isFinite(audio.duration)) { audio.load(); setTimeout(updateTotal, 300); }
     if (audio.paused) {
         audio.play();
         icon.innerHTML = pauseSvg;
