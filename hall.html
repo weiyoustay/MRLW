@@ -6,6 +6,13 @@
     <title>7天重塑人生 - 成长大厅</title>
 <link rel="preload" as="image" href="背景图1.webp" fetchpriority="high">
 <link rel="preload" as="image" href="图8.webp" fetchpriority="high">
+<link rel="preload" as="image" href="图1.webp" fetchpriority="high">
+<link rel="preload" as="image" href="图2.webp" fetchpriority="high">
+<link rel="preload" as="image" href="图3.webp" fetchpriority="high">
+<link rel="preload" as="image" href="图4.webp" fetchpriority="high">
+<link rel="preload" as="image" href="图5.webp" fetchpriority="high">
+<link rel="preload" as="image" href="图6.webp" fetchpriority="high">
+<link rel="preload" as="image" href="图7.webp" fetchpriority="high">
 <meta name="view-transition" content="same-origin">
     <style>
         :root {
@@ -15,7 +22,7 @@
             --text:#e0e0e8;
             --text-secondary:#a0a0b8;
             /* 标题浅蓝 */
-            --title-blue: #428DFF;
+            --title-blue: #29E63E;
             /* 进度条/原有深蓝 保持不变 */
             --vibrant-blue: #0436FE;
             --spring-bud: #B7F700;
@@ -375,7 +382,7 @@
         }
         .hero h1 span {
             display: inline-block;
-            background: linear-gradient(90deg, #B7F700, #428DFF);
+            background: linear-gradient(90deg, #D9FF70, #29E63E);
             -webkit-background-clip: text;
             color: transparent;
             transform: skew(-8deg);
@@ -712,7 +719,7 @@
         }
         .brand-name span {
             display: inline-block;
-            background: linear-gradient(90deg, #B7F700, #428DFF);
+            background: linear-gradient(90deg, #D9FF70, #29E63E);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -1670,6 +1677,14 @@ function renderCards() {
     renderDayNav();
     var startDay = getCurrentDay();
     renderPoster(startDay);
+    // 后台预加载其余解锁天的海报
+    setTimeout(function() {
+        for (var d = 1; d <= 7; d++) {
+            if (d !== startDay && isDayUnlocked(d)) {
+                (function(day){ setTimeout(function(){ drawDayPoster(day); }, day*200); })(d);
+            }
+        }
+    }, 500);
 }
 
 function renderUserInfo() {
