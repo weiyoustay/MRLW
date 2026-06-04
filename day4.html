@@ -152,7 +152,7 @@
         }
         .progress {
             height:100%;
-            background: linear-gradient(90deg, #29E63E, #29E63E);
+            background: linear-gradient(90deg, #D9FF70, #29E63E);
             width:0%;
             transition: width 0.05s linear;
             position: absolute;
@@ -677,7 +677,7 @@ audio.addEventListener('durationchange', updateTotal);
 audio.addEventListener('canplay', updateTotal);
 
 toggleBtn.addEventListener('click', () => {
-    if (!audio.duration || !isFinite(audio.duration)) { audio.load(); setTimeout(updateTotal, 300); }
+    if (!audio.duration || !isFinite(audio.duration)) { setTimeout(updateTotal, 300); }
     if (audio.paused) {
         audio.play();
         icon.innerHTML = pauseSvg;

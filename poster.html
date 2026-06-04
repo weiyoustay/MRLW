@@ -6,9 +6,10 @@
     <title>7天重塑人生 · 专属纪念海报</title>
 <link rel="preload" as="image" href="图片9.webp" fetchpriority="high">
 <link rel="preload" as="image" href="poster1.webp" fetchpriority="high">
-<link rel="preload" as="image" href="poster2.webp" fetchpriority="high">
-<link rel="preload" as="image" href="poster3.webp" fetchpriority="high">
-<link rel="preload" as="image" href="poster5.webp" fetchpriority="high">
+<link rel="preload" as="image" href="poster2.webp">
+<link rel="preload" as="image" href="poster3.webp">
+<link rel="preload" as="image" href="poster4.webp">
+<link rel="preload" as="image" href="poster5.webp">
 <link rel="preload" as="image" href="poster6.webp" fetchpriority="high">
 <link rel="preload" as="image" href="poster7.webp" fetchpriority="high">
 <link rel="preload" as="image" href="poster8.webp" fetchpriority="high">
@@ -677,7 +678,7 @@ body.no-page-anim { animation: none !important; }
             if (posterCache[id]) { showCached(id); return; }
             const off = startOffscreen();
             const img = preloaded[id] || new Image();
-            
+
             if (id === 1) {
                 // ===== 海报1：蜕变 =====
                 img.src = 'poster1.webp';
