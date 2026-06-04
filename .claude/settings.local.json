@@ -37,7 +37,27 @@
       "Bash(git --version)",
       "Bash(gh --version)",
       "Bash(git init *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git config *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(python -c \"import pyminizip; print\\('ok'\\)\")",
+      "Bash(pip install *)",
+      "Read(//c/Program Files/7-Zip/**)",
+      "Read(//c/Program Files \\(x86\\)/7-Zip/**)",
+      "Read(//d/7-Zip/**)",
+      "Bash(python -c \"import pyzipper; print\\('ok'\\)\")",
+      "Bash(wmic logicaldisk *)",
+      "Read(//e/副本网页/**)",
+      "Bash(cp \"C:/Users/MR刘大维/Desktop/副本网页.zip\" \"E:/副本网页.zip\")",
+      "Read(//e//**)",
+      "Bash(cmd.exe /c \"rd /s /q 副本网页\")",
+      "Bash(rm -f \"E:/副本网页/未来.png\")",
+      "Bash(rm -f \"E:/副本网页/未来.webp\")",
+      "Bash(rm -rf \"E:/副本网页\")",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(node *)"
     ]
   }
 }
