@@ -7,6 +7,12 @@
 <link rel="preconnect" href="https://images.pexels.com" crossorigin>
 <link rel="preload" as="image" href="jiguang.webp" fetchpriority="high">
 <link rel="preload" as="image" href="https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&dpr=1" fetchpriority="high">
+<link rel="preload" as="image" href="男1.webp" as="image">
+<link rel="preload" as="image" href="男2.webp" as="image">
+<link rel="preload" as="image" href="男3.webp" as="image">
+<link rel="preload" as="image" href="女1.webp" as="image">
+<link rel="preload" as="image" href="女2.webp" as="image">
+<link rel="preload" as="image" href="女3.webp" as="image">
 <style>
 :root {
   --bg:#0a0a14;
@@ -31,7 +37,8 @@ body {
   color:var(--text);
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
-  /* background-attachment: fixed; removed for mobile performance */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 body::before {
@@ -62,11 +69,16 @@ body::before {
   width:100%;
   min-height:100vh;
   display:flex;
-  align-items:center;
-  justify-content:center;
+  flex-direction:column;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  padding:20px;
+}
+.card-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px 20px;
 }
 .card {
   background:var(--card-bg);
@@ -299,7 +311,7 @@ body::before {
 }
 
 .back-btn {
-  position:absolute;
+  position:fixed;
   top:24px;
   left:16px;
   width:44px;
@@ -331,10 +343,8 @@ body::before {
 }
 
 .footer-brand {
-  position: fixed;
-  bottom: 40px;
-  left: 0;
-  width: 100%;
+  margin-top: auto;
+  padding: 30px 0 20px;
   text-align: center;
   z-index: 1;
   color: rgba(255,255,255,0.75);
@@ -462,6 +472,7 @@ body::before {
 <canvas id="particleCanvas"></canvas>
 <div class="back-btn" onclick="back()" role="button" aria-label="返回首页" tabindex="0">&larr;</div>
 <div class="container">
+  <div class="card-wrapper">
   <div class="card">
     <h2 class="card-title">创建你的成长身份</h2>
     <p class="card-desc">只需设置一个昵称，即可开始你的7天成长之旅</p>
@@ -503,14 +514,14 @@ body::before {
 
     <p class="tip">7天重塑人生体系</p>
   </div>
+  </div>
+  <div class="footer-brand">
+    <div class="brand-name">You 捻光</div>
+    <div class="date-info" id="nowDate"></div>
+  </div>
 </div>
 
 <div class="toast" id="successToast">身份创建成功！正在进入成长大厅...</div>
-
-<div class="footer-brand">
-  <div class="brand-name">You 捻光</div>
-  <div class="date-info" id="nowDate"></div>
-</div>
 
 <script>
 
@@ -735,7 +746,7 @@ if (isEdit) {
 }
 
 // ===== 头像选择 =====
-var selectedAvatar = localStorage.getItem('playerAvatar') || '';
+var selectedAvatar = (localStorage.getItem('playerAvatar') || '').replace('.png','.webp');
 var currentGender = '男';
 var avatarGrid = document.getElementById('avatarGrid');
 var genderBtns = document.querySelectorAll('.gender-btn');
@@ -743,7 +754,7 @@ var genderBtns = document.querySelectorAll('.gender-btn');
 function renderAvatars(gender) {
   avatarGrid.innerHTML = '';
   for (var i = 1; i <= 20; i++) {
-    var filename = gender + i + '.png';
+    var filename = gender + i + '.webp';
     var item = document.createElement('div');
     item.className = 'avatar-item';
     item.style.backgroundImage = 'url(' + filename + ')';

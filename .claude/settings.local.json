@@ -65,7 +65,14 @@
       "Read(//c/Program Files/GitHub CLI/**)",
       "Read(//c/Program Files \\(x86\\)/GitHub CLI/**)",
       "Read(//c/Users/**)",
-      "Bash(C:/Program Files/GitHub CLI/gh auth *)"
+      "Bash(C:/Program Files/GitHub CLI/gh auth *)",
+      "Bash(awk '{sum+=$5; print $5, $NF} END {print \"Total:\", sum/1024/1024, \"MB\"}')",
+      "Bash(where cwebp *)",
+      "Bash(awk '{sum+=$5} END {print \"Total PNG:\", sum/1024/1024, \"MB\"}')",
+      "Bash(awk '{sum+=$5; print $5, $NF} END {print \"Total WebP:\", sum/1024/1024, \"MB\"}')",
+      "Bash(awk '{sum+=$5; print $5, $NF} END {print \"Other PNGs:\", sum/1024/1024, \"MB\"}')",
+      "Bash(ls -la zhuling.*)",
+      "Bash(ls -la zhu*)"
     ]
   }
 }
