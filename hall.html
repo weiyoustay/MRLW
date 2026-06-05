@@ -273,6 +273,12 @@
             color: #1a3a00; line-height: 1.7;
             margin-bottom: 20px;
         }
+        .modal-quote-zh {
+            font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
+            font-size: 0.95rem; color: rgba(26,58,0,0.75);
+            line-height: 1.7; margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
         .modal-date {
             font-family: 'Georgia','Times New Roman',serif;
             font-size: 0.8rem; color: rgba(26,58,0,0.6);
@@ -349,7 +355,7 @@
             letter-spacing: 3px;
             text-transform: uppercase;
             color: #29E63E;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             backdrop-filter: blur(10px);
             animation: badgePulse 3s ease-in-out infinite;
             transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -366,7 +372,7 @@
         .welcome-text {
             font-size: 1.1rem;
             color: var(--spring-bud);
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: 500;
             animation: fadeIn 0.8s ease 0.2s forwards;
             opacity: 0;
@@ -376,7 +382,7 @@
         .hero h1 {
             font-size: clamp(2.2rem, 5vw, 3.5rem);
             font-weight: 900;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
             text-shadow: 0 2px 10px rgba(0,0,0,0.4);
             display: inline-block;
         }
@@ -415,27 +421,28 @@
             font-size: 1rem;
             color: #ffffff;
             opacity: 0.9;
+            margin: 2px 0;
         }
         .hero-en-line {
             font-family: 'Georgia','Times New Roman',serif;
             font-style: italic; font-size: 0.78rem;
-            color: rgba(0,245,212,0.55); line-height: 1.7;
-            margin: 6px 0 12px; letter-spacing: 0.3px;
+            color: rgba(0,245,212,0.55); line-height: 1.5;
+            margin: 2px 0 6px; letter-spacing: 0.3px;
         }
         .hero-cn-line {
             font-size: 0.85rem; color: rgba(183,247,0,0.55);
-            margin-top: 4px; letter-spacing: 1px;
+            margin-top: 2px; letter-spacing: 1px;
         }
         .progress-cheer {
             font-family: 'Georgia','Times New Roman',serif;
             font-style: italic; font-size: 0.7rem;
             color: rgba(0,245,212,0.4);
-            margin-top: 10px; letter-spacing: 0.4px;
+            margin-top: 4px; letter-spacing: 0.4px;
         }
         .progress-box {
             width: 90%;
             max-width: 400px;
-            margin: 20px auto 0;
+            margin: 12px auto 0;
             animation: fadeIn 0.8s ease 0.4s forwards;
             opacity: 0;
         }
@@ -677,7 +684,7 @@
     color: rgba(26,58,0,0.4); margin-bottom: 6px;
 }
 .poster-badge {
-    position: absolute; top: 9px; left: 20px; z-index: 1;
+    position: absolute; top: -2px; left: 20px; z-index: 1;
     font-family: 'Georgia',serif; font-size: 0.48rem; font-weight: 700;
     letter-spacing: 2px; color: rgba(26,58,0,0.32);
     border: 1px solid rgba(26,58,0,0.18);
@@ -773,10 +780,202 @@
 .back-btn:hover { background: rgba(183,247,0,0.15); border-color: var(--spring-bud); color: var(--spring-bud); transform: scale(1.1); box-shadow: 0 0 15px rgba(183,247,0,0.25); }
 .back-btn:active { transform: scale(0.95); }
 .back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
+
+/* ===== "我" 按钮 (右上角) ===== */
+.me-btn-top {
+    position: fixed; top: 24px; right: 20px; z-index: 100;
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 24px;
+    background: linear-gradient(135deg, #3DB008, #E9F8BC, #E0FE44);
+    border: none; color: #1a3a00; font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 1px; cursor: pointer;
+    box-shadow: 0 2px 12px rgba(61,176,8,0.3);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.me-btn-top:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(61,176,8,0.45); }
+.me-btn-top:active { transform: scale(0.94); }
+.me-btn-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background-size: cover; background-position: center;
+    border: 1.5px solid rgba(26,58,0,0.3); flex-shrink: 0;
+}
+
+/* ===== "我" 卡片弹窗 — Apple iOS 18 Design ===== */
+.me-modal-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.38);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.32s cubic-bezier(0.25,0.1,0.25,1);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+.me-modal-overlay.show { opacity: 1; pointer-events: auto; }
+.me-card {
+    position: relative; max-width: 356px; width: 90%;
+    padding: 28px 24px 22px; border-radius: 28px;
+    background: linear-gradient(145deg, #3DB008 40%, #E9F8BC 55%, #E0FE44);
+    box-shadow:
+        0 6px 24px rgba(0,0,0,0.07),
+        0 1px 0 rgba(255,255,255,0.5) inset,
+        0 0 0 1px rgba(255,255,255,0.7);
+    transform: translateY(28px) scale(0.96);
+    transition: transform 0.42s cubic-bezier(0.25,0.1,0.25,1);
+    overflow: hidden;
+    font-family: -apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC',sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+/* 磨砂网点纹理 */
+.me-card::before {
+    content: ''; position: absolute; inset: 0; border-radius: 28px;
+    background-image: radial-gradient(rgba(0,0,0,0.03) 0.4px, transparent 0.4px);
+    background-size: 5px 5px; pointer-events: none; z-index: 0;
+}
+/* 玻璃态覆盖 */
+.me-card::after {
+    content: ''; position: absolute; inset: 0; border-radius: 28px;
+    background: rgba(255,255,255,0.12); pointer-events: none; z-index: 1;
+}
+.me-modal-overlay.show .me-card { transform: translateY(0) scale(1); }
+.me-card > * { position: relative; z-index: 2; }
+
+/* 头像区 */
+.me-card-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+}
+.me-card-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background-size: cover; background-position: center;
+    border: 1.5px solid #fff; flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(183,247,0,0.18), 0 3px 10px rgba(0,0,0,0.06);
+}
+.me-card-info { display: flex; flex-direction: column; gap: 2px; }
+.me-card-info .me-welcome {
+    font-size: 0.72rem; font-weight: 500; color: #222;
+    letter-spacing: 0.8px;
+}
+.me-card-info .me-nickname {
+    font-weight: 700; color: #000;
+}
+.me-card-info .me-greeting {
+    font-size: 0.7rem; font-weight: 400; color: rgba(255,255,255,0.85);
+    letter-spacing: 0.5px; font-style: italic;
+}
+.me-card i { font-weight: 400; opacity: 0.5; font-size: 0.85em; margin-left: 2px; }
+
+/* 数据区 */
+/* ===== 卡片内容区 ===== */
+.me-progress-card {
+    background: #1a1a1a; border-radius: 18px; padding: 18px 18px 14px;
+    margin-bottom: 10px;
+}
+.me-progress-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 12px;
+}
+.me-progress-label {
+    font-size: 0.85rem; font-weight: 600; color: #fff;
+    letter-spacing: -0.1px;
+}
+.me-progress-val {
+    font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.55);
+    font-variant-numeric: tabular-nums;
+}
+.me-progress-bar {
+    width: 100%; height: 8px; background: rgba(255,255,255,0.1);
+    border-radius: 99px; overflow: hidden;
+}
+.me-progress-fill {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, #D9FF70, #29E63E);
+    transition: width 0.6s cubic-bezier(0.25,0.1,0.25,1);
+    box-shadow: 0 0 8px rgba(41,230,62,0.25);
+}
+
+.me-activity-card {
+    background: #1a1a1a; border-radius: 18px; padding: 16px 18px;
+    margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;
+}
+.me-activity-label {
+    font-size: 0.85rem; font-weight: 600; color: #fff;
+    letter-spacing: -0.1px;
+}
+.me-activity-val {
+    font-size: 0.9rem; font-weight: 700; color: #D9FF70;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 底部双栏 */
+.me-bottom-row {
+    display: flex; gap: 12px; align-items: stretch;
+}
+.me-tgp-card {
+    flex: 1.1; background: #1a1a1a; border-radius: 18px;
+    padding: 16px 18px; display: flex; flex-direction: column; justify-content: center;
+}
+.me-tgp-title {
+    font-size: 0.75rem; font-weight: 800; color: rgba(255,255,255,0.4);
+    letter-spacing: 3px;
+}
+.me-tgp-val {
+    font-size: 1rem; font-weight: 700; color: #fff;
+    letter-spacing: -0.2px; font-variant-numeric: tabular-nums; margin-top: 4px;
+}
+.me-tgp-formula {
+    font-size: 0.62rem; font-weight: 400; color: rgba(255,255,255,0.3);
+    letter-spacing: 0.5px; margin-top: 2px;
+}
+.me-return-btn {
+    flex: 0.9; border: none; border-radius: 18px;
+    background: linear-gradient(90deg, #D9FF70, #29E63E);
+    color: #1a3a00; font-size: 0.9rem; font-weight: 700;
+    letter-spacing: 1.5px; cursor: pointer;
+    box-shadow: 0 2px 10px rgba(41,230,62,0.22);
+    transition: all 0.25s ease;
+    font-family: -apple-system,'SF Pro Display','Helvetica Neue','PingFang SC',sans-serif;
+}
+.me-return-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(41,230,62,0.38); }
+.me-return-btn:active { transform: scale(0.97); }
     </style>
 </head>
 <body style="background-color:#0a0a14;">
 <button class="back-btn" onclick="location.href='shouye.html'" aria-label="返回首页">←</button>
+<button class="me-btn-top" id="meBtnTop" style="display:none;" onclick="showMeCard()" aria-label="个人中心">
+    <span class="me-btn-avatar" id="meBtnAvatar"></span>我
+</button>
+
+<!-- ===== "我" 卡片弹窗 ===== -->
+<div class="me-modal-overlay" id="meModalOverlay">
+    <div class="me-card">
+        <div class="me-card-header">
+            <div class="me-card-avatar" id="meCardAvatar"></div>
+            <div class="me-card-info">
+                <div class="me-welcome">WELCOME HOME, <span class="me-nickname" id="meCardName"></span></div>
+                <div class="me-greeting">Take good care of yourself today.</div>
+            </div>
+        </div>
+        <div class="me-progress-card">
+            <div class="me-progress-header">
+                <span class="me-progress-label">今日进度 <i>Today's Progress</i></span>
+                <span class="me-progress-val" id="meTodayProgress">0/7 天</span>
+            </div>
+            <div class="me-progress-bar"><div class="me-progress-fill" id="meProgressFill" style="width:0%"></div></div>
+        </div>
+        <div class="me-activity-card">
+            <span class="me-activity-label">今日手环活跃 <i>Band Daily Activity</i></span>
+            <span class="me-activity-val" id="meTodayActive">0 分钟</span>
+        </div>
+        <div class="me-bottom-row">
+            <div class="me-tgp-card">
+                <span class="me-tgp-title">TGP · 累计成长积分</span>
+                <span class="me-tgp-val" id="meTotalPoints">YNG+0</span>
+                <span class="me-tgp-formula">累计使用时长 × 7</span>
+            </div>
+            <button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
+        </div>
+    </div>
+</div>
 
     <div class="fixed-background"></div>
     <canvas id="particleCanvas"></canvas>
@@ -990,8 +1189,24 @@ var inspiringQuotes = {
 6:["Your mind is the operating system of your life. Upgrade it regularly.","The quality of your thoughts determines the quality of your life.","Your brain is not fixed. It is plastic. Mold it with intention.","Every thought you think is shaping your future. Choose wisely.","The greatest investment you can make is in upgrading your mindset.","Your mind is a garden. Plant flowers, not weeds.","What you feed your mind becomes your reality. Feed it greatness.","You are one decision away from a completely different life.","The mind is not a vessel to be filled but a fire to be kindled.","Upgrade your beliefs. They are the software running your life.","Mental fitness is just as important as physical fitness. Train daily.","The limits you perceive are not real. They are just old programming.","Your inner dialogue creates your outer experience. Speak kindly to yourself.","Neurons that fire together wire together. Choose what you rehearse.","The most powerful tool you own is between your ears. Learn to use it.","Your potential expands as your mindset expands. Think bigger.","Old ways of thinking will not open new doors. Evolve your mind.","Your thoughts are not facts. They are habits. Change them.","The mind that opens to a new idea never returns to its original size.","You are not your thoughts. You are the thinker of your thoughts.","Growth mindset is not a buzzword. It is the foundation of all achievement.","Your mental models shape your world. Upgrade them for a better reality.","Every expert was once a beginner who refused to stop learning.","Intelligence is not fixed. It is developed through effort and learning.","The brain changes physically when you learn something new. Literally upgrade it.","Your mindset is the lens through which you see everything. Clean the lens.","What you believe you can achieve sets the ceiling for what you will achieve.","The most successful people are not the smartest. They are the most adaptable.","Your mind can be your greatest ally or your worst enemy. Train it to be the former.","Metacognition is the superpower of successful people. Think about your thinking.","The stories you tell yourself become your life. Tell better stories.","Your brain believes what you tell it most often. Tell it empowering truths.","Every skill you admire in others can be learned. Start learning today.","The difference between ordinary and extraordinary is often just a shift in perspective.","Your mind is capable of far more than you have asked of it so far.","Reframe challenges as opportunities. Your brain will follow your lead.","You cannot solve problems with the same thinking that created them.","The habit of continuous learning is the ultimate competitive advantage.","Your brain rewires itself based on what you repeatedly do. Practice excellence.","The most important conversations are the ones you have with yourself.","What you focus on expands. Focus on solutions, not problems.","Your potential is not predetermined. It is cultivated through mindset.","The mind is like a parachute. It works best when open.","Every moment of learning is an upgrade to your mental operating system.","You are not stuck with the brain you have. You can change it.","The quality of your attention determines the quality of your life.","A mind stretched by new ideas never returns to its original dimensions.","Your thoughts become your words, actions, habits, character, and destiny.","The most important upgrade you can make is the one between your ears.","Today is a great day to learn something that changes everything."],
 7:["Life is not a problem to be solved. It is a game to be played. Enjoy it.","The meaning of life is the meaning you give it. Make it a good one.","Play is not a break from learning. Play is the highest form of learning.","Do not take life too seriously. You will never get out of it alive.","The purpose of life is to live it fully, to taste experience to the utmost.","Life is short. Smile while you still have teeth.","Happiness is not a destination. It is a way of traveling.","The game of life is not about winning. It is about playing with joy.","Your life is your message to the world. Make it inspiring.","The best things in life are not things. They are moments, memories, and connections.","Life is what happens when you are busy making other plans. Be present.","Every day is a new level in the game of life. Play it well.","Joy is the serious business of life. Take it seriously.","The secret of life is to fall in love with the process of living.","You are the main character in your own story. Make it a great one.","The purpose of life is not to be happy. It is to be useful, honorable, and compassionate.","Life is a daring adventure or nothing at all. Choose adventure.","You only live once. But if you do it right, once is enough.","The quality of your life is determined by the quality of your moments.","Life is not measured by the number of breaths you take but by the moments that take your breath away.","Your life is a reflection of what you believe about yourself and the world.","The game of life is won by those who keep playing. Never give up.","Life is too important to be taken seriously. Lighten up and enjoy the ride.","You are here to live, not just to exist. Choose aliveness every day.","The meaning of life is to find your gift. The purpose is to give it away.","Your life is not a rehearsal. This is the main performance.","The most important thing is to enjoy your life. To be happy. That is all that matters.","Life is a balance between holding on and letting go. Master both.","The purpose of life is to live a life of purpose. Find yours and pursue it.","Every day is a gift. That is why it is called the present.","Life does not have to be perfect to be wonderful.","The good life is one inspired by love and guided by knowledge.","Your life is your art. Create something beautiful.","The unexamined life is not worth living. But the unlived life is not worth examining.","Life begins at the end of your comfort zone. Step out and start living.","The most wasted of all days is one without laughter.","Life is either a daring adventure or nothing. Security does not exist in nature.","The secret to life is to put yourself in the right lighting.","Your life becomes the story you tell yourself. Tell a great one.","The best way to predict your future is to create it. One joyful step at a time.","Life is a series of thousands of tiny miracles. Notice them.","Do not go through life. Grow through life.","The purpose of life is to matter, to be productive, to have it make a difference.","Life is like a camera. Focus on what is important. Capture the good times. Develop from the negatives.","You were born with the ability to change someone's life. Do not waste it.","Life is not about finding yourself. It is about creating yourself, playfully and joyfully.","The tragedy of life is not that it ends so soon, but that we wait so long to begin it.","Your life is a gift. Unwrap it slowly and savor every moment.","Life rewards those who show up, do the work, and never stop believing.","Today, play the game of life with full presence and unlimited joy."]
 };
+var inspiringQuotesZh = {
+1:["千里之行，始于觉察的一步。","清醒是对抗迷茫的解药。看清真实的自己。","你无法改变你不愿看见的东西。向内看。","自我觉察的镜子，映出缺陷也映出光芒。","每一次有意识的自我反思，都让你离自由更近一步。","你眼中看到的自己，就是你将成为的样子。看见那个伟大的你。","你必须面对的第一个真相，是关于你自己的。","觉察如太阳，当它照耀时，黑暗自然消散。","别再逃避自己。转过身来，遇见真实的你。","未经审视的人生虽可度日，却永远无法蜕变。","看清一切不是为了评判，而是为了理解。","你的盲点里藏着你成长的钥匙。","真相是地基，一切都要建在它之上。","当你真正看见自己的那一刻，改变才真正成为可能。","对自己诚实，是最高形式的自我尊重。","看看你此刻身在何处。唯有如此，你才能选择去向何方。","自察力是最稀有也最珍贵的一种智慧。","真相会让你自由，但首先它会让你不安。","你并非你的过错，你是那个看见过错的人。","每一次突破，都始于勇敢地向内看。","看清自己，就是真正地爱自己。","你的故事仍在书写。先读一读已有的篇章。","清晰不是想得更多，而是看得更透。","你将拥有的最重要的对话，是与自己的对话。","认识自己，是一切智慧与改变的起点。","你承认的，可以转化；你忽视的，将你掌控。","看穿模式，打破循环，创造新的可能。","你审视自己的镜头，决定你看到怎样的世界。","真相不总是美丽的，但它总是解放的。","你的内在世界创造你的外在现实。从内开始。","真正的成长，始于你不再伪装的那一刻。","没有行动的觉察只是顿悟，加上行动的觉察才是蜕变。","你早已知道需要改变什么。现在，鼓起勇气去看清它。","你提问的质量，决定了你自我认知的深度。","看清自己不是一个终点，而是一种日常的修炼。","每一个你拒绝直视的阴影，都在暗中操控着你。","觉察之光照亮它所触及的一切。","你一直在逃避这个真相。现在，是时候面对它了。","自我欺骗是成长之敌。彻底的诚实是唯一的路。","最勇敢的举动，是照镜子看见真实的自己。","清晰就是力量。迷茫不过是等待被发现的清晰。","你的盲点，是别人眼中显而易见的发现。去请教吧。","想改变你的人生，先改变你如何看待自己。","真实的你，远比你以为的自己更伟大。","觉察不是批判，它是通往自由的第一步。","每一次诚实的自省，都种下一颗蜕变的种子。","你不是由过去定义的。但你必须看清过去，才能超越它。","自我欺骗的迷雾，只有在你邀请真相之光时才会散去。","带着慈悲看清自己，但要看得清清楚楚。","今天，就是最终对自己诚实的最佳时机。"],
+2:["你已足够。不是因为你的成就，而是因为你是谁。","接纳不是放弃，而是真正改变的根基。","你排斥自己的那些部分，恰恰是最需要被爱的部分。","你无法治愈你拒绝承认存在的东西。","自我接纳，是安然与自己相处的安静勇气。","你的每一个缺陷，都是一个等待被理解的特质。","别再为自己的平凡道歉。开始庆祝它吧。","你并未破碎，你正在成形。","你能给自己的最好礼物，是无条件的自我接纳。","你接纳什么，就超越什么。你抗拒什么，什么就持续。","你此刻就值得被爱，无需任何改变。","通往自爱之旅，始于自我接纳。","你的每个部分都值得被善待，包括你隐藏的那些。","接纳你的过去，它把你带到了这里。接纳你的现在，它是你的力量所在。","你是一部正在创作中的杰作。每一笔都至关重要。","拥抱你的阴影。它们只是等待被理解的光。","当你全然接纳自己的那一刻，你变得势不可挡。","你不是你的错误，你是从中获得的智慧。","自我接纳不是变得完美，而是变得完整。","你从他人身上寻求的爱，必须先来自你的内心。","你一直足够好，只是你忘了。","你的价值不由成就决定，而由你的存在本身决定。","接纳这段旅程，信任这个过程，爱那个正在成为的你。","每一道疤痕都诉说着你的幸存，请珍视全部。","你既可以是一个未完成的作品，也可以是一部杰作。","最彻底的自爱，是无条件地接纳自己。","如果你用对待他人的善意来对待自己，会怎样？","接纳打开的门，抗拒永远紧锁。","你属于这里。你一直都属于。你永远都属于。","你停止与自己战斗的那一刻，就是你开始赢的时刻。","你的缺点不是失败，而是你人性的特质。","自我关怀不是放纵，而是自保。","你不过多，也不过少。你刚刚好。","接纳你此刻的所在。那里是通往你未来的起点。","你与自己的关系，为你所有其他关系定下基调。","你值得拥有自己的爱。从今天开始给自己。","你故事的每个章节都不可或缺，包括你曾想删掉的那些。","你有权为自己已走了这么远而感到骄傲。","自我接纳是改变一切的安静超能力。","自我批判的声音并非真相。去倾听更深处。","你不会被你最糟糕的一天或最大的错误定义。","拥抱你的独一无二。那是你给世界最好的礼物。","你没有任何问题。从来都没有。","接纳是所有成长扎根的土壤。","你是一个人，而非一台机器。你的存在本身就足够了。","别再拿自己的内在和别人精心装饰的外表比较。","你感到破碎的那些部分，实际上是让光照进来的裂缝。","你是唯一能给自己渴望的接纳的人。","今天就接纳你自己。不是某一天，不是等你完美时，就是现在。","你是一个活生生的奇迹。永远不要忘记。"],
+3:["你不是别人口中的你，你是你自己决定成为的你。","重塑自己不是对过去的背叛，而是对未来的忠诚。","你的身份不是固定的，它是一个你随时可以重写的故事。","你正在成为的那个人，远比你曾经的那个人重要。","在被世界定义之前，先定义你自己。","你是自己故事的作者。拿起笔来。","每一次伟大的转变，都始于对自我的重新定义。","你并非被困住了，你只是做好了迎接下一个自己的准备。","别人给你的标签并非你的真相。创造你自己的。","昨天的你，不限制明天的你可以成为谁。","你的潜力不由你的历史决定。","重塑需要勇气。你比自己以为的更勇敢。","你能说的最有力量的话是——「我正在成为。」","身份不是被发现的，而是通过选择和行动锻造出来的。","你有权超越旧版本的自己。","世界会试图给你贴标签，但只有你能定义你自己。","每一天醒来，你都有重新定义自己的权利。","你已不是曾经的模样了，而这本身就是一件美好的事。","最伟大的叛逆，是成为真正的自己。","你的身份是你最具创造力的作品。让它变得非凡。","别再问世界你是谁，告诉世界你是谁。","不断重塑自己，需要多少次就做多少次。成长没有上限。","明天的你，由今天的选择塑造。","你是一幅画布，每一天都是一次创作新作的机会。","别让你过去的自己为未来的你做决定。","成为你年少时最需要的那种人。","你的身份不是牢笼，而是一座花园。每天用心照管。","最重要的问题不是「我是谁」，而是「我想成为谁」。","你是自己品格的雕塑家。用意图去雕刻。","你扮演过的每个角色，都为你下一步的选择做了铺垫。","你不是你的工作、你的过去或你的恐惧。你是无限的可能。","你对自己讲述的关于自己的故事，终将成为你的现实。","你的身份应该是一个动词，而非名词。永远在成为，永不固定。","你内在孕育着每一种你可能成为的人的种子。","重新定义成功，重新定义幸福，重新定义你自己。","最真实的身份是你自己选择的那个，而不是被赋予的那个。","你是一个活着的问号，你的人生就是答案。","五年后的你，取决于你今天拥抱的身份。","你已经改变了这么多，相信你有能力继续改变。","别让任何人替你执笔书写你的人生故事。","你的名字不是你的身份，你的行动才是。","重塑不是一次性事件，而是一种生活方式。","你能做的最勇敢的事，就是成为真正的自己。","你并非抛弃过去的自己，你是在毕业升级。","每一个清晨都是一份邀请，邀请你成为全新的自己。","你的身份太过珍贵，不能从别人那里借用。创造你自己的。","这个世界需要那个唯有你能成为的版本的你。","你并未迷失。你正站在过去的你和未来的你之间的那个美丽缝隙里。","用心定义你自己，否则世界会替你定义。","你是唯一能给自己许可去改变的人。"],
+4:["你的灵魂早已知道它想要什么。你的任务只是倾听。","热情不是被找到的，它是在层层「应该」和「必须」之下被发掘出来的。","什么让你的心跳加速？那就是你的指南针。","这个世界需要只有你才能带来的那团独特的火焰。","渴望不是干扰，它是指引。","你内心最深处的渴求并非偶然，它们是路标。","去发现无人注视时你愿意做的事，然后去做。","那些能点亮你的事物，是你使命的线索。","无聊是一个信号——你宁愿在做什么？","你的热情，是天赋与世界需求相遇的地方。","别再寻找你的使命了，开始聆听你的喜悦吧。","你儿时热爱的东西，依然活在你心里。重新发现它。","你内心的火焰，比周围的认可更重要。","你的梦想不是轻浮的幻想，而是你灵魂给出的指令。","如果你知道自己不会失败，你会去追求什么？","最鲜活的你，是那个追逐真正重要之事的你。","深刻地去渴望，勇敢地去梦想，日复一日去发现。","你的好奇心是一枚指南针，跟随它引领的方向。","那些你无法停止思考的事，就是你应该去追寻的事。","热情是把平凡的努力转化为非凡成果的燃料。","触动你灵魂的事，不是现实生活的干扰，它就是现实生活。","当你在追求对自己有意义的东西时，你的生命就有了意义。","世界上有太多人放弃了自己的梦想。不要成为其中之一。","发现你的热情不是奢侈，而是责任。","你愿意免费去做的事是什么？那就是你的召唤。","你在做自己热爱的事时感受到的能量，是整个宇宙在说「是的」。","你独一无二的兴趣组合并非偶然，而是一份恩赐。","别再等待别人允许你去渴望你想要的。","热情是会传染的。当你找到了自己的热情，你会点亮身边的每个人。","通往满足的道路，是由那些让你忘记时间的东西铺就的。","什么让你心碎？那同样是你使命的一部分。","你生来就怀有使命，你的人生就是发现它的旅程。","那些让你兴奋的事不是随机的，它们是你灵魂的语言。","你的热情也许别人无法理解，但它不需要被理解。","不追逐梦想的代价，是在沉默中抱憾终生。","发现需要好奇，而好奇需要勇气。","你真正想要的是什么——尽管你害怕承认？","你想要的人生就在渴望带来的不适感的另一边。","你的渴望是正当的，你的梦想是真实的，你的热情自有其意义。","当你尊重自己真正的渴望时，你的整个人生都会转变。","别让实用主义扼杀你的热情。找到让两者共存的办法。","你的热情是一根线，当你拉动它时，整个命运的织锦都会展开。","最成功的人并非最有天赋，而是最有热情。","发现自己是一场终生的探险。享受每一次发现。","你10岁的自己，会为你现在追求的东西而感到骄傲吗？","你腹中的那团火不是消化不良，而是灵感。为它行动起来。","你的热情项目，也许就是你的人生使命。给予它应有的关注。","什么让你感到自己是真正活着的？世界需要更多全然活着的人。","你的渴望并不过大，你只是把自己玩得太小了。","今天，就是开始探索真正能触动你的事物的那一天。"],
+5:["勇气不是没有恐惧，而是在恐惧面前依然行动。","恐惧是一扇门，每一个伟大的成就都在它的另一边。","穿越恐惧是唯一的出路。","你的恐惧不是高墙，而是等待被推开的大门。","感受恐惧，然后照样去做。这就是勇敢的定义。","每当你直面一次恐惧，你就缩小了它，壮大了自己。","恐惧只是暂时的，而遗憾是永远的。选择勇气吧。","那些最让你害怕的事，往往是最值得做的事。","勇气是一块肌肉，每次使用它都会变得更强。","别让恐惧替你做出决定。让勇气引领你的方向。","对失败的恐惧，远比失败本身更可怕。","你已熬过了人生中每一个艰难时刻。","勇敢不是无所畏惧，而是恐惧到发抖却依然向前。","舒适区确实是个美丽的地方，但那里什么都长不出来。","一次勇敢的行动，足以改变你整个人生的轨迹。","恐惧只是忘了加氧气——深呼吸，然后行动。","你害怕进入的洞穴里，藏着你在寻找的宝藏。","勇气始于第一步，然后是下一步，再下一步。","如果什么都不怕，你会去做什么？就去做那件事。","你比自己意识到的要勇敢得多。","每个英雄的旅程都始于直面恐惧。这是你的路。","恐惧是个骗子，它告诉你「你做不到」，而你绝对可以。","唯一挡在你和梦想之间的，是对开始的恐惧。","勇气是会传染的。你的勇敢会激励他人变得勇敢。","今天就去做一件让自己害怕的事吧。哪怕是一件小事。","你比自己的恐惧更强大，你一直都是。","恐惧不会完全消失，但你可以学会与它同行。","你的祖先熬过了比这难得多的事，他们的力量活在你血脉之中。","对失败的恐惧是梦想的头号杀手，别让它赢。","你征服的每一个恐惧，都会成为你通往更高自我的阶梯。","最勇敢的人并非毫无畏惧，而是尽管害怕依然行动的人。","勇气不总是咆哮，有时它只是那个轻轻说「再试一次」的声音。","你无法控制恐惧是否会来，但你可以控制恐惧是否掌控你。","唯一真正的失败，是让恐惧阻止你去尝试。","未来的你，会感谢你今天展现的勇气。","恐惧是成长的自然反应，它意味着你正在突破边界。","勇敢，是只有你自己知道你内心有多害怕。","令你恐惧的事物，是一张通往最重要的东西的地图。跟随它。","从不尝试带来的遗憾，永远比失败带来的痛苦更沉重。","你有能力将恐惧转化为燃料。","恐惧不是你的敌人，它是你的老师。从中学习，然后继续向前。","每一次勇敢的行动，都在重塑你的大脑，让你变得更加勇敢。","世界属于那些敢于直面恐惧的人。","你的恐惧比看上去要小。面对它们，它们就会缩小。","勇气是连接你在哪里和你想去哪里的桥梁。","你永远不会知道自己有多坚强，直到坚强成为唯一的选择。","恐惧是一个阴影。当你走向它，光就会随之而来。","现在的你和你想成为的你之间的差距，就叫做勇气。","怀疑扼杀的梦想比失败多得多。选择相信。","勇气是生命为给予平静而索取的代价。心甘情愿地付吧。"],
+6:["你的头脑是你人生的操作系统，定期升级它。","你思想的质量，决定你人生的质量。","你的大脑不是固化不变的，它是可塑的。用意图去塑造它。","你的每一个念头都在塑造你的未来。请慎重选择。","你能做的最好的投资，是升级你的思维模式。","你的心念是一座花园。种下花朵，而不是杂草。","你喂养心灵的，就是你的现实。喂养它伟大。","你离一个完全不同的人生，只差一个决定。","心念不是要被填满的容器，而是要被点燃的火焰。","升级你的信念，它们就是你人生运行的软件。","心理的建设与身体的锻炼同等重要。每日训练。","你感知到的限制不是真实的，只不过是旧的程序罢了。","你的内在对话创造了你的外在体验。对自己温柔一点。","同时激活的神经元会连接在一起。选择你要反复练习的东西。","你拥有的最强大的工具就在你的两耳之间。学会使用它。","你的潜力随你的思维格局而扩展。想得更大一些。","旧的思维方式打不开新的大门。进化你的心念。","你的念头不是事实，而是习惯。改变它们。","向新思想打开的头脑，永远不会回到原来的尺寸。","你不是你的念头，你是念头的观照者。","成长型思维不是一个流行词，它是所有成就的基础。","你的心智模型塑造了你的世界。升级它们，获得更好的现实。","每个专家都曾是一个拒绝停止学习的初学者。","智力不是固定的，它是通过努力和学习培养出来的。","当你学习新东西时，大脑会发生生理变化。真正地升级它。","你的思维模式是你审视一切的镜片。擦亮它。","你相信自己能达成什么，为你将达成什么设定了上限。","最成功的人不是最聪明的，而是最有适应力的。","你的心念可以是你最好的盟友，也可以是你最坏的敌人。训练它成为前者。","元认知是成功人士的超能力。思考你的思考。","你对自己讲的故事，会成为你的人生。讲更好的故事吧。","你的大脑相信你最常告诉它的话。告诉它赋能的真相。","你在别人身上欣赏的每一项技能都可以学会。从今天开始。","平凡和非凡之间的差距，往往只是一个视角的转换。","你的大脑到目前为止只被使用了很小一部分。释放更多。","将挑战重新认知为机遇。你的大脑会跟随你的引导。","你不能用制造问题的同一思维去解决问题。","持续学习的习惯，是终极的竞争优势。","你的大脑会根据你重复的行为进行自我重塑。练习卓越。","最重要的对话，是你与自己的对话。","你关注什么，什么就会扩展。关注解法，而非问题。","你的潜能不是注定的，而是通过思维模式培养的。","头脑如同一把降落伞，打开时才能发挥作用。","每个学习时刻，都是你心智操作系统的一次升级。","你并不受限于你现有的头脑水平，你可以改变它。","你注意力的质量，决定你人生的质量。","被新思想拉伸过的头脑，永远不会回到原来的维度。","你的念头会成为你的话语、行动、习惯、品格和命运。","你能做的最重要的升级，就在你的两耳之间。","今天是一个好日子，去学习一些足以改变一切的东西。"],
+7:["人生不是一个待解的问题，而是一场待玩的游戏。享受它吧。","生命的意义就是你赋予它的意义。给它一个好的意义。","玩耍不是学习的休息，玩耍是学习的最高形式。","别把生活太当回事，反正你也没法活着离开它。","生命的目的是全然地去活，去品味体验的极致。","人生很短，趁你还有牙的时候多笑一笑。","幸福不是终点站，而是一种旅行方式。","人生这场游戏不在于赢，而在于带着喜悦去玩。","你的人生，就是你给世界的讯息。让它充满启发。","生命中最好的东西不是东西，而是瞬间、记忆和联结。","生活总是在你忙着制定其他计划时悄然发生。活在当下吧。","每一天都是人生游戏中的新关卡。好好地玩。","快乐是生命中一件严肃的事。请认真对待它。","生命的秘密，就是爱上「活在其中」的过程。","你是自己故事的主角，让它成为一部好戏。","人生目的不只是快乐，而是成为一个有用的、有荣誉感的、有慈悲心的人。","生活要么是一场勇敢的冒险，要么什么都不是。选择冒险。","你只活一次，但如果你活得精彩，一次也就足够了。","你生命的品质，由你的每一个当下的品质决定。","生命的意义不在于你呼吸了多少次，而在于那些让你屏息的瞬间。","你的生命是你对自己和世界的信念的映射。","人生这场游戏，属于那些坚持玩下去的人。永不放弃。","生命太重要了，重要到不能太过严肃。放轻松，享受旅程。","你来到这里是为了活着，而不仅仅是存在着。每天去选择「活生生」。","人生的意义是找到你的天赋，而人生的目的是把它给予出去。","你的人生不是一场彩排，这就是现场直播。","最重要的事，是去享受你的人生，去快乐。这就是全部了。","人生是在执着与放手之间的平衡。精通两者。","人生的目的，是去活出一个有目的的人生。找到你的目的，然后去追求。","每一天都是一份礼物，所以它才被称为「当下」。","人生不必完美才能精彩。","好的生活，是由爱所启发、由知识所引导的。","你的人生就是你的作品。去创造一些美丽的东西吧。","未经审视的人生不值得活，但未曾活过的人生也不值得审视。","人生真正开始于你走出舒适区的那一刻。迈出脚步，开始活吧。","最浪费的日子，是没有笑声的日子。","人生要么是一场勇敢的冒险，要么什么都不是。安全在大自然中并不存在。","人生的秘密，不过是把自己放在对的灯光下。","你的人生将成为你对自己讲的那个故事。讲一个精彩的。","预测未来的最好方法，就是去创造它。一次一个喜悦的步伐。","人生是由数千个微小的奇迹串联而成的。去发现它们。","别只是过完一生，要从一生中成长。","人生的目的，是让你的存在有意义，有产出，让它带来不同。","人生就像一台相机：对焦在重要的事上，捕捉好时光，从底片中显影。","你生来就有能力改变别人的一天。别浪费了它。","人生不是关于找到自己，而是创造自己，带着玩耍的心和喜悦。","人生的悲剧不在于它结束得太早，而在于我们等了太久才开始。","你的人生是一份礼物。慢慢地拆开它，品味每一个瞬间。","人生奖励那些敢于露面、踏实去做、永不放弃信念的人。","今天，带着全然的在场的投入和无限的喜悦，来玩这场生命的游戏吧。"]
+};
 function getDailyQuote(day) {
     var q = inspiringQuotes[day]; if (!q) return '';
+    var t = new Date();
+    var seed = t.getFullYear()*10000+(t.getMonth()+1)*100+t.getDate();
+    seed = seed*31+day;
+    return q[Math.abs(Math.floor(Math.sin(seed)*100000))%q.length];
+}
+function getDailyQuoteZh(day) {
+    var q = inspiringQuotesZh[day]; if (!q) return '';
     var t = new Date();
     var seed = t.getFullYear()*10000+(t.getMonth()+1)*100+t.getDate();
     seed = seed*31+day;
@@ -1005,6 +1220,7 @@ modalDate=document.getElementById('modalDate');
 modalClose=document.getElementById('modalClose');
 inspiringBtn.addEventListener('click',function(){
     modalQuote.innerText='"'+getDailyQuote(currentPosterDay)+'"';
+    modalQuoteZh.innerText='「'+getDailyQuoteZh(currentPosterDay)+'」';
     modalDate.innerText=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     modalOverlay.classList.add('show');
 });
@@ -1071,9 +1287,14 @@ function drawDayPoster(day, skipDisplay) {
         else { sw = img.naturalWidth; sh = sw / cr; sx = 0; sy = (img.naturalHeight - sh) / 2; }
         ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
         var ov = ctx.createLinearGradient(0, 0, 0, H);
-        ov.addColorStop(0, 'rgba(0,0,0,0.2)');
-        ov.addColorStop(0.5, 'rgba(0,0,0,0.4)');
-        ov.addColorStop(1, 'rgba(0,0,0,0.75)');
+        if (day === 3) {
+            ov.addColorStop(0, 'rgba(0,0,0,0.2)');
+            ov.addColorStop(1, 'rgba(0,0,0,0.2)');
+        } else {
+            ov.addColorStop(0, 'rgba(0,0,0,0.2)');
+            ov.addColorStop(0.5, 'rgba(0,0,0,0.4)');
+            ov.addColorStop(1, 'rgba(0,0,0,0.75)');
+        }
         ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
         if (day === 1) drawDay1(ctx, W, H, pad, item);
         else if (day === 2) drawDay2(ctx, W, H, pad, item);
@@ -1763,6 +1984,88 @@ window.addEventListener('pageshow', function(e) {
     var sc = document.querySelector('.content-scroll');
     if (sc) sc.scrollTop = 0;
 });
+
+// ===== 全站时间追踪系统 =====
+(function() {
+    var HEARTBEAT_MS = 5 * 60 * 1000; // 每5分钟存一次
+    function getDateKey() { var d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+    function initTracking() {
+        if (!localStorage.getItem('totalActiveMinutes')) localStorage.setItem('totalActiveMinutes', '0');
+        if (!localStorage.getItem('todayActiveMinutes')) localStorage.setItem('todayActiveMinutes', '0');
+        var savedDate = localStorage.getItem('lastActiveDate');
+        var today = getDateKey();
+        if (savedDate !== today) {
+            localStorage.setItem('todayActiveMinutes', '0');
+            localStorage.setItem('lastActiveDate', today);
+        }
+        if (!localStorage.getItem('lastHeartbeat')) localStorage.setItem('lastHeartbeat', Date.now().toString());
+        addElapsed();
+        setInterval(addElapsed, HEARTBEAT_MS);
+        window.addEventListener('beforeunload', function() { addElapsed(); });
+    }
+    function addElapsed() {
+        var now = Date.now();
+        var lastBeat = parseInt(localStorage.getItem('lastHeartbeat') || now);
+        var elapsed = Math.min((now - lastBeat) / 60000, 10);
+        if (elapsed >= 0.3) {
+            var todayMin = parseFloat(localStorage.getItem('todayActiveMinutes') || '0');
+            var totalMin = parseFloat(localStorage.getItem('totalActiveMinutes') || '0');
+            localStorage.setItem('todayActiveMinutes', (todayMin + elapsed).toString());
+            localStorage.setItem('totalActiveMinutes', (totalMin + elapsed).toString());
+        }
+        localStorage.setItem('lastHeartbeat', now.toString());
+    }
+    window.getTodayMinutes = function() { return Math.floor(parseFloat(localStorage.getItem('todayActiveMinutes') || '0')); };
+    window.getTotalMinutes = function() { return Math.floor(parseFloat(localStorage.getItem('totalActiveMinutes') || '0')); };
+    window.getGrowthPoints = function() { return window.getTotalMinutes() * 7; };
+    initTracking();
+})();
+
+// ===== "我" 按钮 & 卡片 =====
+var mePlayerName = localStorage.getItem('playerName');
+if (mePlayerName) {
+    var mePlayerAvatar = localStorage.getItem('playerAvatar');
+    var meBtnTop = document.getElementById('meBtnTop');
+    var meBtnAvatar = document.getElementById('meBtnAvatar');
+    meBtnTop.style.display = 'flex';
+    if (mePlayerAvatar) meBtnAvatar.style.backgroundImage = 'url(' + mePlayerAvatar + ')';
+
+    var meCardAvatar = document.getElementById('meCardAvatar');
+    var meCardName = document.getElementById('meCardName');
+    var meTodayProgress = document.getElementById('meTodayProgress');
+    var meProgressFill = document.getElementById('meProgressFill');
+    var meTodayActive = document.getElementById('meTodayActive');
+    var meTotalPoints = document.getElementById('meTotalPoints');
+    var meOverlay = document.getElementById('meModalOverlay');
+    if (mePlayerAvatar) meCardAvatar.style.backgroundImage = 'url(' + mePlayerAvatar + ')';
+    meCardName.textContent = mePlayerName;
+
+    function getAutoUnlockedDay() {
+        var startStr = localStorage.getItem('startDate');
+        var start;
+        if (!startStr) { start = new Date(); start.setHours(0,0,0,0); localStorage.setItem('startDate', start.getTime()); }
+        else { start = new Date(parseInt(startStr)); }
+        var now = new Date(); now.setHours(0,0,0,0);
+        return Math.min(Math.floor((now - start) / 86400000) + 1, 7);
+    }
+
+    function refreshMeStats() {
+        var day = getAutoUnlockedDay();
+        meTodayProgress.textContent = day + '/7 天';
+        meProgressFill.style.width = (day / 7 * 100) + '%';
+        meTodayActive.textContent = window.getTodayMinutes() + ' min';
+        meTotalPoints.textContent = 'YNG+' + window.getGrowthPoints().toLocaleString();
+    }
+    refreshMeStats();
+    setInterval(refreshMeStats, 5 * 60 * 1000);
+
+    window.showMeCard = function() {
+        refreshMeStats();
+        meOverlay.classList.add('show');
+    };
+    document.getElementById('meReturnBtn').addEventListener('click', function() { meOverlay.classList.remove('show'); });
+    meOverlay.addEventListener('click', function(e) { if (e.target === meOverlay) meOverlay.classList.remove('show'); });
+}
 </script>
 <script>
 (function(){
@@ -1776,6 +2079,7 @@ var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick
     <div class="modal-card">
         <button class="modal-close" id="modalClose">&times;</button>
         <p class="modal-quote" id="modalQuote"></p>
+        <p class="modal-quote-zh" id="modalQuoteZh"></p>
         <p class="modal-date" id="modalDate"></p>
     </div>
 </div>

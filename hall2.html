@@ -358,6 +358,158 @@
         body.no-page-anim { animation:none!important; }
         @keyframes pageIn { from { opacity:0.5; transform:translate3d(8px,0,0); } }
 
+        /* ===== "我" 按钮 (右上角) ===== */
+        .me-btn-top {
+            display: flex; align-items: center; gap: 6px;
+            padding: 8px 16px; border-radius: 24px;
+            background: linear-gradient(135deg, #3DB008, #E9F8BC, #E0FE44);
+            border: none; color: #1a3a00; font-size: 0.85rem; font-weight: 700;
+            letter-spacing: 1px; cursor: pointer;
+            box-shadow: 0 2px 12px rgba(61,176,8,0.3);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            white-space: nowrap;
+        }
+        .me-btn-top:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(61,176,8,0.45); }
+        .me-btn-top:active { transform: scale(0.94); }
+        .me-btn-avatar {
+            width: 26px; height: 26px; border-radius: 50%;
+            background-size: cover; background-position: center;
+            border: 1.5px solid rgba(26,58,0,0.3); flex-shrink: 0;
+        }
+        /* ===== "我" 卡片弹窗 — Apple iOS 18 ===== */
+        .me-modal-overlay {
+            position: fixed; inset: 0; z-index: 999;
+            background: rgba(0,0,0,0.38);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.32s cubic-bezier(0.25,0.1,0.25,1);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+        .me-modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .me-card {
+            position: relative; max-width: 356px; width: 90%;
+            padding: 28px 24px 22px; border-radius: 28px;
+            background: linear-gradient(145deg, #3DB008 40%, #E9F8BC 55%, #E0FE44);
+            box-shadow:
+                0 6px 24px rgba(0,0,0,0.07),
+                0 1px 0 rgba(255,255,255,0.5) inset,
+                0 0 0 1px rgba(255,255,255,0.7);
+            transform: translateY(28px) scale(0.96);
+            transition: transform 0.42s cubic-bezier(0.25,0.1,0.25,1);
+            overflow: hidden;
+            font-family: -apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC',sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .me-card::before {
+            content: ''; position: absolute; inset: 0; border-radius: 28px;
+            background-image: radial-gradient(rgba(0,0,0,0.025) 0.4px, transparent 0.4px);
+            background-size: 5px 5px; pointer-events: none; z-index: 0;
+        }
+        .me-card::after {
+            content: ''; position: absolute; inset: 0; border-radius: 28px;
+            background: rgba(255,255,255,0.10); pointer-events: none; z-index: 1;
+        }
+        .me-modal-overlay.show .me-card { transform: translateY(0) scale(1); }
+        .me-card > * { position: relative; z-index: 2; }
+
+        .me-card-header {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+        }
+        .me-card-avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            background-size: cover; background-position: center;
+            border: 1.5px solid #fff; flex-shrink: 0;
+            box-shadow: 0 0 0 2px rgba(183,247,0,0.18), 0 3px 10px rgba(0,0,0,0.06);
+        }
+        .me-card-info { display: flex; flex-direction: column; gap: 2px; }
+        .me-card-info .me-welcome {
+            font-size: 0.72rem; font-weight: 500; color: #222;
+            letter-spacing: 0.8px;
+        }
+        .me-card-info .me-nickname {
+            font-weight: 700; color: #000;
+        }
+        .me-card-info .me-greeting {
+            font-size: 0.7rem; font-weight: 400; color: rgba(255,255,255,0.85);
+            letter-spacing: 0.5px; font-style: italic;
+        }
+        .me-card i { font-weight: 400; opacity: 0.5; font-size: 0.85em; margin-left: 2px; }
+
+        /* ===== 卡片内容区 ===== */
+        .me-progress-card {
+            background: #1a1a1a; border-radius: 18px; padding: 18px 18px 14px;
+            margin-bottom: 10px;
+        }
+        .me-progress-header {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 12px;
+        }
+        .me-progress-label {
+            font-size: 0.85rem; font-weight: 600; color: #fff;
+            letter-spacing: -0.1px;
+        }
+        .me-progress-val {
+            font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.55);
+            font-variant-numeric: tabular-nums;
+        }
+        .me-progress-bar {
+            width: 100%; height: 8px; background: rgba(255,255,255,0.1);
+            border-radius: 99px; overflow: hidden;
+        }
+        .me-progress-fill {
+            height: 100%; border-radius: 99px;
+            background: linear-gradient(90deg, #D9FF70, #29E63E);
+            transition: width 0.6s cubic-bezier(0.25,0.1,0.25,1);
+            box-shadow: 0 0 8px rgba(41,230,62,0.25);
+        }
+
+        .me-activity-card {
+            background: #1a1a1a; border-radius: 18px; padding: 16px 18px;
+            margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .me-activity-label {
+            font-size: 0.85rem; font-weight: 600; color: #fff;
+            letter-spacing: -0.1px;
+        }
+        .me-activity-val {
+            font-size: 0.9rem; font-weight: 700; color: #D9FF70;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 底部双栏 */
+        .me-bottom-row {
+            display: flex; gap: 12px; align-items: stretch;
+        }
+        .me-tgp-card {
+            flex: 1.1; background: #1a1a1a; border-radius: 18px;
+            padding: 16px 18px; display: flex; flex-direction: column; justify-content: center;
+        }
+        .me-tgp-title {
+            font-size: 0.75rem; font-weight: 800; color: rgba(255,255,255,0.4);
+            letter-spacing: 3px;
+        }
+        .me-tgp-val {
+            font-size: 1rem; font-weight: 700; color: #fff;
+            letter-spacing: -0.2px; font-variant-numeric: tabular-nums; margin-top: 4px;
+        }
+        .me-tgp-formula {
+            font-size: 0.62rem; font-weight: 400; color: rgba(255,255,255,0.3);
+            letter-spacing: 0.5px; margin-top: 2px;
+        }
+        .me-return-btn {
+            flex: 0.9; border: none; border-radius: 18px;
+            background: linear-gradient(90deg, #D9FF70, #29E63E);
+            color: #1a3a00; font-size: 0.9rem; font-weight: 700;
+            letter-spacing: 1.5px; cursor: pointer;
+            box-shadow: 0 2px 10px rgba(41,230,62,0.22);
+            transition: all 0.25s ease;
+            font-family: -apple-system,'SF Pro Display','Helvetica Neue','PingFang SC',sans-serif;
+        }
+        .me-return-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(41,230,62,0.38); }
+        .me-return-btn:active { transform: scale(0.97); }
+
         @media (max-width:600px) {
             .grid { gap:10px 10px; row-gap:8px; max-width:260px; }
             .card { padding:6px 3px 8px; border-radius:15px; }
@@ -366,6 +518,12 @@
             .wrap { padding:0 14px 48px; }
             .hero-section { padding: 50px 0 20px; }
             .hero h1 { font-size:1.25rem; }
+            .me-card { max-width: 320px; padding: 24px 18px 20px; }
+            .me-card-header { gap: 12px; }
+            .me-card-avatar { width: 48px; height: 48px; }
+            .me-card-info .me-nickname { font-size: 1.05rem; }
+            .me-stat-left span { font-size: 0.78rem; }
+            .me-stat-val { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -383,6 +541,41 @@
 
 <div class="top-bar">
     <button class="back-btn" onclick="location.href='index.html'" aria-label="返回">←</button>
+    <button class="me-btn-top" id="meBtnTop" style="display:none;" onclick="showMeCard()" aria-label="个人中心">
+        <span class="me-btn-avatar" id="meBtnAvatar"></span>我
+    </button>
+</div>
+
+<!-- ===== "我" 卡片弹窗 — Apple iOS 18 ===== -->
+<div class="me-modal-overlay" id="meModalOverlay">
+    <div class="me-card">
+        <div class="me-card-header">
+            <div class="me-card-avatar" id="meCardAvatar"></div>
+            <div class="me-card-info">
+                <div class="me-welcome">WELCOME HOME, <span class="me-nickname" id="meCardName"></span></div>
+                <div class="me-greeting">Take good care of yourself today.</div>
+            </div>
+        </div>
+        <div class="me-progress-card">
+            <div class="me-progress-header">
+                <span class="me-progress-label">今日进度 <i>Today's Progress</i></span>
+                <span class="me-progress-val" id="meTodayProgress">0/7 天</span>
+            </div>
+            <div class="me-progress-bar"><div class="me-progress-fill" id="meProgressFill" style="width:0%"></div></div>
+        </div>
+        <div class="me-activity-card">
+            <span class="me-activity-label">今日手环活跃 <i>Band Daily Activity</i></span>
+            <span class="me-activity-val" id="meTodayActive">0 分钟</span>
+        </div>
+        <div class="me-bottom-row">
+            <div class="me-tgp-card">
+                <span class="me-tgp-title">TGP · 累计成长积分</span>
+                <span class="me-tgp-val" id="meTotalPoints">YNG+0</span>
+                <span class="me-tgp-formula">累计使用时长 × 7</span>
+            </div>
+            <button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
+        </div>
+    </div>
 </div>
 
 <div class="scroll">
@@ -538,6 +731,88 @@ if(pn){
     var bb=document.querySelector('.back-btn');
     if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
 })();
+
+// ===== 全站时间追踪系统 =====
+(function() {
+    var HEARTBEAT_MS = 5 * 60 * 1000;
+    function getDateKey() { var d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+    function initTracking() {
+        if (!localStorage.getItem('totalActiveMinutes')) localStorage.setItem('totalActiveMinutes', '0');
+        if (!localStorage.getItem('todayActiveMinutes')) localStorage.setItem('todayActiveMinutes', '0');
+        var savedDate = localStorage.getItem('lastActiveDate');
+        var today = getDateKey();
+        if (savedDate !== today) {
+            localStorage.setItem('todayActiveMinutes', '0');
+            localStorage.setItem('lastActiveDate', today);
+        }
+        if (!localStorage.getItem('lastHeartbeat')) localStorage.setItem('lastHeartbeat', Date.now().toString());
+        addElapsed();
+        setInterval(addElapsed, HEARTBEAT_MS);
+        window.addEventListener('beforeunload', function() { addElapsed(); });
+    }
+    function addElapsed() {
+        var now = Date.now();
+        var lastBeat = parseInt(localStorage.getItem('lastHeartbeat') || now);
+        var elapsed = Math.min((now - lastBeat) / 60000, 10);
+        if (elapsed >= 0.3) {
+            var todayMin = parseFloat(localStorage.getItem('todayActiveMinutes') || '0');
+            var totalMin = parseFloat(localStorage.getItem('totalActiveMinutes') || '0');
+            localStorage.setItem('todayActiveMinutes', (todayMin + elapsed).toString());
+            localStorage.setItem('totalActiveMinutes', (totalMin + elapsed).toString());
+        }
+        localStorage.setItem('lastHeartbeat', now.toString());
+    }
+    window.getTodayMinutes = function() { return Math.floor(parseFloat(localStorage.getItem('todayActiveMinutes') || '0')); };
+    window.getTotalMinutes = function() { return Math.floor(parseFloat(localStorage.getItem('totalActiveMinutes') || '0')); };
+    window.getGrowthPoints = function() { return window.getTotalMinutes() * 7; };
+    initTracking();
+})();
+
+// ===== "我" 按钮 & 卡片 =====
+var mePlayerName = localStorage.getItem('playerName');
+if (mePlayerName) {
+    var mePlayerAvatar = localStorage.getItem('playerAvatar');
+    var meBtnTop = document.getElementById('meBtnTop');
+    var meBtnAvatar = document.getElementById('meBtnAvatar');
+    meBtnTop.style.display = 'flex';
+    if (mePlayerAvatar) meBtnAvatar.style.backgroundImage = 'url(' + mePlayerAvatar + ')';
+
+    var meCardAvatar = document.getElementById('meCardAvatar');
+    var meCardName = document.getElementById('meCardName');
+    var meTodayProgress = document.getElementById('meTodayProgress');
+    var meProgressFill = document.getElementById('meProgressFill');
+    var meTodayActive = document.getElementById('meTodayActive');
+    var meTotalPoints = document.getElementById('meTotalPoints');
+    var meOverlay = document.getElementById('meModalOverlay');
+    if (mePlayerAvatar) meCardAvatar.style.backgroundImage = 'url(' + mePlayerAvatar + ')';
+    meCardName.textContent = mePlayerName;
+
+    function getAutoUnlockedDay() {
+        var startStr = localStorage.getItem('startDate');
+        var start;
+        if (!startStr) { start = new Date(); start.setHours(0,0,0,0); localStorage.setItem('startDate', start.getTime()); }
+        else { start = new Date(parseInt(startStr)); }
+        var now = new Date(); now.setHours(0,0,0,0);
+        return Math.min(Math.floor((now - start) / 86400000) + 1, 7);
+    }
+
+    function refreshMeStats() {
+        var day = getAutoUnlockedDay();
+        meTodayProgress.textContent = day + '/7 天';
+        meProgressFill.style.width = (day / 7 * 100) + '%';
+        meTodayActive.textContent = window.getTodayMinutes() + ' min';
+        meTotalPoints.textContent = 'YNG+' + window.getGrowthPoints().toLocaleString();
+    }
+    refreshMeStats();
+    setInterval(refreshMeStats, 5 * 60 * 1000);
+
+    window.showMeCard = function() {
+        refreshMeStats();
+        meOverlay.classList.add('show');
+    };
+    document.getElementById('meReturnBtn').addEventListener('click', function() { meOverlay.classList.remove('show'); });
+    meOverlay.addEventListener('click', function(e) { if (e.target === meOverlay) meOverlay.classList.remove('show'); });
+}
 </script>
 </body>
 </html>

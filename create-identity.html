@@ -234,6 +234,50 @@ body::before {
   box-shadow: none;
 }
 
+/* ===== 头像选择 ===== */
+.avatar-section { margin-bottom: 12px; }
+.avatar-label { font-size: 0.9rem; color: #fff; opacity: 0.9; margin-bottom: 10px; display: block; }
+.gender-toggle { display: flex; gap: 10px; margin-bottom: 12px; }
+.gender-btn {
+  flex: 1; padding: 10px; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.6); font-size: 0.9rem;
+  cursor: pointer; transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+.gender-btn.active {
+  background: linear-gradient(90deg, #D9FF70, #29E63E);
+  border-color: transparent; color: #1a3a00; font-weight: 700;
+  box-shadow: 0 0 16px rgba(41,230,62,0.3);
+}
+.gender-btn:hover:not(.active) { border-color: rgba(183,247,0,0.35); color: #fff; }
+.avatar-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 10px; justify-items: center;
+}
+.avatar-item {
+  width: 52px; height: 52px; border-radius: 50%;
+  background-size: cover; background-position: center;
+  cursor: pointer; position: relative;
+  border: 2.5px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.avatar-item:hover { transform: scale(1.12); border-color: rgba(183,247,0,0.5); }
+.avatar-item.selected {
+  border-color: #29E63E;
+  box-shadow: 0 0 18px rgba(41,230,62,0.45), 0 0 6px rgba(41,230,62,0.3);
+  transform: scale(1.08);
+}
+.avatar-item.selected::after {
+  content: '✓'; position: absolute; bottom: -2px; right: -2px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #29E63E; color: #1a3a00; font-size: 0.65rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
 .privacy-tip {
   text-align: center;
   font-size: 0.75rem;
@@ -442,6 +486,15 @@ body::before {
       <label class="form-label">你的昵称</label>
       <div class="char-count">还能输入 22 字</div>
       <div class="error-tip" id="errorTip">请输入 2-22 个字的昵称</div>
+    </div>
+
+    <div class="avatar-section">
+      <label class="avatar-label">选择头像</label>
+      <div class="gender-toggle" id="genderToggle">
+        <button class="gender-btn active" data-gender="男">♂ 男生</button>
+        <button class="gender-btn" data-gender="女">♀ 女生</button>
+      </div>
+      <div class="avatar-grid" id="avatarGrid"></div>
     </div>
 
     <button class="btn" id="createBtn" onclick="create()" disabled>确认创建 → 进入旅程</button>
@@ -680,6 +733,50 @@ if (isEdit) {
   var cc = document.querySelector('.char-count');
   if (cc) cc.textContent = '还能输入 ' + (22 - el.value.trim().length) + ' 字';
 }
+
+// ===== 头像选择 =====
+var selectedAvatar = localStorage.getItem('playerAvatar') || '';
+var currentGender = '男';
+var avatarGrid = document.getElementById('avatarGrid');
+var genderBtns = document.querySelectorAll('.gender-btn');
+
+function renderAvatars(gender) {
+  avatarGrid.innerHTML = '';
+  for (var i = 1; i <= 20; i++) {
+    var filename = gender + i + '.png';
+    var item = document.createElement('div');
+    item.className = 'avatar-item';
+    item.style.backgroundImage = 'url(' + filename + ')';
+    item.dataset.avatar = filename;
+    if (filename === selectedAvatar) item.classList.add('selected');
+    item.addEventListener('click', function() {
+      avatarGrid.querySelectorAll('.avatar-item').forEach(function(el) { el.classList.remove('selected'); });
+      this.classList.add('selected');
+      selectedAvatar = this.dataset.avatar;
+      localStorage.setItem('playerAvatar', selectedAvatar);
+    });
+    avatarGrid.appendChild(item);
+  }
+}
+
+genderBtns.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    genderBtns.forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    currentGender = this.dataset.gender;
+    renderAvatars(currentGender);
+  });
+});
+
+// 初始化：如果已保存头像，恢复对应性别
+if (selectedAvatar) {
+  if (selectedAvatar.indexOf('女') === 0) {
+    currentGender = '女';
+    genderBtns.forEach(function(b) { b.classList.remove('active'); });
+    document.querySelector('.gender-btn[data-gender="女"]').classList.add('active');
+  }
+}
+renderAvatars(currentGender);
 
 // 已修改：返回到 shouye.html
 function back(){location.href='shouye.html';}
