@@ -57,7 +57,15 @@
       "Bash(rm -f \"E:/副本网页/未来.webp\")",
       "Bash(rm -rf \"E:/副本网页\")",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(gh repo *)",
+      "Bash(winget install *)",
+      "Bash(gh auth *)",
+      "Bash(where gh *)",
+      "Read(//c/Program Files/GitHub CLI/**)",
+      "Read(//c/Program Files \\(x86\\)/GitHub CLI/**)",
+      "Read(//c/Users/**)",
+      "Bash(C:/Program Files/GitHub CLI/gh auth *)"
     ]
   }
 }

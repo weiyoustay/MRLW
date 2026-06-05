@@ -46,7 +46,18 @@
             overflow-y:auto; overflow-x:hidden;
             padding: 20px;
         }
+        
         .container {
+            max-width: 720px;
+            margin: 60px auto;
+            position:relative; z-index:1;
+        }
+         min-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 0 20px; }
+        .mantra-section { min-height: 75vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 24px 80px; }
+        .mantra-line { font-family: "Georgia","Times New Roman",serif; font-style: italic; font-size: 0.82rem; color: rgba(255,255,255,0.7); line-height: 2.4; text-align: center; max-width: 400px; }
+        .mantra-line b { color: rgba(255,255,255,0.9); }
+
+
             max-width: 720px;
             margin: 60px auto;
             position:relative; z-index:1;
@@ -159,6 +170,21 @@
         .time-group:hover {
             color: #29E63E;
         }
+        .script-toggle {
+            display: inline-flex; align-items: center; gap: 5px;
+            margin: 0 0 18px; padding: 5px 14px 5px 12px;
+            background: linear-gradient(90deg, #3DB008, #E9F8BC, #E0FE44);
+            border: 1px solid rgba(61,176,8,0.25); border-radius: 20px;
+            color: #1a2a00; font-size: 0.66rem; font-weight: 600;
+            letter-spacing: 0.8px; cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 8px rgba(61,176,8,0.15);
+        }
+        .script-toggle::before { content: "▸"; font-size: 0.5rem; transition: transform 0.3s ease; }
+        .script-toggle.expanded::before { transform: rotate(90deg); }
+        .script-toggle:hover { transform: translateY(-1px); box-shadow: 0 3px 14px rgba(61,176,8,0.25); }
+        .script-toggle:active { transform: scale(0.97); }
+
         .script-box {
             margin: 40px 0 50px;
             background: rgba(0,0,0,0.25);
@@ -299,14 +325,21 @@ body.no-page-anim { animation: none !important; }
 <div class="scroll">
 <div class="container">
 
-<header>
+<div class="hero-section">
+
     <div class="tag">SPECIAL MESSAGE</div>
     <div class="personal-tag" id="personalTag"></div>
 	    <h1>致每一位不断挑战自我的你</h1>
     <p class="desc">特别献声 · 勇气 · 坚韧 · 永不放弃</p>
-</header>
 
-<div class="audio-tip">这段献给坚持到这里的你，请认真聆听</div>
+	</div>
+	<div class="mantra-section">
+		<p class="mantra-line">Seven days ago, you took the <b>first courageous step</b>.</p>
+		<p class="mantra-line">Now look at you — <b>transformed, awake, alive</b>.</p>
+		<p class="mantra-line">The journey does not end here. <b>It has only just begun</b>.</p>
+		<p class="mantra-line">Carry this light forward. The world <b>needs you shining</b>.</p>
+	</div>
+	<div class="audio-tip">这段献给坚持到这里的你，请认真聆听</div>
 
 <div class="player">
     <div class="controls">
@@ -327,7 +360,9 @@ body.no-page-anim { animation: none !important; }
     <audio id="audio" preload="auto" src="audio_gift.mp3"></audio>
 </div>
 
-<div class="script-box">
+<button class="script-toggle" id="scriptToggle">EXPAND</button>
+
+<div class="script-box" id="scriptBox">
     <div class="script-title">励志音频｜完整英文对照</div>
 
     <div class="line">
@@ -962,6 +997,8 @@ if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
 var pn=localStorage.getItem('playerName');if(pn)document.getElementById('personalTag').innerText=pn+'，这份礼物是给你的';
 var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
 })();
+
+	var st=document.getElementById("scriptToggle");var sb=document.getElementById("scriptBox");if(st&&sb){var se=false;var al=sb.querySelectorAll(".line");if(al.length>3)for(var i=3;i<al.length;i++)al[i].style.display="none";st.addEventListener("click",function(){se=!se;for(var i=3;i<al.length;i++)al[i].style.display=se?"":"none";st.classList.toggle("expanded",se);st.childNodes[st.childNodes.length-1].textContent=se?"COLLAPSE":"EXPAND";});}
 </script>
 </body>
 </html>

@@ -773,9 +773,6 @@
 .back-btn:hover { background: rgba(183,247,0,0.15); border-color: var(--spring-bud); color: var(--spring-bud); transform: scale(1.1); box-shadow: 0 0 15px rgba(183,247,0,0.25); }
 .back-btn:active { transform: scale(0.95); }
 .back-btn:focus-visible { outline: 2px solid var(--spring-bud); outline-offset: 2px; }
-body { animation: pageIn 0.1s ease; will-change: transform, opacity; }
-body.no-page-anim { animation: none !important; }
-@keyframes pageIn { from { opacity: 0.7; transform: translate3d(15px,0,0); } }
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -1028,7 +1025,9 @@ var posterCache = {};
 var currentPosterDay = 1;
 var pCtx, pW, pH, pDpr;
 
+var posterInited = false;
 function initPosterCanvas() {
+    if (posterInited) return;
     var canvas = document.getElementById('posterCanvas');
     var stage = document.getElementById('posterStage');
     pDpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1040,15 +1039,18 @@ function initPosterCanvas() {
     pCtx.scale(pDpr, pDpr);
     pCtx.imageSmoothingEnabled = true;
     pCtx.imageSmoothingQuality = 'high';
+    posterInited = true;
 }
 
-function drawDayPoster(day) {
+function drawDayPoster(day, skipDisplay) {
     if (posterCache[day]) {
-        var canvas = document.getElementById('posterCanvas');
-        var ctx = canvas.getContext('2d');
-        canvas.width = pW * pDpr; canvas.height = pH * pDpr;
-        ctx.scale(pDpr, pDpr);
-        ctx.drawImage(posterCache[day], 0, 0, pW, pH);
+        if (!skipDisplay) {
+            var canvas = document.getElementById('posterCanvas');
+            var ctx = canvas.getContext('2d');
+            canvas.width = pW * pDpr; canvas.height = pH * pDpr;
+            ctx.scale(pDpr, pDpr);
+            ctx.drawImage(posterCache[day], 0, 0, pW, pH);
+        }
         return;
     }
     initPosterCanvas();
@@ -1081,11 +1083,13 @@ function drawDayPoster(day) {
         else if (day === 6) drawDay6(ctx, W, H, pad, item);
         else if (day === 7) drawDay7(ctx, W, H, pad, item);
         posterCache[day] = off;
-        var mc = document.getElementById('posterCanvas');
-        var mctx = mc.getContext('2d');
-        mc.width = pW * pDpr; mc.height = pH * pDpr;
-        mctx.scale(pDpr, pDpr);
-        mctx.drawImage(off, 0, 0, pW, pH);
+        if (!skipDisplay) {
+            var mc = document.getElementById('posterCanvas');
+            var mctx = mc.getContext('2d');
+            mc.width = pW * pDpr; mc.height = pH * pDpr;
+            mctx.scale(pDpr, pDpr);
+            mctx.drawImage(off, 0, 0, pW, pH);
+        }
     };
     img.onerror = function() {
         ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, W, H);
@@ -1625,6 +1629,7 @@ var currentPosterDay = 1;
 
 function renderPoster(day) {
     currentPosterDay = day;
+    sessionStorage.setItem('hallPosterDay', day);
     var stage = document.getElementById('posterStage');
     var unlocked = isDayUnlocked(day);
     var exploreBtn = document.getElementById('exploreBtn');
@@ -1654,34 +1659,45 @@ function renderPoster(day) {
     drawDayPoster(day);
 }
 
-function renderDayNav() {
+function renderDayNav(activeDay) {
     var nav = document.getElementById('dayNav');
     nav.innerHTML = '';
-    var currentDay = getCurrentDay();
+    if (activeDay === undefined) activeDay = getCurrentDay();
     for (var d = 1; d <= 7; d++) {
         var dot = document.createElement('button');
         dot.className = 'day-dot';
         if (!isDayUnlocked(d)) dot.classList.add('locked');
-        if (d === currentDay) dot.classList.add('active');
+        if (d === activeDay) dot.classList.add('active');
         dot.dataset.day = d;
         dot.innerText = 'Day' + d;
         dot.addEventListener('click', function() {
             var day = parseInt(this.dataset.day);
-            if (isDayUnlocked(day)) renderPoster(day);
+            if (isDayUnlocked(day)) {
+                renderPoster(day);
+                document.querySelectorAll('.day-dot').forEach(function(d){ d.classList.remove('active'); });
+                this.classList.add('active');
+            }
         });
         nav.appendChild(dot);
     }
 }
 
 function renderCards() {
-    renderDayNav();
-    var startDay = getCurrentDay();
+    var isReturn = sessionStorage.getItem('hallReturn') === '1';
+    sessionStorage.removeItem('hallReturn');
+    var savedDay = sessionStorage.getItem('hallPosterDay');
+    var startDay = 1;
+    if (isReturn && savedDay) {
+        var d = parseInt(savedDay, 10);
+        if (isDayUnlocked(d)) startDay = d;
+    }
+    renderDayNav(startDay);
     renderPoster(startDay);
-    // 后台预加载其余解锁天的海报
+    // 后台预加载其余解锁天的海报（只缓存，不显示）
     setTimeout(function() {
         for (var d = 1; d <= 7; d++) {
             if (d !== startDay && isDayUnlocked(d)) {
-                (function(day){ setTimeout(function(){ drawDayPoster(day); }, day*200); })(d);
+                (function(day){ setTimeout(function(){ drawDayPoster(day, true); }, day*200); })(d);
             }
         }
     }, 500);
@@ -1733,11 +1749,19 @@ function renderDate() {
     document.getElementById('dateDisplay').innerText = now.toLocaleDateString('en-US', opt);
 }
 
+window.addEventListener('beforeunload', function() {
+    sessionStorage.setItem('hallReturn', '1');
+});
 window.addEventListener('DOMContentLoaded', () => {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     renderUserInfo();
     renderCards();
     renderDate();
     checkPosterUnlock();
+});
+window.addEventListener('pageshow', function(e) {
+    var sc = document.querySelector('.content-scroll');
+    if (sc) sc.scrollTop = 0;
 });
 </script>
 <script>
