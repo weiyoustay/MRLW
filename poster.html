@@ -251,7 +251,7 @@ body.no-page-anim { animation: none !important; }
         function getHint(id){ if(id===1)return '完成7天成长解锁'; var m=UNLOCK_MINUTES[id],cur=getTotalMin(); if(getDaysDone()<7)return '需完成7天+累计'+m+'分钟'; if(cur<m)return '还需'+(m-cur)+'分钟(当前'+cur+'/'+m+')'; return ''; }
         function updateTabs(){ document.querySelectorAll('.tab').forEach(function(t){ var id=parseInt(t.dataset.id); if(isUnlocked(id)){ t.classList.remove('locked'); } else { t.classList.add('locked'); } }); }
         updateTabs(); updateUnlockStatus();
-        function updateUnlockStatus(){ var el=document.getElementById('unlockStatus'); if(!el)return; var tds=getDaysDone(); var tm=getTotalMin(); var h=''; if(tds<7){ h='已完成 '+tds+'/7 天成长 · 累计活跃 '+tm+' 分钟 · 解锁更多海报需要完成7天成长'; } else { h='7天成长已完成 ✓ · 累计活跃 '+tm+' 分钟'; var next=0; for(var k in UNLOCK_MINUTES){ var v=UNLOCK_MINUTES[k]; if(tm<v){ next=v; break; } } if(next)h+=' · 下一张海报需 '+next+' 分钟'; else h+=' · 全部海报已解锁 🎉'; } el.textContent=h; }
+        function updateUnlockStatus(){ var el=document.getElementById('unlockStatus'); if(!el)return; var tds=getDaysDone(); var tm=getTotalMin(); var txt=''; if(tds<7){ txt='需完成7天成长（当前'+tds+'/7）解锁基础海报，累计活跃达666分钟解锁第二张，当前累计活跃'+tm+'分钟'; } else { txt='7天成长已完成 ✓ · 累计活跃时长 '+tm+' 分钟'; var next=0; for(var k in UNLOCK_MINUTES){ if(tm<UNLOCK_MINUTES[k]){ next=UNLOCK_MINUTES[k]; break; } } if(next)txt+=' · 解锁下一张海报需累计活跃 '+next+' 分钟（还差'+(next-tm)+'分钟）'; else txt+=' · 🎉 全部8张海报已解锁'; } el.textContent=txt; }
         updateUnlockStatus();
 
 
