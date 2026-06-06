@@ -470,13 +470,13 @@ body.no-page-anim { animation: none !important; }
 	    position: fixed; inset: 0; z-index: 2000;
 	    background: rgba(0,0,0,0.42);
 	    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-	    display: flex; align-items: center; justify-content: center;
+	    display: flex; align-items: flex-start; justify-content: center; padding-top: 50px;
 	    opacity: 0; pointer-events: none;
 	    transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1);
 	}
 	.cal-overlay.show { opacity: 1; pointer-events: auto; }
 	.cal-card {
-	    position: relative; width: 380px; max-width: 94vw; max-height: 88vh;
+	    position: relative; width: 380px; max-width: 94vw; max-height: 80vh;
 	    padding: 28px 22px 22px; border-radius: 28px;
 	    background: linear-gradient(145deg, #3DB008 40%, #E9F8BC 55%, #E0FE44);
 	    box-shadow:
