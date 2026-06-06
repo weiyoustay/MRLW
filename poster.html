@@ -724,7 +724,9 @@ body.no-page-anim { animation: none !important; }
             img.onload = () => {
                 loadedCount++;
                 preloaded[id] = img;
+                var pid=parseInt(id);
                 if (loadedCount === 1) { drawPoster(1); updateCanvasLock(1); }
+                else { drawPoster(pid); }
             };
             img.onerror = () => { loadedCount++; };
             img.src = src;
