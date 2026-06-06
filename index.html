@@ -485,7 +485,7 @@ body.no-page-anim { animation: none !important; }
 	        0 0 0 1px rgba(255,255,255,0.7);
 	    transform: translateY(24px) scale(0.96);
 	    transition: transform 0.42s cubic-bezier(0.25,0.1,0.25,1);
-	    overflow: hidden; scrollbar-width: none; -ms-overflow-style: none;
+	    overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
 	    font-family: -apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC',sans-serif;
 	}
 	.cal-card::-webkit-scrollbar { display: none; }
@@ -503,7 +503,7 @@ body.no-page-anim { animation: none !important; }
 	.cal-card > * { position: relative; z-index: 2; }
 
 	.cal-close {
-	    position: absolute; top: 14px; right: 18px; z-index: 3;
+	    position: absolute; top: -2px; right: 10px; z-index: 10;
 	    width: 30px; height: 30px; border-radius: 50%;
 	    background: rgba(0,0,0,0.14); border: none;
 	    color: rgba(26,58,0,0.7); font-size: 1rem; cursor: pointer;
@@ -634,6 +634,7 @@ body.no-page-anim { animation: none !important; }
 	    content: '✓'; position: absolute; top: 0; right: 2px;
 	    font-size: 0.45rem; color: #1a3a00; font-weight: 700;
 	}
+    .cal-card-anchor{position:relative;display:inline-block}
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -643,8 +644,9 @@ body.no-page-anim { animation: none !important; }
 
 <!-- ===== 日历弹窗 ===== -->
 <div class="cal-overlay" id="calOverlay">
+    <div class="cal-card-anchor">
+    <button class="cal-close" onclick="closeCalendar()">&times;</button>
     <div class="cal-card">
-        <button class="cal-close" onclick="closeCalendar()">&times;</button>
         <div class="cal-title">CALENDAR</div>
         <div class="cal-month-nav">
             <button onclick="prevMonth()">&lsaquo;</button>
