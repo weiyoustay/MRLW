@@ -642,13 +642,12 @@ body.no-page-anim { animation: none !important; }
 .cal-dot{width:7px;height:7px;border-radius:50%;background:#1a3a00}
 .cal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.42);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:flex-start;justify-content:center;padding-top:30px;opacity:0;pointer-events:none;transition:opacity 0.35s cubic-bezier(0.4,0,0.2,1)}
 .cal-overlay.show{opacity:1;pointer-events:auto}
-.cal-card{position:relative;width:380px;max-width:94vw;max-height:82vh;padding:28px 22px 22px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);transform:translateY(24px) scale(0.96);transition:transform 0.42s cubic-bezier(0.25,0.1,0.25,1);overflow:hidden;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;font-family:-apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC',sans-serif}
-.cal-card::-webkit-scrollbar{display:none}
+.cal-card{position:relative;width:380px;max-width:94vw;max-height:82vh;padding:28px 22px 22px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);transform:translateY(24px) scale(0.96);transition:transform 0.42s cubic-bezier(0.25,0.1,0.25,1);overflow:visible;font-family:-apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC',sans-serif}
 .cal-card::before{content:'';position:absolute;inset:0;border-radius:28px;background-image:radial-gradient(rgba(0,0,0,0.03) 0.4px,transparent 0.4px);background-size:5px 5px;pointer-events:none;z-index:0}
 .cal-card::after{content:'';position:absolute;inset:0;border-radius:28px;background:rgba(255,255,255,0.12);pointer-events:none;z-index:1}
 .cal-overlay.show .cal-card{transform:translateY(0) scale(1)}
 .cal-card>*{position:relative;z-index:2}
-.cal-close-btn{position:sticky;top:0;float:right;z-index:10;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.12);border:none;color:rgba(26,58,0,0.65);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-bottom:-36px}
+.cal-close-btn{position:absolute;top:12px;right:16px;z-index:10;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.12);border:none;color:rgba(26,58,0,0.65);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 .cal-close-btn:hover,.cal-close-btn:active{background:rgba(0,0,0,0.2);color:#1a3a00}
 .cal-title{font-size:0.7rem;color:rgba(26,58,0,0.55);letter-spacing:3px;text-align:center;margin-bottom:4px;font-weight:700}
 .cal-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -706,6 +705,8 @@ body.no-page-anim { animation: none !important; }
 .cal-add-btn:hover{opacity:0.85}
 .cal-empty{font-size:0.78rem;color:rgba(26,58,0,0.48);font-weight:500;text-align:center;padding:12px 0}
 
+    .cal-scroll{overflow-y:auto;max-height:70vh;scrollbar-width:none;-ms-overflow-style:none;padding-top:4px}
+.cal-scroll::-webkit-scrollbar{display:none}
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -761,6 +762,7 @@ body.no-page-anim { animation: none !important; }
 <div class="cal-overlay" id="calOverlay">
     <div class="cal-card">
         <button class="cal-close-btn" onclick="closeCalendar()">&times;</button>
+        <div class="cal-scroll">
         <div class="cal-title">CALENDAR</div>
         <div class="cal-month-nav">
             <button onclick="prevMonth()">&lsaquo;</button>
