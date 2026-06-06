@@ -969,8 +969,8 @@
 .cd-task-chip.selected .cd-task-chip-name{color:#E0FE44}
 .cd-task-chip-dur{font-size:0.65rem;color:rgba(26,58,0,0.5);font-weight:500}
 .cd-task-chip.selected .cd-task-chip-dur{color:rgba(224,254,68,0.8)}
-.cd-task-chip-del{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.25);border:none;color:#fff;font-size:0.65rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all 0.2s}
-.cd-task-chip:hover .cd-task-chip-del{display:flex}
+.cd-task-chip-del{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.25);border:none;color:#fff;font-size:0.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+
 .cd-task-chip-del:hover{background:#dc3232}
 .cd-task-chip.completed .cd-task-chip-name{text-decoration:line-through;opacity:0.55}
 .cd-task-chip.completed.selected .cd-task-chip-name{text-decoration:line-through;opacity:0.7}
@@ -999,8 +999,10 @@
 .cd-ctrl-reset:hover{background:rgba(0,0,0,0.16);color:#1a3a00}
 .cd-ctrl-group{display:flex;flex-direction:column;align-items:center;gap:4px}
 .cd-ctrl-label{font-size:0.58rem;color:rgba(26,58,0,0.4);font-weight:600;letter-spacing:1px}
-.cd-close{position:absolute;top:16px;right:20px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.1);border:none;color:rgba(26,58,0,0.55);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:2}
-.cd-close:hover{background:rgba(0,0,0,0.2);color:#1a3a00}
+.cd-vibe-btn{position:absolute;top:14px;left:16px;padding:4px 10px;border-radius:12px;background:#1a3a00;border:1px solid #1a3a00;color:#E0FE44;font-size:0.6rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;z-index:2}
+.cd-vibe-btn.off{background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.12);color:rgba(26,58,0,0.4)}
+.cd-close{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.12);border:none;color:rgba(26,58,0,0.65);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:2}
+.cd-close:hover,.cd-close:active{background:rgba(0,0,0,0.2);color:#1a3a00}
 .cd-title{font-size:0.7rem;color:rgba(26,58,0,0.45);letter-spacing:3px;text-align:center;margin-bottom:4px;font-weight:700}
 
     </style>
@@ -1051,6 +1053,7 @@
     <!-- ===== COUNTDOWN 弹窗 ===== -->
 <div class="cd-overlay" id="cdOverlay">
     <div class="cd-card">
+        <button class="cd-vibe-btn" id="cdVibeBtn" onclick="toggleVibe()" title="震动">震动</button>
         <button class="cd-close" onclick="closeCountdown()">&times;</button>
         <div class="cd-title">COUNTDOWN</div>
         <div class="cd-ring-wrap">
@@ -1063,7 +1066,7 @@
         <div class="cd-add-form" id="cdAddForm">
             <div class="cd-add-row">
                 <input class="cd-add-input" id="cdAddName" placeholder="任务名称" maxlength="20">
-                <input class="cd-add-min" id="cdAddMin" type="number" placeholder="分钟" min="1" max="300" value="25">
+                <input class="cd-add-min" id="cdAddMin" type="number" placeholder="分钟" min="1" max="720" value="25">
             </div>
             <div class="cd-presets">
                 <button class="cd-preset" onclick="setPreset(5)">5 min</button>
@@ -2196,11 +2199,22 @@ function playChime(){try{var a=new(window.AudioContext||window.webkitAudioContex
 function saveTimerState(){if(isRunning&&selectedTaskId)localStorage.setItem(TIMER_KEY,JSON.stringify({taskId:selectedTaskId,endTs:Date.now()+remainingSeconds*1000,total:totalSeconds}));else localStorage.removeItem(TIMER_KEY)}
 function loadTimerState(){try{var s=JSON.parse(localStorage.getItem(TIMER_KEY));if(!s)return;var now=Date.now();if(s.endTs<=now){localStorage.removeItem(TIMER_KEY);if(s.taskId){var t=tasks.find(function(x){return x.id===s.taskId});if(t)t.completed=true;S()}return}selectedTaskId=s.taskId;totalSeconds=s.total;remainingSeconds=Math.ceil((s.endTs-now)/1000);var t=tasks.find(function(x){return x.id===s.taskId});if(t){cdTaskLabel.textContent=t.name+(t.completed?' ✓':'');cdTime.textContent=F(remainingSeconds);U();isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';timerInterval=setInterval(tick,1000);updateBtn()}}catch(e){localStorage.removeItem(TIMER_KEY)}}
 function updateBtn(){if(isRunning){cdBtn.innerHTML='<span class="cd-dot" style="animation:none;opacity:1"></span>'+F(remainingSeconds);cdBtn.style.letterSpacing='0.5px'}else{cdBtn.innerHTML='<span class="cd-dot"></span>COUNTDOWN';cdBtn.style.letterSpacing='1.5px'}}
-function tick(){saveTimerState();if(remainingSeconds<=0){stopTimer();cdTime.textContent='00:00';cdRing.style.strokeDashoffset=String(RING_LEN);cdTaskLabel.textContent='\u2713 任务完成！';playChime();if(navigator.vibrate)navigator.vibrate([200,100,200]);if(selectedTaskId){var t=tasks.find(function(x){return x.id===selectedTaskId});if(t)t.completed=true;S();renderTasks()}localStorage.removeItem(TIMER_KEY);updateBtn();return}remainingSeconds--;cdTime.textContent=F(remainingSeconds);U();updateBtn()}
+function tick(){saveTimerState();if(remainingSeconds<=0){stopTimer();cdTime.textContent='00:00';cdRing.style.strokeDashoffset=String(RING_LEN);cdTaskLabel.textContent='\u2713 任务完成！';playChime();var vibeOn=localStorage.getItem("cdVibrate")!=="off";if(vibeOn&&navigator.vibrate)navigator.vibrate([200,100,200]);if(selectedTaskId){var t=tasks.find(function(x){return x.id===selectedTaskId});if(t)t.completed=true;S();renderTasks()}localStorage.removeItem(TIMER_KEY);updateBtn();return}remainingSeconds--;cdTime.textContent=F(remainingSeconds);U();updateBtn()}
 function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}isRunning=false;cdPlayIcon.innerHTML='<path d="M8 5v14l11-7z"/>';saveTimerState();updateBtn();updateCtrlLabel()}
 function startTimer(){if(remainingSeconds<=0)return;isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';timerInterval=setInterval(tick,1000);saveTimerState();updateBtn();updateCtrlLabel()}
 function updateCtrlLabel(){var lbl=document.querySelector('.cd-ctrl-group:nth-child(2) .cd-ctrl-label');if(lbl)lbl.textContent=isRunning?'暂停':'开始'}
-window.toggleCountdown=function(){if(!selectedTaskId){cdTaskLabel.textContent='请先选择一个任务';return}var t=tasks.find(function(x){return x.id===selectedTaskId});if(t&&t.completed){t.completed=false;S();renderTasks();cdTaskLabel.textContent=t.name;selectTask(selectedTaskId);return}if(isRunning){stopTimer();return}if(remainingSeconds<=0&&t){remainingSeconds=t.duration*60;totalSeconds=remainingSeconds;cdTime.textContent=F(remainingSeconds);U();cdTaskLabel.textContent=t.name}startTimer()};
+window.toggleCountdown=function(){
+    if(!selectedTaskId){cdTaskLabel.textContent="请先选择一个任务";return}
+    var t=tasks.find(function(x){return x.id===selectedTaskId});
+    if(t&&t.completed){cdTaskLabel.textContent="已完成的任务";return}
+    if(isRunning){
+        clearInterval(timerInterval);timerInterval=null;isRunning=false;
+        cdPlayIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+        updateBtn();updateCtrlLabel();saveTimerState();
+        return}
+    if(remainingSeconds<=0&&t){remainingSeconds=t.duration*60;totalSeconds=remainingSeconds;cdTime.textContent=F(remainingSeconds);U();cdTaskLabel.textContent=t.name}
+    isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';timerInterval=setInterval(tick,1000);saveTimerState();updateBtn();updateCtrlLabel()
+};
 window.resetCountdown=function(){stopTimer();remainingSeconds=0;totalSeconds=0;cdTime.textContent='00:00';cdRing.style.strokeDashoffset='0';cdTaskLabel.textContent='选择一个任务开始专注';localStorage.removeItem(TIMER_KEY);updateBtn()};
 window.restartCountdown=function(){stopTimer();if(!selectedTaskId)return;var t=tasks.find(function(x){return x.id===selectedTaskId});if(t){t.completed=false;S();remainingSeconds=t.duration*60;totalSeconds=remainingSeconds;cdTime.textContent=F(remainingSeconds);U();cdTaskLabel.textContent=t.name;startTimer()}};
 function selectTask(id,noArm){stopTimer();selectedTaskId=id;var t=tasks.find(function(x){return x.id===id});if(t){if(!noArm){remainingSeconds=t.duration*60;totalSeconds=remainingSeconds;cdTime.textContent=F(remainingSeconds);U()}else{remainingSeconds=0;totalSeconds=0;cdTime.textContent='00:00';cdRing.style.strokeDashoffset='0'}cdTaskLabel.textContent=t.name+(t.completed?' ✓':'');if(t.completed){cdRing.style.strokeDashoffset='0';cdTime.textContent='00:00';remainingSeconds=0;totalSeconds=0}}localStorage.removeItem(TIMER_KEY);updateBtn();renderTasks()}
@@ -2210,8 +2224,8 @@ window.showAddForm=function(){cdAddForm.classList.add('show');cdAddBtn.style.dis
 window.cancelAddTask=function(){cdAddForm.classList.remove('show');cdAddName.value='';cdAddMin.value='25';resetPresets();cdAddBtn.style.display=tasks.length<8?'flex':'none'};
 window.setPreset=function(m){cdAddMin.value=m;var ps=document.querySelectorAll('.cd-preset');ps.forEach(function(p){p.classList.remove('active')});event.target.classList.add('active')};
 function resetPresets(){var ps=document.querySelectorAll('.cd-preset');ps.forEach(function(p){p.classList.remove('active');if(p.textContent.trim()==='25 min')p.classList.add('active')})}
-window.confirmAddTask=function(){var n=cdAddName.value.trim(),m=parseInt(cdAddMin.value)||25;if(!n){cdAddName.focus();return}if(m<1)m=1;if(m>300)m=300;var newId='cd_'+Date.now();tasks.push({id:newId,name:n,duration:m,completed:false});S();cdAddForm.classList.remove('show');cdAddName.value='';cdAddMin.value='25';resetPresets();cdAddBtn.style.display=tasks.length<8?'flex':'none';renderTasks();selectTask(newId,true)};
-window.showCountdown=function(){L();renderTasks();loadTimerState();cdOverlay.classList.add('show')};
+window.confirmAddTask=function(){var n=cdAddName.value.trim(),m=parseInt(cdAddMin.value)||25;if(!n){cdAddName.focus();return}if(m<1)m=1;if(m>720)m=720;var newId='cd_'+Date.now();tasks.push({id:newId,name:n,duration:m,completed:false});S();cdAddForm.classList.remove('show');cdAddName.value='';cdAddMin.value='25';resetPresets();cdAddBtn.style.display=tasks.length<8?'flex':'none';renderTasks();selectTask(newId,true)};
+window.toggleVibe=function(){var btn=document.getElementById("cdVibeBtn");var off=localStorage.getItem("cdVibrate")==="off";if(off){localStorage.removeItem("cdVibrate");btn.classList.remove("off");btn.textContent="♫"}else{localStorage.setItem("cdVibrate","off");btn.classList.add("off");btn.textContent="♫"}};window.showCountdown=function(){L();renderTasks();loadTimerState();var vb=document.getElementById("cdVibeBtn");if(localStorage.getItem("cdVibrate")==="off"){vb.classList.add("off");vb.textContent="♫"}cdOverlay.classList.add("show")};
 window.closeCountdown=function(){cdOverlay.classList.remove('show')};
 cdOverlay.addEventListener('click',function(e){if(e.target===cdOverlay)closeCountdown()});
 L();loadTimerState();

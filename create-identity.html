@@ -266,7 +266,7 @@ body::before {
 .gender-btn:hover:not(.active) { border-color: rgba(183,247,0,0.35); color: #fff; }
 .avatar-grid {
   display: grid; grid-template-columns: repeat(5, 1fr);
-  gap: 10px; justify-items: center;
+  gap: 10px; justify-items: center; padding-right: 8px;
 }
 .avatar-item {
   width: 52px; height: 52px; border-radius: 50%;
@@ -302,9 +302,9 @@ body::before {
   color:var(--text-secondary);
   text-align:center;
   margin-top:16px;
-  animation: fadeIn 2s ease forwards;
+  animation: fadeIn 0.4s ease forwards;
   opacity:0;
-  animation-delay:1s;
+  animation-delay:0s;
 }
 @keyframes fadeIn {
   to { opacity:1; }
