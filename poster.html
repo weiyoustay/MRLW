@@ -2821,7 +2821,7 @@ body.no-page-anim { animation: none !important; }
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 var tid=Number(tab.dataset.id);
-                if(!isUnlocked(tid)){ updateTabs(); return; }
+                if(!isUnlocked(tid)){ updateTabs(); var el=document.getElementById("unlockStatus"); if(el)el.textContent=getHint(tid); return; }
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentPoster = tid;
