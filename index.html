@@ -911,7 +911,7 @@ body.no-page-anim { animation: none !important; }
                 row.innerHTML='<div class=\"cal-task-cb'+(item.done?' done':'')+'\" onclick=\"toggleCalItem(\''+calSelected+'\','+i+')\">'+(item.done?'✓':'')+'</div><span class=\"cal-task-text'+(item.done?' done':'')+'\">'+item.text+'</span><span class=\"cal-task-type '+item.type+'\">'+(item.type==='event'?'事件':'任务')+'</span><div class=\"cal-task-del\" onclick=\"deleteCalItem(\''+calSelected+'\','+i+')\">&times;</div>';
                 calTaskList.appendChild(row)})}}
 
-    window.selectCalDay=function(dateKey){calSelected=dateKey;renderCalendar();renderDetail();calAddInput.focus()}
+    window.selectCalDay=function(dateKey){calSelected=dateKey;renderCalendar();renderDetail()}
     window.toggleCalItem=function(dateKey,i){calData[dateKey][i].done=!calData[dateKey][i].done;S();renderCalendar();renderDetail()}
     window.deleteCalItem=function(dateKey,i){calData[dateKey].splice(i,1);if(calData[dateKey].length===0)delete calData[dateKey];S();renderCalendar();renderDetail()}
     window.setCalType=function(t,el){calType=t;var btns=document.querySelectorAll('.cal-type-btn');btns.forEach(function(b){b.classList.remove('active')});el.classList.add('active')}
