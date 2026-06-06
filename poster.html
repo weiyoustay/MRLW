@@ -188,8 +188,7 @@ body.no-page-anim { animation: none !important; }
     
         .tab.locked { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.04); cursor: not-allowed; }
         .tab.locked:hover { background: rgba(255,255,255,0.03); transform: none; }
-        .tab .lock-hint { display: none; position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: rgba(255,255,255,0.3); white-space: nowrap; }
-        .tab.locked .lock-hint { display: block; }
+        
         .tab { position: relative; }
 
     </style>
@@ -206,13 +205,13 @@ body.no-page-anim { animation: none !important; }
             </div>
             <div class="tab-bar">
                 <div class="tab active" data-id="1">Poster One</div>
-                <div class="tab locked" data-id="2">Poster Two<span class="lock-hint"></span></div>
-                <div class="tab locked" data-id="3">Poster Three<span class="lock-hint"></span></div>
-                <div class="tab locked" data-id="4">Poster Four<span class="lock-hint"></span></div>
-                <div class="tab locked" data-id="5">Poster Five<span class="lock-hint"></span></div>
-                <div class="tab locked" data-id="6">Poster Six<span class="lock-hint"></span></div>
-                <div class="tab locked" data-id="7">Poster Seven<span class="lock-hint"></span></div>
-                <div class="tab locked" data-id="8">Poster Eight<span class="lock-hint"></span></div>
+                <div class="tab locked" data-id="2">Poster Two</div>
+                <div class="tab locked" data-id="3">Poster Three</div>
+                <div class="tab locked" data-id="4">Poster Four</div>
+                <div class="tab locked" data-id="5">Poster Five</div>
+                <div class="tab locked" data-id="6">Poster Six</div>
+                <div class="tab locked" data-id="7">Poster Seven</div>
+                <div class="tab locked" data-id="8">Poster Eight</div>
             </div>
             <div class="canvas-wrapper">
                 <div id="tabLoading" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:14px;letter-spacing:2px;z-index:10;">加载中...</div>
@@ -247,7 +246,7 @@ body.no-page-anim { animation: none !important; }
         function getTotalMin(){ try{return Math.floor(parseFloat(localStorage.getItem('totalActiveMinutes')||'0'))}catch(e){return 0} }
         function isUnlocked(id){ if(id===1)return getDaysDone()>=7; return getDaysDone()>=7 && getTotalMin()>=UNLOCK_MINUTES[id]; }
         function getHint(id){ if(id===1)return '完成7天成长解锁'; var m=UNLOCK_MINUTES[id],cur=getTotalMin(); if(getDaysDone()<7)return '需完成7天+累计'+m+'分钟'; if(cur<m)return '还需'+(m-cur)+'分钟(当前'+cur+'/'+m+')'; return ''; }
-        function updateTabs(){ document.querySelectorAll('.tab').forEach(function(t){ var id=parseInt(t.dataset.id); var hint=t.querySelector('.lock-hint'); if(isUnlocked(id)){ t.classList.remove('locked'); if(hint)hint.textContent=''; } else { t.classList.add('locked'); if(hint)hint.textContent=getHint(id); } }); }
+        function updateTabs(){ document.querySelectorAll('.tab').forEach(function(t){ var id=parseInt(t.dataset.id); if(isUnlocked(id)){ t.classList.remove('locked'); } else { t.classList.add('locked'); } }); }
         updateTabs();
 
 
@@ -2817,7 +2816,7 @@ body.no-page-anim { animation: none !important; }
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 var tid=Number(tab.dataset.id);
-                if(!isUnlocked(tid)){ updateTabs(); return; }
+                if(!isUnlocked(tid)){ updateTabs(); document.getElementById('tabLoading').style.display='block'; document.getElementById('tabLoading').innerHTML='<div style=text-align:center;line-height:2><div style=font-size:3rem;opacity:0.3>🔒</div><div style=color:rgba(255,255,255,0.6)>'+getHint(tid)+'</div></div>'; return; }
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentPoster = tid;
