@@ -498,6 +498,11 @@
             font-size: 0.62rem; font-weight: 400; color: rgba(255,255,255,0.3);
             letter-spacing: 0.5px; margin-top: 2px;
         }
+        .me-tgp-sub {
+            font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.55);
+            letter-spacing: -0.1px; margin-top: 6px;
+            padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08);
+        }
         .me-return-btn {
             flex: 0.9; border: none; border-radius: 18px;
             background: linear-gradient(90deg, #D9FF70, #29E63E);
@@ -571,7 +576,8 @@
             <div class="me-tgp-card">
                 <span class="me-tgp-title">TGP · 累计成长积分</span>
                 <span class="me-tgp-val" id="meTotalPoints">YNG+0</span>
-                <span class="me-tgp-formula">累计使用时长 × 7</span>
+                <span class="me-tgp-sub" id="meTotalActive">累计活跃 0 min</span>
+                <span class="me-tgp-formula">累计使用时长 × 0.7</span>
             </div>
             <button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
         </div>
@@ -748,9 +754,15 @@ if(pn){
         if (!localStorage.getItem('lastHeartbeat')) localStorage.setItem('lastHeartbeat', Date.now().toString());
         addElapsed();
         setInterval(addElapsed, HEARTBEAT_MS);
+        
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') { addElapsed(); }
+            localStorage.setItem('lastHeartbeat', Date.now().toString());
+        });
         window.addEventListener('beforeunload', function() { addElapsed(); });
     }
     function addElapsed() {
+        if (document.visibilityState !== 'visible') return;
         var now = Date.now();
         var lastBeat = parseInt(localStorage.getItem('lastHeartbeat') || now);
         var elapsed = Math.min((now - lastBeat) / 60000, 10);
@@ -764,7 +776,7 @@ if(pn){
     }
     window.getTodayMinutes = function() { return Math.floor(parseFloat(localStorage.getItem('todayActiveMinutes') || '0')); };
     window.getTotalMinutes = function() { return Math.floor(parseFloat(localStorage.getItem('totalActiveMinutes') || '0')); };
-    window.getGrowthPoints = function() { return window.getTotalMinutes() * 7; };
+    window.getGrowthPoints = function() { return (window.getTotalMinutes() * 0.7).toFixed(2); };
     initTracking();
 })();
 
@@ -782,6 +794,7 @@ if (mePlayerName) {
     var meTodayProgress = document.getElementById('meTodayProgress');
     var meProgressFill = document.getElementById('meProgressFill');
     var meTodayActive = document.getElementById('meTodayActive');
+    var meTotalActive = document.getElementById('meTotalActive');
     var meTotalPoints = document.getElementById('meTotalPoints');
     var meOverlay = document.getElementById('meModalOverlay');
     if (mePlayerAvatar) meCardAvatar.style.backgroundImage = 'url(' + mePlayerAvatar + ')';
@@ -801,6 +814,7 @@ if (mePlayerName) {
         meTodayProgress.textContent = day + '/7 天';
         meProgressFill.style.width = (day / 7 * 100) + '%';
         meTodayActive.textContent = window.getTodayMinutes() + ' min';
+        meTotalActive.textContent = '累计活跃 ' + window.getTotalMinutes().toLocaleString() + ' min';
         meTotalPoints.textContent = 'YNG+' + window.getGrowthPoints().toLocaleString();
     }
     refreshMeStats();

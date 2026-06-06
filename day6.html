@@ -398,6 +398,40 @@ body.no-page-anim { animation: none !important; }
   transform: scale(1);
 }
 
+
+        /* ===== 每日感悟 ===== */
+        .journal-card {
+            max-width: 680px; margin: 40px auto 0; padding: 24px 22px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s ease;
+        }
+        .journal-card:focus-within {
+            background: rgba(255,255,255,0.05); border-color: rgba(41,230,62,0.25);
+            box-shadow: 0 0 20px rgba(41,230,62,0.05);
+        }
+        .journal-header {
+            display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px;
+        }
+        .journal-title {
+            font-size: 0.9rem; font-weight: 700; color: #fff; letter-spacing: 1px;
+        }
+        .journal-sub {
+            font-size: 0.62rem; color: rgba(255,255,255,0.3); letter-spacing: 1.5px; font-style: italic;
+        }
+        .journal-input {
+            width: 100%; min-height: 70px; background: transparent; border: none;
+            color: rgba(255,255,255,0.75); font-size: 0.85rem; line-height: 1.8;
+            resize: none; outline: none; font-family: inherit;
+            transition: color 0.3s;
+        }
+        .journal-input::placeholder { color: rgba(255,255,255,0.15); }
+        .journal-input:focus { color: rgba(255,255,255,0.9); }
+        .journal-saved {
+            font-size: 0.6rem; color: rgba(41,230,62,0.5); text-align: right;
+            margin-top: 4px; opacity: 0; transition: opacity 0.4s;
+        }
+        .journal-saved.show { opacity: 1; }
 </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -423,7 +457,7 @@ body.no-page-anim { animation: none !important; }
 		<p class="mantra-line">Every thought you think is <b>shaping your future</b>. Choose wisely.</p>
 		<p class="mantra-line">You are one decision away from a <b>completely different life</b>.</p>
 	</div>
-	<div class="audio-tip">在开始今天的主题之前，请你认真听完这段关于认知与价值的演讲</div>
+	<div class="audio-tip">在开始今天的主题之前，来听听今日励志演讲</div>
 
 <div class="player">
     <div class="controls">
@@ -721,6 +755,16 @@ body.no-page-anim { animation: none !important; }
     </div>
 </div>
 
+
+        <div class="journal-card">
+            <div class="journal-header">
+                <span class="journal-title">今日感悟</span>
+                <span class="journal-sub">Daily Reflection</span>
+            </div>
+            <textarea class="journal-input" id="journalInput" placeholder="今天最大的收获或想对自己说的话…" maxlength="500"></textarea>
+            <div class="journal-saved" id="journalSaved">已自动保存</div>
+        </div>
+
 <div class="lock-note" id="unlockTip">明日内容将在 凌晨0点 自动解锁｜每日0点更新</div>
 
 <div class="footer">
@@ -912,6 +956,23 @@ var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick
 })();
 
 	var st=document.getElementById("scriptToggle");var sb=document.getElementById("scriptBox");if(st&&sb){var se=false;var al=sb.querySelectorAll(".line");if(al.length>3)for(var i=3;i<al.length;i++)al[i].style.display="none";st.addEventListener("click",function(){se=!se;for(var i=3;i<al.length;i++)al[i].style.display=se?"":"none";st.classList.toggle("expanded",se);st.childNodes[st.childNodes.length-1].textContent=se?"COLLAPSE":"EXPAND";});}
+
+var journalKey='journal_day6';
+var journalInput=document.getElementById('journalInput');
+var journalSaved=document.getElementById('journalSaved');
+if(journalInput){
+    journalInput.value=localStorage.getItem(journalKey)||'';
+    var jt;
+    journalInput.addEventListener('input',function(){
+        clearTimeout(jt);
+        jt=setTimeout(function(){
+            localStorage.setItem(journalKey,journalInput.value);
+            journalSaved.classList.add('show');
+            setTimeout(function(){journalSaved.classList.remove('show')},1500);
+        },600);
+    });
+}
+
 </script>
 </body>
 </html>
