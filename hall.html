@@ -997,7 +997,7 @@
 .cd-ctrl-reset:hover{background:rgba(0,0,0,0.16);color:#1a3a00}
 .cd-ctrl-group{display:flex;flex-direction:column;align-items:center;gap:4px}
 .cd-ctrl-label{font-size:0.58rem;color:rgba(26,58,0,0.4);font-weight:600;letter-spacing:1px}
-.cd-close{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.12);border:none;color:rgba(26,58,0,0.65);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:2}
+.cd-vibe-btn{position:absolute;top:14px;left:16px;padding:4px 10px;border-radius:12px;background:#1a3a00;border:1px solid #1a3a00;color:#E0FE44;font-size:0.6rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;z-index:2}.cd-vibe-btn.off{background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.12);color:rgba(26,58,0,0.4)}.cd-close{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.12);border:none;color:rgba(26,58,0,0.65);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:2}
 .cd-close:hover,.cd-close:active{background:rgba(0,0,0,0.2);color:#1a3a00}
 .cd-title{font-size:0.7rem;color:rgba(26,58,0,0.45);letter-spacing:3px;text-align:center;margin-bottom:4px;font-weight:700}
     </style>
@@ -1037,7 +1037,8 @@
             <div class="me-tgp-card">
                 <span class="me-tgp-title">TGP · 累计成长积分</span>
                 <span class="me-tgp-val" id="meTotalPoints">YNG+0</span>
-                <span class="me-tgp-formula">累计使用时长 × 7</span>
+                <span class="me-tgp-sub" id="meTotalActive">累计活跃 0 min</span>
+                <span class="me-tgp-formula">累计使用时长 × 0.7</span>
             </div>
             <button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
         </div>
@@ -1046,6 +1047,7 @@
 
     <div class="cd-overlay" id="cdOverlay">
 <div class="cd-card">
+<button class="cd-vibe-btn" id="cdVibeBtn" onclick="toggleVibe()">震动</button>
 <button class="cd-close" onclick="closeCountdown()">&times;</button>
 <div class="cd-title">COUNTDOWN</div>
 <div class="cd-ring-wrap">
@@ -2108,7 +2110,7 @@ window.addEventListener('pageshow', function(e) {
     }
     window.getTodayMinutes = function() { return Math.floor(parseFloat(localStorage.getItem('todayActiveMinutes') || '0')); };
     window.getTotalMinutes = function() { return Math.floor(parseFloat(localStorage.getItem('totalActiveMinutes') || '0')); };
-    window.getGrowthPoints = function() { return window.getTotalMinutes() * 7; };
+    window.getGrowthPoints = function() { return (window.getTotalMinutes() * 0.7).toFixed(2); };
     initTracking();
 })();
 
@@ -2126,6 +2128,7 @@ if (mePlayerName) {
     var meTodayProgress = document.getElementById('meTodayProgress');
     var meProgressFill = document.getElementById('meProgressFill');
     var meTodayActive = document.getElementById('meTodayActive');
+    var meTotalActive = document.getElementById('meTotalActive');
     var meTotalPoints = document.getElementById('meTotalPoints');
     var meOverlay = document.getElementById('meModalOverlay');
     if (mePlayerAvatar) meCardAvatar.style.backgroundImage = 'url(' + mePlayerAvatar + ')';
@@ -2145,6 +2148,7 @@ if (mePlayerName) {
         meTodayProgress.textContent = day + '/7 天';
         meProgressFill.style.width = (day / 7 * 100) + '%';
         meTodayActive.textContent = window.getTodayMinutes() + ' min';
+        meTotalActive.textContent = '累计活跃 ' + window.getTotalMinutes().toLocaleString() + ' min';
         meTotalPoints.textContent = 'YNG+' + window.getGrowthPoints().toLocaleString();
     }
     refreshMeStats();
@@ -2169,7 +2173,7 @@ function U(){if(totalSeconds===0){cdRing.style.strokeDashoffset='0';return}cdRin
 function saveTimerState(){if(isRunning&&selectedTaskId)localStorage.setItem(TIMER_KEY,JSON.stringify({taskId:selectedTaskId,endTs:Date.now()+remainingSeconds*1000,total:totalSeconds}));else localStorage.removeItem(TIMER_KEY)}
 function loadTimerState(){try{var s=JSON.parse(localStorage.getItem(TIMER_KEY));if(!s)return;var now=Date.now();if(s.endTs<=now){localStorage.removeItem(TIMER_KEY);if(s.taskId){var t=tasks.find(function(x){return x.id===s.taskId});if(t)t.completed=true;S()}return}selectedTaskId=s.taskId;totalSeconds=s.total;remainingSeconds=Math.ceil((s.endTs-now)/1000);var t=tasks.find(function(x){return x.id===s.taskId});if(t){cdTaskLabel.textContent=t.name+(t.completed?' ✓':'');cdTime.textContent=F(remainingSeconds);U();isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';timerInterval=setInterval(tick,1000);updateBtn()}}catch(e){localStorage.removeItem(TIMER_KEY)}}
 function updateBtn(){if(isRunning){cdBtn.innerHTML='<span class="cd-dot" style="animation:none;opacity:1"></span>'+F(remainingSeconds);cdBtn.style.letterSpacing='0.5px'}else{cdBtn.innerHTML='<span class="cd-dot"></span>COUNTDOWN';cdBtn.style.letterSpacing='1.5px'}}
-function tick(){saveTimerState();if(remainingSeconds<=0){stopTimer();cdTime.textContent='00:00';cdRing.style.strokeDashoffset=String(RING_LEN);cdTaskLabel.textContent='✓ 任务完成！';var vibeOn=localStorage.getItem('cdVibrate')!=='off';if(vibeOn&&navigator.vibrate)navigator.vibrate([200,100,200]);if(selectedTaskId){var t=tasks.find(function(x){return x.id===selectedTaskId});if(t)t.completed=true;S();renderTasks()}localStorage.removeItem(TIMER_KEY);updateBtn();return}remainingSeconds--;cdTime.textContent=F(remainingSeconds);U();updateBtn()}
+function tick(){saveTimerState();if(remainingSeconds<=0){stopTimer();cdTime.textContent='00:00';cdRing.style.strokeDashoffset=String(RING_LEN);cdTaskLabel.textContent='✓ 任务完成！';var vibeOn=localStorage.getItem('cdVibrate')!=='off';var vibeOn=localStorage.getItem("cdVibrate")!=="off";if(vibeOn&&navigator.vibrate)navigator.vibrate([200,100,200]);if(selectedTaskId){var t=tasks.find(function(x){return x.id===selectedTaskId});if(t)t.completed=true;S();renderTasks()}localStorage.removeItem(TIMER_KEY);updateBtn();return}remainingSeconds--;cdTime.textContent=F(remainingSeconds);U();updateBtn()}
 function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}isRunning=false;cdPlayIcon.innerHTML='<path d="M8 5v14l11-7z"/>';saveTimerState();updateBtn();updateCtrlLabel()}
 function startTimer(){if(remainingSeconds<=0)return;isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';timerInterval=setInterval(tick,1000);saveTimerState();updateBtn();updateCtrlLabel()}
 function updateCtrlLabel(){var lbl=document.querySelector('.cd-ctrl-group:nth-child(2) .cd-ctrl-label');if(lbl)lbl.textContent=isRunning?'暂停':'开始'}
@@ -2184,7 +2188,7 @@ window.cancelAddTask=function(){cdAddForm.classList.remove('show');cdAddName.val
 window.setPreset=function(m){cdAddMin.value=m;var ps=document.querySelectorAll('.cd-preset');ps.forEach(function(p){p.classList.remove('active')});event.target.classList.add('active')}
 function resetPresets(){var ps=document.querySelectorAll('.cd-preset');ps.forEach(function(p){p.classList.remove('active');if(p.textContent.trim()==='25 min')p.classList.add('active')})}
 window.confirmAddTask=function(){var n=cdAddName.value.trim(),m=parseInt(cdAddMin.value)||25;if(!n){cdAddName.focus();return}if(m<1)m=1;if(m>720)m=720;var newId='cd_'+Date.now();tasks.push({id:newId,name:n,duration:m,completed:false});S();cdAddForm.classList.remove('show');cdAddName.value='';cdAddMin.value='25';resetPresets();cdAddBtn.style.display=tasks.length<8?'flex':'none';renderTasks();selectTask(newId,true)}
-window.showCountdown=function(){L();renderTasks();loadTimerState();cdOverlay.classList.add('show')}
+window.toggleVibe=function(){var btn=document.getElementById("cdVibeBtn");var off=localStorage.getItem("cdVibrate")==="off";if(off){localStorage.removeItem("cdVibrate");btn.classList.remove("off")}else{localStorage.setItem("cdVibrate","off");btn.classList.add("off")}};window.showCountdown=function(){L();renderTasks();loadTimerState();var vb=document.getElementById("cdVibeBtn");if(localStorage.getItem("cdVibrate")==="off")vb.classList.add("off");cdOverlay.classList.add("show")}
 window.closeCountdown=function(){cdOverlay.classList.remove('show')}
 cdOverlay.addEventListener('click',function(e){if(e.target===cdOverlay)closeCountdown()});
 L();loadTimerState();
