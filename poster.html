@@ -2821,7 +2821,7 @@ body.no-page-anim { animation: none !important; }
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 var tid=Number(tab.dataset.id);
-                if(!isUnlocked(tid)){ updateTabs(); document.getElementById('tabLoading').style.display='block'; document.getElementById('tabLoading').innerHTML='<div style=text-align:center;padding-top:60px;color:rgba(255,255,255,0.4);line-height:2>'+getHint(tid)+'</div>'; return; }
+                if(!isUnlocked(tid)){ updateTabs(); return; }
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentPoster = tid;
