@@ -191,6 +191,8 @@ body.no-page-anim { animation: none !important; }
         
         .tab { position: relative; }
 
+    
+        .unlock-status { font-size: 13px; color: rgba(255,255,255,0.5); text-align: center; margin-bottom: 16px; min-height: 20px; letter-spacing: 0.5px; }
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -203,6 +205,7 @@ body.no-page-anim { animation: none !important; }
                 七天蜕变，打破旧我<br>
                重塑新生，遇见更好的自己
             </div>
+            <div class="unlock-status" id="unlockStatus"></div>
             <div class="tab-bar">
                 <div class="tab active" data-id="1">Poster One</div>
                 <div class="tab locked" data-id="2">Poster Two</div>
@@ -247,7 +250,9 @@ body.no-page-anim { animation: none !important; }
         function isUnlocked(id){ if(id===1)return getDaysDone()>=7; return getDaysDone()>=7 && getTotalMin()>=UNLOCK_MINUTES[id]; }
         function getHint(id){ if(id===1)return '完成7天成长解锁'; var m=UNLOCK_MINUTES[id],cur=getTotalMin(); if(getDaysDone()<7)return '需完成7天+累计'+m+'分钟'; if(cur<m)return '还需'+(m-cur)+'分钟(当前'+cur+'/'+m+')'; return ''; }
         function updateTabs(){ document.querySelectorAll('.tab').forEach(function(t){ var id=parseInt(t.dataset.id); if(isUnlocked(id)){ t.classList.remove('locked'); } else { t.classList.add('locked'); } }); }
-        updateTabs();
+        updateTabs(); updateUnlockStatus();
+        function updateUnlockStatus(){ var el=document.getElementById('unlockStatus'); if(!el)return; var tds=getDaysDone(); var tm=getTotalMin(); var h=''; if(tds<7){ h='已完成 '+tds+'/7 天成长 · 累计活跃 '+tm+' 分钟 · 解锁更多海报需要完成7天成长'; } else { h='7天成长已完成 ✓ · 累计活跃 '+tm+' 分钟'; var next=0; for(var k in UNLOCK_MINUTES){ var v=UNLOCK_MINUTES[k]; if(tm<v){ next=v; break; } } if(next)h+=' · 下一张海报需 '+next+' 分钟'; else h+=' · 全部海报已解锁 🎉'; } el.textContent=h; }
+        updateUnlockStatus();
 
 
         function showCached(id) {
@@ -2816,7 +2821,7 @@ body.no-page-anim { animation: none !important; }
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 var tid=Number(tab.dataset.id);
-                if(!isUnlocked(tid)){ updateTabs(); document.getElementById('tabLoading').style.display='block'; document.getElementById('tabLoading').innerHTML='<div style=text-align:center;line-height:2><div style=font-size:3rem;opacity:0.3>🔒</div><div style=color:rgba(255,255,255,0.6)>'+getHint(tid)+'</div></div>'; return; }
+                if(!isUnlocked(tid)){ updateTabs(); document.getElementById('tabLoading').style.display='block'; document.getElementById('tabLoading').innerHTML='<div style=text-align:center;padding-top:60px;color:rgba(255,255,255,0.4);line-height:2>'+getHint(tid)+'</div>'; return; }
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentPoster = tid;
