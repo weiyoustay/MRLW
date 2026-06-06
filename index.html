@@ -470,7 +470,7 @@ body.no-page-anim { animation: none !important; }
 	    position: fixed; inset: 0; z-index: 2000;
 	    background: rgba(0,0,0,0.42);
 	    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-	    display: flex; align-items: center; justify-content: center;
+	    display: flex; align-items: flex-start; justify-content: center; padding-top: 30px;
 	    opacity: 0; pointer-events: none;
 	    transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1);
 	}
@@ -485,7 +485,7 @@ body.no-page-anim { animation: none !important; }
 	        0 0 0 1px rgba(255,255,255,0.7);
 	    transform: translateY(24px) scale(0.96);
 	    transition: transform 0.42s cubic-bezier(0.25,0.1,0.25,1);
-	    overflow: hidden; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
+	    overflow: hidden; scrollbar-width: none; -ms-overflow-style: none;
 	    font-family: -apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC',sans-serif;
 	}
 	.cal-card::-webkit-scrollbar { display: none; }
@@ -507,7 +507,7 @@ body.no-page-anim { animation: none !important; }
 	    width: 30px; height: 30px; border-radius: 50%;
 	    background: rgba(0,0,0,0.14); border: none;
 	    color: rgba(26,58,0,0.7); font-size: 1rem; cursor: pointer;
-	    display: flex; align-items: center; justify-content: center;
+	    display: flex; align-items: flex-start; justify-content: center; padding-top: 30px;
 	    transition: all 0.2s;
 	}
 	.cal-close:hover { background: rgba(0,0,0,0.24); color: #1a3a00; }
@@ -519,7 +519,7 @@ body.no-page-anim { animation: none !important; }
 	.cal-month-nav button {
 	    width: 32px; height: 32px; border-radius: 50%; border: none;
 	    background: rgba(0,0,0,0.1); color: rgba(26,58,0,0.75);
-	    font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+	    font-size: 1.1rem; cursor: pointer; display: flex; align-items: flex-start; justify-content: center; padding-top: 30px;
 	    transition: all 0.2s; font-weight: 600;
 	}
 	.cal-month-nav button:hover { background: rgba(0,0,0,0.18); color: #1a3a00; }
@@ -567,7 +567,7 @@ body.no-page-anim { animation: none !important; }
 	.cal-task-cb {
 	    width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
 	    border: 2px solid rgba(26,58,0,0.5); background: transparent;
-	    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+	    cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; justify-content: center; padding-top: 30px;
 	    font-size: 0.6rem; color: transparent;
 	}
 	.cal-task-cb.done { background: #1a3a00; border-color: #1a3a00; color: #E0FE44; }
@@ -580,7 +580,7 @@ body.no-page-anim { animation: none !important; }
 	    width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
 	    background: transparent; border: none; color: rgba(26,58,0,0.48);
 	    cursor: pointer; font-size: 0.7rem; transition: all 0.2s;
-	    display: flex; align-items: center; justify-content: center;
+	    display: flex; align-items: flex-start; justify-content: center; padding-top: 30px;
 	}
 	.cal-task-del:hover { background: rgba(220,50,50,0.2); color: #dc3232; }
 
@@ -634,86 +634,9 @@ body.no-page-anim { animation: none !important; }
 	    content: '✓'; position: absolute; top: 0; right: 2px;
 	    font-size: 0.45rem; color: #1a3a00; font-weight: 700;
 	}
-    
-/* ===== 日历按钮 ===== */
-.cal-btn{position:fixed;top:24px;right:20px;z-index:1000;display:none;align-items:center;gap:6px;padding:8px 16px;border-radius:24px;background:linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44);border:none;color:#1a3a00;font-size:0.78rem;font-weight:700;letter-spacing:1.2px;cursor:pointer;box-shadow:0 2px 12px rgba(61,176,8,0.3);transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
-.cal-btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(61,176,8,0.45)}
-.cal-btn:active{transform:scale(0.94)}
-.cal-dot{width:7px;height:7px;border-radius:50%;background:#1a3a00}
-.cal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.42);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:flex-start;justify-content:center;padding-top:30px;opacity:0;pointer-events:none;transition:opacity 0.35s cubic-bezier(0.4,0,0.2,1)}
-.cal-overlay.show{opacity:1;pointer-events:auto}
-.cal-card{position:relative;width:380px;max-width:94vw;max-height:82vh;padding:28px 22px 22px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);transform:translateY(24px) scale(0.96);transition:transform 0.42s cubic-bezier(0.25,0.1,0.25,1);overflow:visible;font-family:-apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC',sans-serif}
-.cal-card::before{content:'';position:absolute;inset:0;border-radius:28px;background-image:radial-gradient(rgba(0,0,0,0.03) 0.4px,transparent 0.4px);background-size:5px 5px;pointer-events:none;z-index:0}
-.cal-card::after{content:'';position:absolute;inset:0;border-radius:28px;background:rgba(255,255,255,0.12);pointer-events:none;z-index:1}
-.cal-overlay.show .cal-card{transform:translateY(0) scale(1)}
-.cal-card>*{position:relative;z-index:2}
-.cal-close-btn{position:absolute;top:12px;right:16px;z-index:10;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.12);border:none;color:rgba(26,58,0,0.65);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.cal-close-btn:hover,.cal-close-btn:active{background:rgba(0,0,0,0.2);color:#1a3a00}
-.cal-title{font-size:0.7rem;color:rgba(26,58,0,0.55);letter-spacing:3px;text-align:center;margin-bottom:4px;font-weight:700}
-.cal-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cal-month-nav button{width:32px;height:32px;border-radius:50%;border:none;background:rgba(0,0,0,0.1);color:rgba(26,58,0,0.75);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;font-weight:600}
-.cal-month-nav button:hover{background:rgba(0,0,0,0.18);color:#1a3a00}
-.cal-month-label{font-size:1rem;font-weight:700;color:#1a3a00;letter-spacing:0.5px}
-.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:6px}
-.cal-weekdays span{font-size:0.65rem;color:rgba(26,58,0,0.55);font-weight:700;letter-spacing:1px;padding:4px 0}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
-.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;font-size:0.85rem;color:#1a3a00;font-weight:600;cursor:pointer;transition:all 0.15s ease;position:relative}
-.cal-day:hover{background:rgba(0,0,0,0.1)}
-.cal-day.today{background:#1a3a00;color:#E0FE44;font-weight:700}
-.cal-day.selected{background:rgba(26,58,0,0.22);font-weight:700}
-.cal-day.today.selected{background:#1a3a00;color:#E0FE44}
-.cal-day.other-month{color:rgba(26,58,0,0.18);pointer-events:none}
-.cal-dot-indicator{width:5px;height:5px;border-radius:50%;background:#1a3a00;position:absolute;bottom:4px;opacity:0.9}
-.cal-day.today .cal-dot-indicator{background:#E0FE44}
-.cal-day.has-event{background:rgba(56,178,172,0.48)}
-.cal-day.has-event:hover{background:rgba(56,178,172,0.6)}
-.cal-day.today.has-event{box-shadow:inset 0 0 0 2px #38B2AC}
-.cal-day.checked-in::after{content:'\2713';position:absolute;top:0;right:2px;font-size:0.45rem;color:#1a3a00;font-weight:700}
-.cal-detail{margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,0,0,0.14)}
-.cal-detail-date{font-size:0.8rem;color:rgba(26,58,0,0.7);font-weight:700;letter-spacing:1px;margin-bottom:10px}
-.cal-checkin-wrap{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-checkin-btn{display:flex;align-items:center;gap:8px;padding:12px 22px;border-radius:20px;border:none;background:rgba(0,0,0,0.12);color:rgba(26,58,0,0.72);font-size:0.9rem;font-weight:700;cursor:pointer;letter-spacing:1px;transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
-.cal-checkin-btn:hover{background:rgba(0,0,0,0.18);color:#1a3a00;transform:scale(1.03)}
-.cal-checkin-btn:active{transform:scale(0.96)}
-.cal-checkin-btn.checked{background:#1a3a00;color:#E0FE44;box-shadow:0 2px 16px rgba(26,58,0,0.2)}
-.cal-checkin-icon{font-size:1.2rem}
-.cal-checkin-btn.checked .cal-checkin-icon{animation:checkinPop 0.5s ease}
-@keyframes checkinPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
-.cal-streak{font-size:0.72rem;color:rgba(26,58,0,0.52);font-weight:700;letter-spacing:0.5px}
-.cal-task-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:140px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
-.cal-task-list::-webkit-scrollbar{display:none}
-.cal-task-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:rgba(0,0,0,0.08);transition:all 0.2s}
-.cal-task-row:hover{background:rgba(0,0,0,0.14)}
-.cal-task-cb{width:20px;height:20px;border-radius:50%;flex-shrink:0;border:2px solid rgba(26,58,0,0.5);background:transparent;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:transparent}
-.cal-task-cb.done{background:#1a3a00;border-color:#1a3a00;color:#E0FE44}
-.cal-task-text{font-size:0.82rem;color:#1a3a00;font-weight:600;flex:1}
-.cal-task-text.done{text-decoration:line-through;opacity:0.5}
-.cal-task-type{font-size:0.62rem;padding:2px 8px;border-radius:8px;font-weight:700;letter-spacing:0.5px;flex-shrink:0}
-.cal-task-type.task{background:rgba(26,58,0,0.16);color:rgba(26,58,0,0.75)}
-.cal-task-type.event{background:rgba(224,254,68,0.45);color:#1a3a00}
-.cal-task-del{width:18px;height:18px;border-radius:50%;flex-shrink:0;background:transparent;border:none;color:rgba(26,58,0,0.48);cursor:pointer;font-size:0.7rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
-.cal-task-del:hover{background:rgba(220,50,50,0.2);color:#dc3232}
-.cal-add-type{display:flex;gap:4px;margin-bottom:6px}
-.cal-type-btn{padding:4px 10px;border-radius:10px;border:1px solid rgba(0,0,0,0.18);background:rgba(0,0,0,0.08);color:rgba(26,58,0,0.6);font-size:0.65rem;font-weight:700;cursor:pointer;transition:all 0.2s}
-.cal-type-btn.active{background:#1a3a00;color:#E0FE44;border-color:#1a3a00}
-.cal-type-hint{font-size:0.62rem;color:rgba(26,58,0,0.42);font-weight:500;margin-bottom:6px;letter-spacing:0.3px}
-.cal-add-row{display:flex;gap:6px;margin-top:6px}
-.cal-add-input{flex:1;background:rgba(0,0,0,0.1);border:1px solid rgba(0,0,0,0.18);border-radius:12px;padding:8px 12px;color:#1a3a00;font-size:0.8rem;outline:none;font-family:inherit;font-weight:500}
-.cal-add-input::placeholder{color:rgba(26,58,0,0.4)}
-.cal-add-input:focus{border-color:rgba(26,58,0,0.5);background:rgba(0,0,0,0.14)}
-.cal-add-btn{padding:8px 14px;border-radius:12px;border:none;background:#1a3a00;color:#E0FE44;font-weight:700;font-size:0.75rem;cursor:pointer;letter-spacing:1px;transition:all 0.2s;white-space:nowrap}
-.cal-add-btn:hover{opacity:0.85}
-.cal-empty{font-size:0.78rem;color:rgba(26,58,0,0.48);font-weight:500;text-align:center;padding:12px 0}
-
-    .cal-scroll{overflow-y:auto;max-height:70vh;scrollbar-width:none;-ms-overflow-style:none;padding-top:4px}
-.cal-scroll::-webkit-scrollbar{display:none}
     </style>
 </head>
 <body style="background-color:#0a0a14;">
-<button class="cal-btn" id="calBtn" onclick="showCalendar()" aria-label="日历打卡">
-    <span class="cal-dot"></span>CALENDAR
-</button>
-
 <button class="cal-btn" id="calBtn" onclick="showCalendar()" aria-label="日历打卡" style="display:none;">
     <span class="cal-dot"></span>CALENDAR
 </button>
@@ -758,39 +681,6 @@ body.no-page-anim { animation: none !important; }
     <div class="breath-dot"></div>
     <div class="scan-lines"></div>
     <div class="noise-overlay"></div>
-<!-- ===== 日历弹窗 ===== -->
-<div class="cal-overlay" id="calOverlay">
-    <div class="cal-card">
-        <button class="cal-close-btn" onclick="closeCalendar()">&times;</button>
-        <div class="cal-scroll">
-        <div class="cal-title">CALENDAR</div>
-        <div class="cal-month-nav">
-            <button onclick="prevMonth()">&lsaquo;</button>
-            <span class="cal-month-label" id="calMonthLabel"></span>
-            <button onclick="nextMonth()">&rsaquo;</button>
-        </div>
-        <div class="cal-weekdays"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
-        <div class="cal-grid" id="calGrid"></div>
-        <div class="cal-detail" id="calDetail">
-            <div class="cal-checkin-wrap" id="calCheckinWrap">
-                <button class="cal-checkin-btn" id="calCheckinBtn" onclick="doCheckin()"><span class="cal-checkin-icon">☀</span><span class="cal-checkin-text">今日打卡</span></button>
-                <span class="cal-streak" id="calStreak"></span>
-            </div>
-            <div class="cal-detail-date" id="calDetailDate"></div>
-            <div class="cal-task-list" id="calTaskList"></div>
-            <div class="cal-add-type">
-                <button class="cal-type-btn active" onclick="setCalType('task',this)">任务</button>
-                <button class="cal-type-btn" onclick="setCalType('event',this)">事件</button>
-            </div>
-            <div class="cal-type-hint">任务 — 当天待办可打钩 | 事件 — 极为重要怕忘记、或该日前必须达成的目标</div>
-            <div class="cal-add-row">
-                <input class="cal-add-input" id="calAddInput" placeholder="添加任务或事件..." maxlength="40">
-                <button class="cal-add-btn" onclick="addCalItem()">添加</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
     <div class="container" id="container">
         <div class="logo" id="logo"></div>
@@ -850,7 +740,6 @@ body.no-page-anim { animation: none !important; }
             document.getElementById('buttonsWrap').classList.add('show');
             document.getElementById('btnGrow').disabled = false;
             document.getElementById('btnLight').disabled = false;
-            document.getElementById('calBtn').style.display = 'flex';
             document.getElementById('calBtn').style.display = 'flex';
             document.getElementById('loadingText').textContent = 'WELCOME BACK';
             document.getElementById('phrase').textContent = 'Continue your journey.';
@@ -929,7 +818,7 @@ body.no-page-anim { animation: none !important; }
         progressBar.addEventListener('animationend', (e) => {
             if (e.animationName === 'progress') {
                 setTimeout(() => {
-                    buttonsWrap.classList.add('show');document.getElementById('calBtn').style.display='flex';
+                    buttonsWrap.classList.add('show');
                     btnGrow.disabled = false;
                     btnLight.disabled = false;
                     document.getElementById('calBtn').style.display = 'flex';
@@ -1060,58 +949,6 @@ body.no-page-anim { animation: none !important; }
 var n=performance.getEntriesByType('navigation')[0];
 if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
 })();
-
-// ===== 日历打卡 =====
-(function(){
-var DATA_KEY='calData',CHECKIN_KEY='calCheckins',calData={},checkins={},calYear,calMonth,calSelected=null,calType='task';
-function K(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function L(){try{calData=JSON.parse(localStorage.getItem(DATA_KEY))||{}}catch(e){calData={}}}
-function S(){localStorage.setItem(DATA_KEY,JSON.stringify(calData))}
-function LC(){try{checkins=JSON.parse(localStorage.getItem(CHECKIN_KEY))||{}}catch(e){checkins={}}}
-function SC(){localStorage.setItem(CHECKIN_KEY,JSON.stringify(checkins))}
-L();LC();
-function calcStreak(){var streak=0,today=new Date(),d=new Date(today);while(true){var key=K(d);if(checkins[key]){streak++;d.setDate(d.getDate()-1)}else break}return streak}
-var calOverlay=document.getElementById('calOverlay'),calGrid=document.getElementById('calGrid'),calMonthLabel=document.getElementById('calMonthLabel'),calDetail=document.getElementById('calDetail'),calDetailDate=document.getElementById('calDetailDate'),calTaskList=document.getElementById('calTaskList'),calAddInput=document.getElementById('calAddInput'),calCheckinWrap=document.getElementById('calCheckinWrap'),calCheckinBtn=document.getElementById('calCheckinBtn'),calStreak=document.getElementById('calStreak');
-window.closeCalendar=function(){calOverlay.classList.remove('show')}
-calOverlay.addEventListener('click',function(e){if(e.target===calOverlay)closeCalendar()});
-function renderCalendar(){
-    var today=new Date();calMonthLabel.textContent=calYear+'年 '+(calMonth+1)+'月';
-    var firstDay=new Date(calYear,calMonth,1).getDay(),daysInMonth=new Date(calYear,calMonth+1,0).getDate(),daysInPrev=new Date(calYear,calMonth,0).getDate();
-    var html='';
-    for(var i=firstDay-1;i>=0;i--){html+='<div class="cal-day other-month">'+(daysInPrev-i)+'</div>'}
-    for(var d=1;d<=daysInMonth;d++){
-        var dateKey=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-        var cls='cal-day';if(calSelected===dateKey)cls+=' selected';if(K(today)===dateKey)cls+=' today';if(checkins[dateKey])cls+=' checked-in';
-        var items=calData[dateKey]||[],hasTask=items.some(function(x){return x.type==='task'&&!x.done}),hasEvent=items.some(function(x){return x.type==='event'});
-        if(hasTask)cls+=' has-task';if(hasEvent)cls+=' has-event';
-        html+='<div class="'+cls+'" data-date="'+dateKey+'" onclick="selectCalDay(''+dateKey+'')">'+d+((hasTask||(hasEvent&&!hasTask))?'<span class="cal-dot-indicator"></span>':'')+'</div>'}
-    var remaining=7-((firstDay+daysInMonth)%7);if(remaining===7)remaining=0;
-    for(var d=1;d<=remaining;d++){html+='<div class="cal-day other-month">'+d+'</div>'}
-    calGrid.innerHTML=html}
-function renderDetail(){
-    if(!calSelected){calDetail.style.display='none';return}
-    calDetail.style.display='block';var today=new Date(),todayKey=K(today),isToday=(calSelected===todayKey);
-    calCheckinWrap.style.display=isToday?'flex':'none';
-    if(isToday){var checked=!!checkins[todayKey];calCheckinBtn.classList.toggle('checked',checked);calCheckinBtn.querySelector('.cal-checkin-text').textContent=checked?'已打卡 \u2713':'今日打卡';var streak=calcStreak();calStreak.textContent=streak>0?'连续 '+streak+' 天':''}
-    var parts=calSelected.split('-');calDetailDate.textContent=parts[0]+'年'+parseInt(parts[1])+'月'+parseInt(parts[2])+'日';
-    var items=calData[calSelected]||[];
-    if(items.length===0){calTaskList.innerHTML='<div class="cal-empty">这天还没有安排</div>'}
-    else{calTaskList.innerHTML='';items.forEach(function(item,i){
-        var row=document.createElement('div');row.className='cal-task-row';
-        row.innerHTML='<div class="cal-task-cb'+(item.done?' done':'')+'" onclick="toggleCalItem(\''+calSelected+'\','+i+')">'+(item.done?'\u2713':'')+'</div><span class="cal-task-text'+(item.done?' done':'')+'">'+item.text+'</span><span class="cal-task-type '+item.type+'">'+(item.type==='event'?'事件':'任务')+'</span><div class="cal-task-del" onclick="deleteCalItem(\''+calSelected+'\','+i+')">&times;</div>';
-        calTaskList.appendChild(row)})}}
-window.selectCalDay=function(dateKey){calSelected=dateKey;renderCalendar();renderDetail()}
-window.toggleCalItem=function(dateKey,i){calData[dateKey][i].done=!calData[dateKey][i].done;S();renderCalendar();renderDetail()}
-window.deleteCalItem=function(dateKey,i){calData[dateKey].splice(i,1);if(calData[dateKey].length===0)delete calData[dateKey];S();renderCalendar();renderDetail()}
-window.setCalType=function(t,el){calType=t;var btns=document.querySelectorAll('.cal-type-btn');btns.forEach(function(b){b.classList.remove('active')});el.classList.add('active')}
-window.addCalItem=function(){var text=calAddInput.value.trim();if(!text)return;if(!calSelected){var today=new Date();calSelected=K(today);renderCalendar()}if(!calData[calSelected])calData[calSelected]=[];calData[calSelected].push({text:text,type:calType,done:false});S();calAddInput.value='';renderCalendar();renderDetail()}
-calAddInput.addEventListener('keydown',function(e){if(e.key==='Enter')addCalItem()});
-window.doCheckin=function(){var today=new Date(),key=K(today);checkins[key]=true;SC();var streak=calcStreak();calCheckinBtn.classList.add('checked');calCheckinBtn.querySelector('.cal-checkin-text').textContent='已打卡 \u2713';calStreak.textContent='连续 '+streak+' 天';if(navigator.vibrate)navigator.vibrate(50);renderCalendar()}
-window.prevMonth=function(){calMonth--;if(calMonth<0){calMonth=11;calYear--}renderCalendar();renderDetail()}
-window.nextMonth=function(){calMonth++;if(calMonth>11){calMonth=0;calYear++}renderCalendar();renderDetail()}
-window.showCalendar=function(){var now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();calSelected=K(now);L();LC();renderCalendar();renderDetail();calOverlay.classList.add('show')}
-})();
-
 </script>
 </body>
 </html>
