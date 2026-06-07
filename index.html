@@ -470,7 +470,7 @@ body.no-page-anim { animation: none !important; }
 	    position: fixed; inset: 0; z-index: 2000;
 	    background: transparent;
 	    
-	    display: flex; align-items: center; justify-content: center;
+	    display: flex; align-items: flex-start; justify-content: center; padding-top: 50px;
 	    opacity: 0; pointer-events: none; transition: opacity 0.15s ease, visibility 0s 0.15s;
 	    
 	}
@@ -632,18 +632,6 @@ body.no-page-anim { animation: none !important; }
 	    content: '✓'; position: absolute; top: 0; right: 2px;
 	    font-size: 0.45rem; color: #1a3a00; font-weight: 700;
 	}
-    
-.cal-greet-card{position:relative;width:340px;max-width:90vw;padding:36px 28px 28px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);transform:translateY(24px) scale(0.96);transition:all 0.4s cubic-bezier(0.25,0.1,0.25,1);overflow:hidden;font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue","PingFang SC",sans-serif;text-align:center}
-.cal-greet-overlay.show .cal-greet-card{transform:translateY(0) scale(1)}
-.cal-greet-card::before{content:"";position:absolute;inset:0;border-radius:28px;background-image:radial-gradient(rgba(0,0,0,0.03) 0.4px,transparent 0.4px);background-size:5px 5px;pointer-events:none;z-index:0}.cal-greet-card::after{content:"";position:absolute;inset:0;border-radius:28px;background:rgba(255,255,255,0.12);pointer-events:none;z-index:1}.cal-greet-card>*{position:relative;z-index:2}.cal-greet-card.fade-out{opacity:0;transform:translateY(-20px) scale(0.95);pointer-events:none}
-.cal-greet-date{font-size:4rem;font-weight:300;color:#1a3a00;letter-spacing:1px;line-height:1}
-.cal-greet-week{font-size:1.1rem;color:rgba(26,58,0,0.7);letter-spacing:2px;margin-top:4px;font-weight:600}
-.cal-greet-msg{font-size:1.4rem;color:#1a3a00;font-weight:700;margin-top:20px;letter-spacing:0.5px}
-.cal-greet-sub{font-size:0.75rem;color:rgba(26,58,0,0.45);margin-top:6px;letter-spacing:0.5px}
-.cal-greet-btn{margin-top:28px;padding:14px 32px;border-radius:24px;border:none;background:#1a3a00;color:#E0FE44;font-size:0.9rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(26,58,0,0.2)}
-.cal-greet-btn:hover{transform:scale(1.03);box-shadow:0 6px 22px rgba(26,58,0,0.3)}
-.cal-greet-btn:active{transform:scale(0.97)}
-
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -653,14 +641,7 @@ body.no-page-anim { animation: none !important; }
 
 <!-- ===== 日历弹窗 ===== -->
 <div class="cal-overlay" id="calOverlay">
-    <div class="cal-card" id="calMainCard">
-            <div class="cal-greet-date" id="calGreetDate"></div>
-            <div class="cal-greet-week" id="calGreetWeek"></div>
-            <div class="cal-greet-msg" id="calGreetMsg"></div>
-            <div class="cal-greet-sub" id="calGreetSub"></div>
-            <button class="cal-greet-btn" onclick="openCalendar()">来开启新的一天 →</button>
-        </div>
-        <div class="cal-card" id="calMainCard" style="display:none;">
+    <div class="cal-card">
         <button class="cal-close" onclick="closeCalendar()">&times;</button>
         <div class="cal-title">CALENDAR</div>
         <div class="cal-month-nav">
@@ -955,21 +936,9 @@ body.no-page-anim { animation: none !important; }
     window.nextMonth=function(){calMonth++;if(calMonth>11){calMonth=0;calYear++}renderCalendar();renderDetail()}
 
     window.showCalendar=function(){
-        var now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();calSelected=K(now);L();LC();
-        document.getElementById('calGreetDate').innerHTML=now.getDate();
-        document.getElementById('calGreetWeek').textContent='星期'+['日','一','二','三','四','五','六'][now.getDay()];
-        var h=now.getHours(),msg='',sub='';
-        if(h>=5&&h<12){msg='早上好';sub='新的一天，从觉察开始'}
-        else if(h>=12&&h<14){msg='中午好';sub='休息片刻，再出发'}
-        else if(h>=14&&h<18){msg='下午好';sub='专注当下，不负时光'}
-        else if(h>=18&&h<22){msg='晚上好';sub='回顾今日，感恩收获'}
-        else{msg='夜深了';sub='早点休息，明天会更好'}
-        document.getElementById('calGreetMsg').textContent=msg;
-        document.getElementById('calGreetSub').textContent=sub;
-        document.getElementById('calGreetOverlay').style.visibility='visible';document.getElementById('calGreetOverlay').style.opacity='1';document.getElementById('calGreetOverlay').style.pointerEvents='auto'}
-    window.closeCalendar=function(){calOverlay.classList.remove("show");document.getElementById("calGreetOverlay").style.visibility="hidden";document.getElementById("calGreetOverlay").style.opacity="0";document.getElementById("calGreetOverlay").style.pointerEvents="none"};window.openCalendar=function(){
-    document.getElementById('calGreetOverlay').style.visibility='hidden';document.getElementById('calGreetOverlay').style.opacity='0';document.getElementById('calGreetOverlay').style.pointerEvents='none';
-    calOverlay.classList.add('show');renderCalendar();renderDetail()}
+        var now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();
+        calSelected=K(now);L();LC();renderCalendar();renderDetail();calOverlay.classList.add('show')}
+    window.closeCalendar=function(){calOverlay.classList.remove('show')}
     calOverlay.addEventListener('click',function(e){if(e.target===calOverlay)closeCalendar()});
 })();
 </script>
