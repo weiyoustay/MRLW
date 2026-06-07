@@ -632,6 +632,20 @@ body.no-page-anim { animation: none !important; }
 	    content: '✓'; position: absolute; top: 0; right: 2px;
 	    font-size: 0.45rem; color: #1a3a00; font-weight: 700;
 	}
+
+.cal-greet-overlay{position:fixed;inset:0;z-index:2001;background:rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease}
+.cal-greet-overlay.show{opacity:1;pointer-events:auto}
+.cal-greet-card{width:320px;max-width:88vw;padding:40px 28px 32px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);text-align:center;overflow:hidden;font-family:-apple-system,"SF Pro Display","PingFang SC",sans-serif}
+.cal-greet-card::before{content:"";position:absolute;inset:0;border-radius:28px;background-image:radial-gradient(rgba(0,0,0,0.03) 0.4px,transparent 0.4px);background-size:5px 5px;pointer-events:none;z-index:0}
+.cal-greet-card::after{content:"";position:absolute;inset:0;border-radius:28px;background:rgba(255,255,255,0.12);pointer-events:none;z-index:1}
+.cal-greet-card>*{position:relative;z-index:2}
+.cal-greet-date{font-size:4rem;font-weight:300;color:#1a3a00;line-height:1}
+.cal-greet-week{font-size:1rem;color:rgba(26,58,0,0.6);letter-spacing:2px;margin-top:4px;font-weight:600}
+.cal-greet-msg{font-size:1.5rem;color:#1a3a00;font-weight:700;margin-top:24px}
+.cal-greet-sub{font-size:0.8rem;color:rgba(26,58,0,0.45);margin-top:6px}
+.cal-greet-btn{margin-top:28px;padding:14px 36px;border-radius:24px;border:none;background:#1a3a00;color:#E0FE44;font-size:0.9rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(26,58,0,0.25)}
+.cal-greet-btn:hover{transform:scale(1.03)}
+.cal-greet-btn:active{transform:scale(0.97)}
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -671,6 +685,17 @@ body.no-page-anim { animation: none !important; }
                 <button class="cal-add-btn" onclick="addCalItem()">添加</button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- ===== 问候卡片 ===== -->
+<div class="cal-greet-overlay" id="calGreetOverlay">
+    <div class="cal-greet-card">
+        <div class="cal-greet-date" id="calGreetDate"></div>
+        <div class="cal-greet-week" id="calGreetWeek"></div>
+        <div class="cal-greet-msg" id="calGreetMsg"></div>
+        <div class="cal-greet-sub" id="calGreetSub"></div>
+        <button class="cal-greet-btn" onclick="openCalendar()">来开启新的一天 →</button>
     </div>
 </div>
 
@@ -938,6 +963,7 @@ body.no-page-anim { animation: none !important; }
     window.showCalendar=function(){
         var now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();
         calSelected=K(now);L();LC();renderCalendar();renderDetail();calOverlay.classList.add('show')}
+    window.openCalendar=function(){document.getElementById('calGreetOverlay').classList.remove('show');calOverlay.classList.add('show');renderCalendar();renderDetail()};
     window.closeCalendar=function(){calOverlay.classList.remove('show')}
     calOverlay.addEventListener('click',function(e){if(e.target===calOverlay)closeCalendar()});
 })();
