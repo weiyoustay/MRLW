@@ -2224,7 +2224,7 @@ function U(){if(totalSeconds===0){cdRing.style.strokeDashoffset='0';return}cdRin
 function saveTimerState(){if(isRunning&&selectedTaskId)localStorage.setItem(TIMER_KEY,JSON.stringify({taskId:selectedTaskId,endTs:Date.now()+remainingSeconds*1000,total:totalSeconds}));else localStorage.removeItem(TIMER_KEY)}
 function loadTimerState(){try{var s=JSON.parse(localStorage.getItem(TIMER_KEY));if(!s)return;var now=Date.now();if(s.endTs<=now){localStorage.removeItem(TIMER_KEY);if(s.taskId){var t=tasks.find(function(x){return x.id===s.taskId});if(t)t.completed=true;S()}return}selectedTaskId=s.taskId;totalSeconds=s.total;remainingSeconds=Math.ceil((s.endTs-now)/1000);var t=tasks.find(function(x){return x.id===s.taskId});if(t){cdTaskLabel.textContent=t.name+(t.completed?' ✓':'');cdTime.textContent=F(remainingSeconds);U();isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';timerInterval=setInterval(tick,1000);updateBtn()}}catch(e){localStorage.removeItem(TIMER_KEY)}}
 function updateBtn(){if(isRunning){cdBtn.innerHTML='<span class="cd-dot" style="animation:none;opacity:1"></span>'+F(remainingSeconds);cdBtn.style.letterSpacing='0.5px'}else{cdBtn.innerHTML='<span class="cd-dot"></span>COUNTDOWN';cdBtn.style.letterSpacing='1.5px'}}
-function tick(){saveTimerState();if(remainingSeconds<=0){stopTimer();cdTime.textContent='00:00';cdRing.style.strokeDashoffset=String(RING_LEN);cdTaskLabel.textContent='✓ 任务完成！';var vibeOn=localStorage.getItem('cdVibrate')!=='off';var vibeOn=localStorage.getItem("cdVibrate")!=="off";if(vibeOn&&navigator.vibrate)navigator.vibrate([200,100,200]);if(selectedTaskId){var t=tasks.find(function(x){return x.id===selectedTaskId});if(t)t.completed=true;S();renderTasks()}localStorage.removeItem(TIMER_KEY);updateBtn();return}remainingSeconds--;cdTime.textContent=F(remainingSeconds);U();updateBtn()}
+function tick(){saveTimerState();if(remainingSeconds<=0){stopTimer();cdTime.textContent='00:00';cdRing.style.strokeDashoffset=String(RING_LEN);cdTaskLabel.textContent='✓ 任务完成！';var vibeOn=localStorage.getItem('cdVibrate')!=='off';var vibeOn=localStorage.getItem("cdVibrate")!=="off";if(vibeOn&&navigator.vibrate)navigator.vibrate([200,100,200]);if(selectedTaskId){var t=tasks.find(function(x){return x.id===selectedTaskId});if(t){t.completed=true;var dk=new Date();var dlk=dk.getFullYear()+'-'+String(dk.getMonth()+1).padStart(2,'0')+'-'+String(dk.getDate()).padStart(2,'0');var dlog={};try{dlog=JSON.parse(localStorage.getItem('cdDailyLog'))||{}}catch(e){}dlog[dlk]=(dlog[dlk]||0)+t.duration;localStorage.setItem('cdDailyLog',JSON.stringify(dlog))}S();renderTasks()}localStorage.removeItem(TIMER_KEY);updateBtn();return}remainingSeconds--;cdTime.textContent=F(remainingSeconds);U();updateBtn()}
 function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}isRunning=false;cdPlayIcon.innerHTML='<path d="M8 5v14l11-7z"/>';saveTimerState();updateBtn();updateCtrlLabel()}
 function startTimer(){if(remainingSeconds<=0)return;isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';timerInterval=setInterval(tick,1000);saveTimerState();updateBtn();updateCtrlLabel()}
 function updateCtrlLabel(){var lbl=document.querySelector('.cd-ctrl-group:nth-child(2) .cd-ctrl-label');if(lbl)lbl.textContent=isRunning?'暂停':'开始'}
@@ -2247,14 +2247,17 @@ L();loadTimerState();
 
 
 window.showTodayStats=function(){
+    var dlog={};try{dlog=JSON.parse(localStorage.getItem("cdDailyLog"))||{}}catch(e){}
+    var today=new Date();var tk=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+    var todayMin=dlog[tk]||0;
     var tasks=[];try{tasks=JSON.parse(localStorage.getItem("cdTasks"))||[]}catch(e){}
     var completed=tasks.filter(function(t){return t.completed});
     var html="";var total=0;
     if(completed.length===0){html="<div style=text-align:center;color:rgba(26,58,0,0.3);padding:20px>今天还没有完成的任务</div>"}
-    else{completed.forEach(function(t){html+="<div class=cd-stat-item><span class=task-name>\u2713 "+t.name+"</span><span class=task-dur>"+t.duration+" min</span></div>";total+=t.duration})}
+    else{completed.forEach(function(t){html+="<div class=cd-stat-item><span class=task-name>✓ "+t.name+"</span><span class=task-dur>"+t.duration+" min</span></div>";total+=t.duration})}
     document.getElementById("cdTodayContent").innerHTML=html;
-    document.getElementById("cdTodayTotal").textContent=completed.length?"共完成 "+completed.length+" 个任务 \u00b7 总专注 "+total+" 分钟":"";
-    document.getElementById("cdTodayModal").classList.add("show");};
+    document.getElementById("cdTodayTotal").innerHTML="<div>共完成 "+completed.length+" 个任务</div><div style=font-size:1.6rem;margin-top:4px>"+todayMin+" <span style=font-size:0.7rem;font-weight:500>分钟</span></div>";
+    document.getElementById("cdOverlay").classList.remove("show");document.getElementById("cdTodayModal").classList.add("show")};
 window.closeTodayStats=function(){document.getElementById("cdTodayModal").classList.remove("show")};
 document.getElementById("cdTodayModal").addEventListener("click",function(e){if(e.target===this)closeTodayStats()});
 
@@ -2274,27 +2277,18 @@ function getDayDate(monday,dayIdx){var d=new Date(monday);d.setDate(monday.getDa
 
 function renderWeek(){
     var week=getWeekRange(weekOffset);document.getElementById("cdWeekLabel").textContent=week.label;
-    var days=["一","二","三","四","五","六","日"];var maxMin=30;var data=[0,0,0,0,0,0,0];
-    var cdData={};try{cdData=JSON.parse(localStorage.getItem("calCheckins"))||{}}catch(e){}
+    var days=["一","二","三","四","五","六","日"];var data=[0,0,0,0,0,0,0];
+    var dlog={};try{dlog=JSON.parse(localStorage.getItem("cdDailyLog"))||{}}catch(e){}
+    for(var i=0;i<7;i++){var dk=getDayDate(week.start,i);data[i]=dlog[dk]||0}
+    var maxMin=Math.max.apply(null,data);if(maxMin<10)maxMin=10;
+    var totalWeek=data.reduce(function(a,b){return a+b},0);
+    var html="";var today=new Date();var todayIdx=today.getDay();todayIdx=todayIdx===0?6:todayIdx-1;
+    var isThisWeek=weekOffset===0;
     for(var i=0;i<7;i++){
-        var dateKey=getDayDate(week.start,i);
-        if(cdData[dateKey])data[i]=5;
-    }
-    try{var tasks=JSON.parse(localStorage.getItem("cdTasks"))||[];
-        tasks.forEach(function(t){if(t.completed){
-            for(var i=0;i<7;i++){var dk=getDayDate(week.start,i); data[i]+=t.duration;}
-        }})
-    }catch(e){}
-    for(var i=0;i<7;i++){if(data[i]>maxMin)maxMin=data[i]}
-    if(maxMin<10)maxMin=10;
-    var html="";
-    for(var i=0;i<7;i++){var h=data[i]/maxMin*140;html+="<div class=cd-bar-col><div class=cd-bar-fill style=height:"+Math.max(h,3)+"px></div><div class=cd-bar-min>"+data[i]+"m</div><div class=cd-bar-label>"+days[i]+"</div></div>"}
-    document.getElementById("cdBarWrap").innerHTML=html}
-
-</script>
-<script>
-(function(){
-var n=performance.getEntriesByType('navigation')[0];
+        var h=data[i]/maxMin*130;var isToday=isThisWeek&&i===todayIdx;
+        html+="<div class=cd-bar-col><div class=cd-bar-fill style=height:"+Math.max(h,3)+"px;background:"+(isToday?"#1a3a00":"rgba(26,58,0,0.55)")+"></div><div class=cd-bar-min>"+(data[i]||0)+"m</div><div class=cd-bar-label style="+(isToday?"color:#1a3a00;font-weight:700":"")+">"+days[i]+"</div></div>"}
+    html+="</div><div class=cd-stat-total>本周总专注 "+totalWeek+" 分钟</div>";
+    document.getElementById("cdBarWrap").innerHTML=html}getEntriesByType('navigation')[0];
 if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
 var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
 })();
