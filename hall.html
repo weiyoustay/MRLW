@@ -2364,7 +2364,7 @@ window.showArchive=function(){
     var ci={};try{ci=JSON.parse(localStorage.getItem("calCheckins"))||{}}catch(e){}
     var streak=0;var td=new Date();var d=new Date(td);
     while(true){var k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(ci[k]){streak++;d.setDate(d.getDate()-1)}else break}
-    var tgp=(tm*0.7).toFixed(2);
+    var atm=0;try{atm=Math.floor(parseFloat(localStorage.getItem("totalActiveMinutes")||"0"))}catch(e){};var tgp=(atm*0.7).toFixed(2);
     document.getElementById("arcFocus").textContent=tm;
     document.getElementById("arcTasks").textContent=completed.length;
     document.getElementById("arcStreak").textContent=streak;
