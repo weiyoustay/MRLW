@@ -324,6 +324,10 @@ body.no-page-anim { animation: none !important; }
 }
 
 
+
+
+
+
 </style>
 
 <!-- 背景图极速预加载，打开页面立刻显示 -->
@@ -435,7 +439,246 @@ var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick
 })();
 
 
+
+
+
+
 </script>
+<button class="cd-btn" id="cdBtn" onclick="showCountdown()" aria-label="倒计时">
+    <span class="cd-dot"></span>COUNTDOWN
+</button>
+<button class="cd-stat-top-btn" onclick="showTodayStats()" style="top:116px;">今日专注</button>
+<button class="cd-stat-top-btn" onclick="showWeekStats()" style="top:160px;">本周可视</button>
+<button class="back-btn" onclick="location.href='shouye.html'" aria-label="返回首页">←</button>
+<button class="me-btn-top" id="meBtnTop" style="display:none;" onclick="showMeCard()" aria-label="个人中心">
+    <span class="me-btn-avatar" id="meBtnAvatar"></span>我
+</button>
+
+<!-- ===== "我" 卡片弹窗 ===== -->
+<div class="me-modal-overlay" id="meModalOverlay">
+    <div class="me-card">
+        <div class="me-card-header">
+            <div class="me-card-avatar" id="meCardAvatar"></div>
+            <div class="me-card-info">
+                <div class="me-welcome">WELCOME HOME, <span class="me-nickname" id="meCardName"></span></div>
+                <div class="me-greeting">Take good care of yourself today.</div>
+            </div>
+        </div>
+        <div class="me-progress-card">
+            <div class="me-progress-header">
+                <span class="me-progress-label">今日进度 <i>Today's Progress</i></span>
+                <span class="me-progress-val" id="meTodayProgress">0/7 天</span>
+            </div>
+            <div class="me-progress-bar"><div class="me-progress-fill" id="meProgressFill" style="width:0%"></div></div>
+        </div>
+        <div class="me-activity-card">
+            <span class="me-activity-label">今日手环活跃 <i>Band Daily Activity</i></span>
+            <span class="me-activity-val" id="meTodayActive">0 分钟</span>
+        </div>
+        <div class="me-bottom-row">
+            <div class="me-tgp-card">
+                <span class="me-tgp-title">TGP · 累计成长积分</span>
+                <span class="me-tgp-val" id="meTotalPoints">YNG+0</span>
+                <span class="me-tgp-sub" id="meTotalActive">累计活跃 0 min</span>
+                <span class="me-tgp-formula">累计使用时长 × 0.7</span>
+            </div>
+            <button class="me-archive-btn" onclick="showArchive()" style="flex:1.1;border:none;border-radius:18px;background:rgba(255,255,255,0.25);color:#1a3a00;font-size:0.75rem;font-weight:700;letter-spacing:1px;cursor:pointer;padding:14px 10px;transition:all 0.25s;margin-right:8px">成长档案</button>
+<button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
+        </div>
+    </div>
+</div>
+
+    <div class="cd-overlay" id="cdOverlay">
+<div class="cd-card">
+<button class="cd-vibe-btn" id="cdVibeBtn" onclick="toggleVibe()">震动</button>
+<button class="cd-return-btn" onclick="closeCountdown()">返回 RETURN</button>
+<div class="cd-title">COUNTDOWN</div>
+<div class="cd-ring-wrap">
+<svg class="cd-ring-svg" viewBox="0 0 180 180"><circle class="cd-ring-bg" cx="90" cy="90" r="80"/><circle class="cd-ring-fg" id="cdRing" cx="90" cy="90" r="80"/></svg>
+<div class="cd-time-display"><div class="cd-time-num" id="cdTime">00:00</div><div class="cd-time-label">MIN:SEC</div></div>
+</div>
+<div class="cd-task-name" id="cdTaskLabel">选择一个任务开始专注</div>
+<div class="cd-tasks-label">任务列表</div>
+<div class="cd-tasks-scroll" id="cdTaskList"></div>
+<div class="cd-add-form" id="cdAddForm">
+<div class="cd-add-row"><input class="cd-add-input" id="cdAddName" placeholder="任务名称" maxlength="20"><input class="cd-add-min" id="cdAddMin" type="number" placeholder="分钟" min="1" max="720" value="25"></div>
+<div class="cd-presets"><button class="cd-preset" onclick="setPreset(5)">5 min</button><button class="cd-preset" onclick="setPreset(15)">15 min</button><button class="cd-preset active" onclick="setPreset(25)">25 min</button><button class="cd-preset" onclick="setPreset(45)">45 min</button><button class="cd-preset" onclick="setPreset(60)">60 min</button></div>
+<div class="cd-add-row"><button class="cd-add-confirm" onclick="confirmAddTask()">添加任务</button><button class="cd-add-cancel" onclick="cancelAddTask()">取消</button></div>
+</div>
+<button class="cd-add-chip" id="cdAddBtn" onclick="showAddForm()" style="margin:0 auto;">+</button>
+<div class="cd-controls">
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-reset" onclick="resetCountdown()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.5 15.5A9 9 0 1 0 5.6 5.6L1 10"/></svg></button><span class="cd-ctrl-label">清零</span></div>
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-play" id="cdPlayBtn" onclick="toggleCountdown()"><svg id="cdPlayIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><span class="cd-ctrl-label">开始</span></div>
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-reset" onclick="restartCountdown()" style="font-size:0.7rem;font-weight:600;letter-spacing:1px;">RE</button><span class="cd-ctrl-label">重来</span></div>
+</div>
+</div>
+</div>
+
+<div class="cd-stat-modal" id="cdTodayModal">
+    <div class="cd-stat-card">
+        <button class="cd-return-btn" onclick="closeTodayStats()" style="position:static;float:right;">返回 RETURN</button>
+        <div class="cd-stat-title">今日专注</div>
+        <div id="cdTodayContent"></div>
+        <div class="cd-stat-total" id="cdTodayTotal"></div>
+    </div>
+</div>
+
+<div class="cd-stat-modal" id="cdWeekModal">
+    <div class="cd-stat-card">
+        <button class="cd-return-btn" onclick="closeWeekStats()" style="position:static;float:right;">返回 RETURN</button>
+        <div class="cd-week-nav">
+            <button onclick="prevWeek()">&lsaquo;</button>
+            <span class="cd-week-label" id="cdWeekLabel"></span>
+            <button onclick="nextWeek()">&rsaquo;</button>
+        </div>
+        <div class="cd-bar-wrap" id="cdBarWrap"></div>
+    </div>
+</div>
+
+
+<div class="arc-overlay" id="arcOverlay">
+    <div class="arc-card">
+        <button class="arc-return" onclick="closeArchive()">返回 RETURN</button>
+        <div class="arc-title">GROWTH ARCHIVE</div>
+        <div class="arc-greeting">
+            <div class="name" id="arcName"></div>
+            <div class="days" id="arcDays"></div>
+        </div>
+        <div class="arc-grid">
+            <div class="arc-stat"><div class="arc-stat-val" id="arcFocus">0</div><div class="arc-stat-label">分钟 · 累计专注</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcTasks">0</div><div class="arc-stat-label">个 · 完成任务</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcStreak">0</div><div class="arc-stat-label">天 · 连续打卡</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcTGP">0</div><div class="arc-stat-label">TGP · 成长积分</div></div>
+        </div>
+        <div class="arc-section-title">📝 七日感悟</div>
+        <div id="arcJournals"></div>
+        <div class="arc-section-title">🖼 解锁海报</div>
+        <div class="arc-posters" id="arcPosters"></div>
+        <div class="arc-section-title">📅 坚持足迹</div>
+        <div class="arc-timeline" id="arcTimeline"></div>
+        <div class="arc-quote" id="arcQuote"></div>
+    </div>
+</div>
+
+
+
+<button class="cd-btn" id="cdBtn" onclick="showCountdown()" aria-label="倒计时">
+    <span class="cd-dot"></span>COUNTDOWN
+</button>
+<button class="cd-stat-top-btn" onclick="showTodayStats()" style="top:116px;">今日专注</button>
+<button class="cd-stat-top-btn" onclick="showWeekStats()" style="top:160px;">本周可视</button>
+<button class="back-btn" onclick="location.href='shouye.html'" aria-label="返回首页">←</button>
+<button class="me-btn-top" id="meBtnTop" style="display:none;" onclick="showMeCard()" aria-label="个人中心">
+    <span class="me-btn-avatar" id="meBtnAvatar"></span>我
+</button>
+
+<!-- ===== "我" 卡片弹窗 ===== -->
+<div class="me-modal-overlay" id="meModalOverlay">
+    <div class="me-card">
+        <div class="me-card-header">
+            <div class="me-card-avatar" id="meCardAvatar"></div>
+            <div class="me-card-info">
+                <div class="me-welcome">WELCOME HOME, <span class="me-nickname" id="meCardName"></span></div>
+                <div class="me-greeting">Take good care of yourself today.</div>
+            </div>
+        </div>
+        <div class="me-progress-card">
+            <div class="me-progress-header">
+                <span class="me-progress-label">今日进度 <i>Today's Progress</i></span>
+                <span class="me-progress-val" id="meTodayProgress">0/7 天</span>
+            </div>
+            <div class="me-progress-bar"><div class="me-progress-fill" id="meProgressFill" style="width:0%"></div></div>
+        </div>
+        <div class="me-activity-card">
+            <span class="me-activity-label">今日手环活跃 <i>Band Daily Activity</i></span>
+            <span class="me-activity-val" id="meTodayActive">0 分钟</span>
+        </div>
+        <div class="me-bottom-row">
+            <div class="me-tgp-card">
+                <span class="me-tgp-title">TGP · 累计成长积分</span>
+                <span class="me-tgp-val" id="meTotalPoints">YNG+0</span>
+                <span class="me-tgp-sub" id="meTotalActive">累计活跃 0 min</span>
+                <span class="me-tgp-formula">累计使用时长 × 0.7</span>
+            </div>
+            <button class="me-archive-btn" onclick="showArchive()" style="flex:1.1;border:none;border-radius:18px;background:rgba(255,255,255,0.25);color:#1a3a00;font-size:0.75rem;font-weight:700;letter-spacing:1px;cursor:pointer;padding:14px 10px;transition:all 0.25s;margin-right:8px">成长档案</button>
+<button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
+        </div>
+    </div>
+</div>
+
+    <div class="cd-overlay" id="cdOverlay">
+<div class="cd-card">
+<button class="cd-vibe-btn" id="cdVibeBtn" onclick="toggleVibe()">震动</button>
+<button class="cd-return-btn" onclick="closeCountdown()">返回 RETURN</button>
+<div class="cd-title">COUNTDOWN</div>
+<div class="cd-ring-wrap">
+<svg class="cd-ring-svg" viewBox="0 0 180 180"><circle class="cd-ring-bg" cx="90" cy="90" r="80"/><circle class="cd-ring-fg" id="cdRing" cx="90" cy="90" r="80"/></svg>
+<div class="cd-time-display"><div class="cd-time-num" id="cdTime">00:00</div><div class="cd-time-label">MIN:SEC</div></div>
+</div>
+<div class="cd-task-name" id="cdTaskLabel">选择一个任务开始专注</div>
+<div class="cd-tasks-label">任务列表</div>
+<div class="cd-tasks-scroll" id="cdTaskList"></div>
+<div class="cd-add-form" id="cdAddForm">
+<div class="cd-add-row"><input class="cd-add-input" id="cdAddName" placeholder="任务名称" maxlength="20"><input class="cd-add-min" id="cdAddMin" type="number" placeholder="分钟" min="1" max="720" value="25"></div>
+<div class="cd-presets"><button class="cd-preset" onclick="setPreset(5)">5 min</button><button class="cd-preset" onclick="setPreset(15)">15 min</button><button class="cd-preset active" onclick="setPreset(25)">25 min</button><button class="cd-preset" onclick="setPreset(45)">45 min</button><button class="cd-preset" onclick="setPreset(60)">60 min</button></div>
+<div class="cd-add-row"><button class="cd-add-confirm" onclick="confirmAddTask()">添加任务</button><button class="cd-add-cancel" onclick="cancelAddTask()">取消</button></div>
+</div>
+<button class="cd-add-chip" id="cdAddBtn" onclick="showAddForm()" style="margin:0 auto;">+</button>
+<div class="cd-controls">
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-reset" onclick="resetCountdown()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.5 15.5A9 9 0 1 0 5.6 5.6L1 10"/></svg></button><span class="cd-ctrl-label">清零</span></div>
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-play" id="cdPlayBtn" onclick="toggleCountdown()"><svg id="cdPlayIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><span class="cd-ctrl-label">开始</span></div>
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-reset" onclick="restartCountdown()" style="font-size:0.7rem;font-weight:600;letter-spacing:1px;">RE</button><span class="cd-ctrl-label">重来</span></div>
+</div>
+</div>
+</div>
+
+<div class="cd-stat-modal" id="cdTodayModal">
+    <div class="cd-stat-card">
+        <button class="cd-return-btn" onclick="closeTodayStats()" style="position:static;float:right;">返回 RETURN</button>
+        <div class="cd-stat-title">今日专注</div>
+        <div id="cdTodayContent"></div>
+        <div class="cd-stat-total" id="cdTodayTotal"></div>
+    </div>
+</div>
+
+<div class="cd-stat-modal" id="cdWeekModal">
+    <div class="cd-stat-card">
+        <button class="cd-return-btn" onclick="closeWeekStats()" style="position:static;float:right;">返回 RETURN</button>
+        <div class="cd-week-nav">
+            <button onclick="prevWeek()">&lsaquo;</button>
+            <span class="cd-week-label" id="cdWeekLabel"></span>
+            <button onclick="nextWeek()">&rsaquo;</button>
+        </div>
+        <div class="cd-bar-wrap" id="cdBarWrap"></div>
+    </div>
+</div>
+
+
+<div class="arc-overlay" id="arcOverlay">
+    <div class="arc-card">
+        <button class="arc-return" onclick="closeArchive()">返回 RETURN</button>
+        <div class="arc-title">GROWTH ARCHIVE</div>
+        <div class="arc-greeting">
+            <div class="name" id="arcName"></div>
+            <div class="days" id="arcDays"></div>
+        </div>
+        <div class="arc-grid">
+            <div class="arc-stat"><div class="arc-stat-val" id="arcFocus">0</div><div class="arc-stat-label">分钟 · 累计专注</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcTasks">0</div><div class="arc-stat-label">个 · 完成任务</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcStreak">0</div><div class="arc-stat-label">天 · 连续打卡</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcTGP">0</div><div class="arc-stat-label">TGP · 成长积分</div></div>
+        </div>
+        <div class="arc-section-title">📝 七日感悟</div>
+        <div id="arcJournals"></div>
+        <div class="arc-section-title">🖼 解锁海报</div>
+        <div class="arc-posters" id="arcPosters"></div>
+        <div class="arc-section-title">📅 坚持足迹</div>
+        <div class="arc-timeline" id="arcTimeline"></div>
+        <div class="arc-quote" id="arcQuote"></div>
+    </div>
+</div>
+
+
 <button class="cd-btn" id="cdBtn" onclick="showCountdown()" aria-label="倒计时">
     <span class="cd-dot"></span>COUNTDOWN
 </button>
