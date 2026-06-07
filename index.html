@@ -960,7 +960,7 @@ body.no-page-anim { animation: none !important; }
     window.closeCalendar=function(){calOverlay.classList.remove("show")};window.openCalendar=function(){
     var greet=document.getElementById('calGreetCard'),main=document.getElementById('calMainCard');
     greet.classList.add('fade-out');
-    setTimeout(function(){main.style.display='block';renderCalendar();renderDetail()},350)}
+    setTimeout(function(){greet.style.display='none';main.style.display='block';renderCalendar();renderDetail()},350)}
     calOverlay.addEventListener('click',function(e){if(e.target===calOverlay)closeCalendar()});
 })();
 </script>
