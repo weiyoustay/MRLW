@@ -1027,6 +1027,37 @@
 .cd-return-btn{position:absolute;top:12px;right:12px;padding:6px 14px;border-radius:18px;border:none;background:linear-gradient(90deg,#D9FF70,#29E63E);color:#1a3a00;font-size:0.65rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.25s;z-index:2;box-shadow:0 2px 10px rgba(41,230,62,0.22)}
 .cd-return-btn:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(41,230,62,0.38)}
 .cd-return-btn:active{transform:scale(0.97)}
+
+.arc-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease}
+.arc-overlay.show{opacity:1;pointer-events:auto}
+.arc-card{width:370px;max-width:94vw;max-height:85vh;overflow-y:auto;scrollbar-width:none;padding:28px 22px 24px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);font-family:-apple-system,"SF Pro Display","PingFang SC",sans-serif;position:relative}
+.arc-card::-webkit-scrollbar{display:none}
+.arc-card::before{content:"";position:absolute;inset:0;border-radius:28px;background-image:radial-gradient(rgba(0,0,0,0.03) 0.4px,transparent 0.4px);background-size:5px 5px;pointer-events:none;z-index:0}
+.arc-card::after{content:"";position:absolute;inset:0;border-radius:28px;background:rgba(255,255,255,0.12);pointer-events:none;z-index:1}
+.arc-card>*{position:relative;z-index:2}
+.arc-return{position:absolute;top:12px;right:12px;padding:6px 14px;border-radius:18px;border:none;background:linear-gradient(90deg,#D9FF70,#29E63E);color:#1a3a00;font-size:0.65rem;font-weight:700;letter-spacing:1px;cursor:pointer;z-index:3;box-shadow:0 2px 10px rgba(41,230,62,0.22)}
+.arc-title{font-size:0.7rem;color:rgba(26,58,0,0.45);letter-spacing:3px;text-align:center;margin-bottom:2px;font-weight:700}
+.arc-greeting{text-align:center;margin:10px 0 18px}
+.arc-greeting .name{font-size:1.3rem;font-weight:700;color:#1a3a00}
+.arc-greeting .days{font-size:0.65rem;color:rgba(26,58,0,0.4);margin-top:2px;letter-spacing:1px}
+.arc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.arc-stat{background:rgba(0,0,0,0.04);border-radius:16px;padding:14px 12px;text-align:center}
+.arc-stat-val{font-size:1.5rem;font-weight:700;color:#1a3a00;line-height:1}
+.arc-stat-label{font-size:0.55rem;color:rgba(26,58,0,0.45);letter-spacing:1px;margin-top:4px;font-weight:600}
+.arc-section-title{font-size:0.68rem;font-weight:700;color:rgba(26,58,0,0.5);letter-spacing:2px;margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.arc-journal-item{padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.04);margin-bottom:4px;font-size:0.7rem;color:rgba(26,58,0,0.65);line-height:1.5;max-height:40px;overflow:hidden}
+.arc-journal-item.empty{color:rgba(26,58,0,0.2);font-style:italic}
+.arc-posters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:4px 0}
+.arc-posters::-webkit-scrollbar{display:none}
+.arc-poster{width:56px;height:84px;border-radius:10px;flex-shrink:0;background-size:cover;background-position:center;position:relative}
+.arc-poster.locked{opacity:0.2;filter:grayscale(1)}
+.arc-poster .lock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#1a3a00}
+.arc-timeline{display:flex;gap:2px;flex-wrap:wrap;margin-bottom:16px}
+.arc-tl-dot{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,0.1)}
+.arc-tl-dot.done{background:#1a3a00}
+.arc-tl-dot.today{background:#1a3a00;box-shadow:0 0 0 3px rgba(26,58,0,0.2)}
+.arc-quote{text-align:center;padding:12px 0 0;border-top:1px solid rgba(0,0,0,0.06);font-size:0.65rem;color:rgba(26,58,0,0.35);font-style:italic;letter-spacing:0.5px}
+
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -1069,7 +1100,8 @@
                 <span class="me-tgp-sub" id="meTotalActive">累计活跃 0 min</span>
                 <span class="me-tgp-formula">累计使用时长 × 0.7</span>
             </div>
-            <button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
+            <button class="me-archive-btn" onclick="showArchive()" style="flex:1.1;border:none;border-radius:18px;background:rgba(255,255,255,0.25);color:#1a3a00;font-size:0.75rem;font-weight:700;letter-spacing:1px;cursor:pointer;padding:14px 10px;transition:all 0.25s;margin-right:8px">成长档案</button>
+<button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
         </div>
     </div>
 </div>
@@ -1118,6 +1150,31 @@
             <button onclick="nextWeek()">&rsaquo;</button>
         </div>
         <div class="cd-bar-wrap" id="cdBarWrap"></div>
+    </div>
+</div>
+
+
+<div class="arc-overlay" id="arcOverlay">
+    <div class="arc-card">
+        <button class="arc-return" onclick="closeArchive()">返回 RETURN</button>
+        <div class="arc-title">GROWTH ARCHIVE</div>
+        <div class="arc-greeting">
+            <div class="name" id="arcName"></div>
+            <div class="days" id="arcDays"></div>
+        </div>
+        <div class="arc-grid">
+            <div class="arc-stat"><div class="arc-stat-val" id="arcFocus">0</div><div class="arc-stat-label">分钟 · 累计专注</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcTasks">0</div><div class="arc-stat-label">个 · 完成任务</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcStreak">0</div><div class="arc-stat-label">天 · 连续打卡</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcTGP">0</div><div class="arc-stat-label">TGP · 成长积分</div></div>
+        </div>
+        <div class="arc-section-title">📝 七日感悟</div>
+        <div id="arcJournals"></div>
+        <div class="arc-section-title">🖼 解锁海报</div>
+        <div class="arc-posters" id="arcPosters"></div>
+        <div class="arc-section-title">📅 坚持足迹</div>
+        <div class="arc-timeline" id="arcTimeline"></div>
+        <div class="arc-quote" id="arcQuote"></div>
     </div>
 </div>
 
@@ -2292,6 +2349,56 @@ function renderWeek(){
         html+="<div class=cd-bar-col><div class=cd-bar-fill style=height:"+Math.max(h,3)+"px;background:"+(isToday?"#1a3a00":"rgba(26,58,0,0.55)")+"></div><div class=cd-bar-min>"+(data[i]||0)+"m</div><div class=cd-bar-label style="+(isToday?"color:#1a3a00;font-weight:700":"")+">"+days[i]+"</div></div>"}
     html+="</div><div class=cd-stat-total>本周总专注 "+totalWeek+" 分钟</div>";
     document.getElementById("cdBarWrap").innerHTML=html}
+
+window.showArchive=function(){
+    var pn=localStorage.getItem("playerName")||"旅行者";
+    var sd=localStorage.getItem("startDate");
+    var joinDays=0;if(sd){var st=new Date(parseInt(sd));var now=new Date();joinDays=Math.floor((now-st)/86400000)+1}
+    document.getElementById("arcName").textContent=pn;
+    document.getElementById("arcDays").textContent=joinDays>0?"你已坚持了 "+joinDays+" 天":"成长之路，由此开始";
+
+    // Stats
+    var tm=0;try{tm=Math.floor(parseFloat(localStorage.getItem("totalActiveMinutes")||"0"))}catch(e){}
+    var tasks=[];try{tasks=JSON.parse(localStorage.getItem("cdTasks"))||[]}catch(e){}
+    var completed=tasks.filter(function(t){return t.completed});
+    var ci={};try{ci=JSON.parse(localStorage.getItem("calCheckins"))||{}}catch(e){}
+    var streak=0;var td=new Date();var d=new Date(td);
+    while(true){var k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(ci[k]){streak++;d.setDate(d.getDate()-1)}else break}
+    var tgp=(tm*0.7).toFixed(2);
+    document.getElementById("arcFocus").textContent=tm;
+    document.getElementById("arcTasks").textContent=completed.length;
+    document.getElementById("arcStreak").textContent=streak;
+    document.getElementById("arcTGP").textContent=tgp;
+
+    // Journals
+    var jhtml="";var hasJournal=false;
+    for(var i=1;i<=7;i++){var j=localStorage.getItem("journal_day"+i);if(j&&j.trim()){hasJournal=true;jhtml+="<div class=arc-journal-item>Day"+i+" · "+j.substring(0,50)+(j.length>50?"...":"")+"</div>"}}
+    if(!hasJournal)jhtml="<div class='arc-journal-item empty'>还没有写感悟，去7天课程里记录吧</div>";
+    document.getElementById("arcJournals").innerHTML=jhtml;
+
+    // Posters
+    var ph="";var unlocked=joinDays>=7;
+    for(var i=1;i<=8;i++){var locked=true;
+        if(i===1&&unlocked)locked=false;
+        if(unlocked){var mins=[0,0,666,777,888,999,1111,1222,1333];if(tm>=mins[i])locked=false}
+        ph+="<div class='arc-poster"+(locked?" locked":"")+"' style=background-image:url(poster"+i+".webp)>"+(locked?"<div class=lock>🔒</div>":"")+"</div>"}
+    document.getElementById("arcPosters").innerHTML=ph;
+
+    // Timeline - last 30 days
+    var th="";var today=new Date();
+    for(var i=29;i>=0;i--){var dd=new Date(today);dd.setDate(today.getDate()-i);var dk=dd.getFullYear()+"-"+String(dd.getMonth()+1).padStart(2,"0")+"-"+String(dd.getDate()).padStart(2,"0");var cls="arc-tl-dot";if(ci[dk])cls+=" done";if(i===0)cls+=" today";th+="<div class='"+cls+"' title='"+(dd.getMonth()+1)+"/"+dd.getDate()+"'></div>"}
+    document.getElementById("arcTimeline").innerHTML=th;
+
+    // Quote
+    var quotes=["每一个坚持的日子，都是未来的你在感谢现在的自己","成长不是一蹴而就，而是日复一日的选择","你走过的每一步都算数","今天的努力，是明天惊喜的铺垫","不积跬步，无以至千里","世界不会辜负每一个认真生活的人"];
+    document.getElementById("arcQuote").textContent="「"+quotes[Math.floor(Math.random()*quotes.length)]+"」";
+
+    document.getElementById("arcOverlay").classList.add("show");
+    document.getElementById("meOverlay").classList.remove("show");
+};
+window.closeArchive=function(){document.getElementById("arcOverlay").classList.remove("show")};
+document.getElementById("arcOverlay").addEventListener("click",function(e){if(e.target===this)closeArchive()});
+
 </script>
 <script>
 (function(){
