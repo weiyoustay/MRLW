@@ -2288,7 +2288,11 @@ function renderWeek(){
         var h=data[i]/maxMin*130;var isToday=isThisWeek&&i===todayIdx;
         html+="<div class=cd-bar-col><div class=cd-bar-fill style=height:"+Math.max(h,3)+"px;background:"+(isToday?"#1a3a00":"rgba(26,58,0,0.55)")+"></div><div class=cd-bar-min>"+(data[i]||0)+"m</div><div class=cd-bar-label style="+(isToday?"color:#1a3a00;font-weight:700":"")+">"+days[i]+"</div></div>"}
     html+="</div><div class=cd-stat-total>本周总专注 "+totalWeek+" 分钟</div>";
-    document.getElementById("cdBarWrap").innerHTML=html}getEntriesByType('navigation')[0];
+    document.getElementById("cdBarWrap").innerHTML=html}
+</script>
+<script>
+(function(){
+var n=performance.getEntriesByType('navigation')[0];
 if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
 var bb=document.querySelector('.back-btn');if(bb){var m=bb.getAttribute('onclick');if(m){var u=m.match(/location\.href='([^']+)'/);if(u){bb.removeAttribute('onclick');bb.addEventListener('click',function(e){e.preventDefault();location.href=u[1]});}}}
 })();
