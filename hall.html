@@ -1000,6 +1000,30 @@
 .cd-vibe-btn{position:absolute;top:14px;left:16px;padding:4px 10px;border-radius:12px;background:#1a3a00;border:1px solid #1a3a00;color:#E0FE44;font-size:0.6rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;z-index:2}.cd-vibe-btn.off{background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.12);color:rgba(26,58,0,0.4)}.cd-close{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.12);border:none;color:rgba(26,58,0,0.65);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:2}
 .cd-close:hover,.cd-close:active{background:rgba(0,0,0,0.2);color:#1a3a00}
 .cd-title{font-size:0.7rem;color:rgba(26,58,0,0.45);letter-spacing:3px;text-align:center;margin-bottom:4px;font-weight:700}
+
+.cd-stats-row{display:flex;gap:8px;margin-top:14px}
+.cd-stat-btn{flex:1;padding:10px 6px;border-radius:14px;border:1px solid rgba(0,0,0,0.1);background:rgba(0,0,0,0.05);color:rgba(26,58,0,0.6);font-size:0.62rem;font-weight:600;letter-spacing:0.5px;cursor:pointer;text-align:center;transition:all 0.2s}
+.cd-stat-btn:hover{background:rgba(0,0,0,0.1);color:#1a3a00}
+.cd-stat-modal{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s ease}
+.cd-stat-modal.show{opacity:1;pointer-events:auto}
+.cd-stat-card{width:340px;max-width:90vw;max-height:75vh;overflow-y:auto;scrollbar-width:none;padding:24px 20px;border-radius:24px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);font-family:-apple-system,"SF Pro Display","PingFang SC",sans-serif}
+.cd-stat-card::-webkit-scrollbar{display:none}
+.cd-stat-close{float:right;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.1);border:none;color:rgba(26,58,0,0.6);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.cd-stat-close:hover{background:rgba(0,0,0,0.2);color:#1a3a00}
+.cd-stat-title{font-size:0.75rem;font-weight:700;color:#1a3a00;letter-spacing:1px;margin-bottom:16px}
+.cd-stat-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.04);margin-bottom:6px;font-size:0.78rem;color:#1a3a00;font-weight:500}
+.cd-stat-item .task-name{flex:1}.cd-stat-item .task-dur{color:rgba(26,58,0,0.5);font-size:0.7rem}
+.cd-stat-total{text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.1);font-size:0.85rem;font-weight:700;color:#1a3a00}
+.cd-bar-wrap{display:flex;align-items:flex-end;gap:8px;height:160px;padding:0 4px;justify-content:center}
+.cd-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;max-width:40px}
+.cd-bar-fill{width:100%;border-radius:6px 6px 2px 2px;background:#1a3a00;min-height:4px;transition:height 0.4s ease}
+.cd-bar-label{font-size:0.55rem;color:rgba(26,58,0,0.5);font-weight:600}
+.cd-bar-min{font-size:0.5rem;color:rgba(26,58,0,0.35)}
+.cd-week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cd-week-nav button{width:28px;height:28px;border-radius:50%;border:none;background:rgba(0,0,0,0.08);color:rgba(26,58,0,0.6);cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center}
+.cd-week-nav button:hover{background:rgba(0,0,0,0.15);color:#1a3a00}
+.cd-week-label{font-size:0.7rem;font-weight:700;color:#1a3a00}
+
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -1068,8 +1092,34 @@
 <div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-play" id="cdPlayBtn" onclick="toggleCountdown()"><svg id="cdPlayIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><span class="cd-ctrl-label">开始</span></div>
 <div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-reset" onclick="restartCountdown()" style="font-size:0.7rem;font-weight:600;letter-spacing:1px;">RE</button><span class="cd-ctrl-label">重来</span></div>
 </div>
+<div class="cd-stats-row">
+    <button class="cd-stat-btn" onclick="showTodayStats()">今日专注时长</button>
+    <button class="cd-stat-btn" onclick="showWeekStats()">本周专注可视图</button>
 </div>
 </div>
+</div>
+
+<div class="cd-stat-modal" id="cdTodayModal">
+    <div class="cd-stat-card">
+        <button class="cd-stat-close" onclick="closeTodayStats()">&times;</button>
+        <div class="cd-stat-title">今日专注</div>
+        <div id="cdTodayContent"></div>
+        <div class="cd-stat-total" id="cdTodayTotal"></div>
+    </div>
+</div>
+
+<div class="cd-stat-modal" id="cdWeekModal">
+    <div class="cd-stat-card">
+        <button class="cd-stat-close" onclick="closeWeekStats()">&times;</button>
+        <div class="cd-week-nav">
+            <button onclick="prevWeek()">&lsaquo;</button>
+            <span class="cd-week-label" id="cdWeekLabel"></span>
+            <button onclick="nextWeek()">&rsaquo;</button>
+        </div>
+        <div class="cd-bar-wrap" id="cdBarWrap"></div>
+    </div>
+</div>
+
 <div class="fixed-background"></div>
     <canvas id="particleCanvas"></canvas>
     <div class="content-scroll">
@@ -2193,6 +2243,52 @@ window.closeCountdown=function(){cdOverlay.classList.remove('show')}
 cdOverlay.addEventListener('click',function(e){if(e.target===cdOverlay)closeCountdown()});
 L();loadTimerState();
 })();
+
+
+window.showTodayStats=function(){
+    var tasks=[];try{tasks=JSON.parse(localStorage.getItem("cdTasks"))||[]}catch(e){}
+    var completed=tasks.filter(function(t){return t.completed});
+    var html="";var total=0;
+    if(completed.length===0){html="<div style=text-align:center;color:rgba(26,58,0,0.3);padding:20px>今天还没有完成的任务</div>"}
+    else{completed.forEach(function(t){html+="<div class=cd-stat-item><span class=task-name>\u2713 "+t.name+"</span><span class=task-dur>"+t.duration+" min</span></div>";total+=t.duration})}
+    document.getElementById("cdTodayContent").innerHTML=html;
+    document.getElementById("cdTodayTotal").textContent=completed.length?"共完成 "+completed.length+" 个任务 \u00b7 总专注 "+total+" 分钟":"";
+    document.getElementById("cdTodayModal").classList.add("show")};
+window.closeTodayStats=function(){document.getElementById("cdTodayModal").classList.remove("show")};
+document.getElementById("cdTodayModal").addEventListener("click",function(e){if(e.target===this)closeTodayStats()});
+
+var weekOffset=0;
+window.showWeekStats=function(){weekOffset=0;renderWeek();document.getElementById("cdWeekModal").classList.add("show")};
+window.closeWeekStats=function(){document.getElementById("cdWeekModal").classList.remove("show")};
+document.getElementById("cdWeekModal").addEventListener("click",function(e){if(e.target===this)closeWeekStats()});
+window.prevWeek=function(){weekOffset--;renderWeek()};
+window.nextWeek=function(){weekOffset++;renderWeek()};
+
+function getWeekRange(offset){
+    var now=new Date();var day=now.getDay();var monday=new Date(now);
+    monday.setDate(now.getDate()-(day===0?6:day-1)+offset*7);
+    monday.setHours(0,0,0,0);var sunday=new Date(monday);sunday.setDate(monday.getDate()+6);
+    return{start:monday,end:sunday,label:monday.getMonth()+1+"/"+monday.getDate()+" - "+(sunday.getMonth()+1)+"/"+sunday.getDate()}}
+function getDayDate(monday,dayIdx){var d=new Date(monday);d.setDate(monday.getDate()+dayIdx);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+
+function renderWeek(){
+    var week=getWeekRange(weekOffset);document.getElementById("cdWeekLabel").textContent=week.label;
+    var days=["一","二","三","四","五","六","日"];var maxMin=30;var data=[0,0,0,0,0,0,0];
+    var cdData={};try{cdData=JSON.parse(localStorage.getItem("calCheckins"))||{}}catch(e){}
+    for(var i=0;i<7;i++){
+        var dateKey=getDayDate(week.start,i);
+        if(cdData[dateKey])data[i]=5;
+    }
+    try{var tasks=JSON.parse(localStorage.getItem("cdTasks"))||[];
+        tasks.forEach(function(t){if(t.completed){
+            for(var i=0;i<7;i++){var dk=getDayDate(week.start,i); data[i]+=t.duration;}
+        }})
+    }catch(e){}
+    for(var i=0;i<7;i++){if(data[i]>maxMin)maxMin=data[i]}
+    if(maxMin<10)maxMin=10;
+    var html="";
+    for(var i=0;i<7;i++){var h=data[i]/maxMin*140;html+="<div class=cd-bar-col><div class=cd-bar-fill style=height:"+Math.max(h,3)+"px></div><div class=cd-bar-min>"+data[i]+"m</div><div class=cd-bar-label>"+days[i]+"</div></div>"}
+    document.getElementById("cdBarWrap").innerHTML=html}
 
 </script>
 <script>
