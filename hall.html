@@ -937,9 +937,246 @@
 }
 .me-return-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(41,230,62,0.38); }
 .me-return-btn:active { transform: scale(0.97); }
+/* ===== COUNTDOWN ===== */
+.cd-btn{position:fixed;top:24px;right:108px;z-index:100;display:flex;align-items:center;gap:5px;padding:8px 16px;border-radius:24px;background:linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44);border:none;color:#1a3a00;font-size:0.8rem;font-weight:700;letter-spacing:1.5px;cursor:pointer;box-shadow:0 2px 12px rgba(61,176,8,0.3);transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
+.cd-btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(61,176,8,0.45)}
+.cd-btn:active{transform:scale(0.94)}
+.cd-dot{width:7px;height:7px;border-radius:50%;background:#1a3a00;animation:cdPulse 2s ease-in-out infinite}
+@keyframes cdPulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.cd-overlay{position:fixed;inset:0;z-index:1001;background:rgba(0,0,0,0.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.35s cubic-bezier(0.4,0,0.2,1)}
+.cd-overlay.show{opacity:1;pointer-events:auto}
+.cd-card{position:relative;max-width:340px;width:92vw;padding:28px 24px 22px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);transform:translateY(24px) scale(0.96);transition:transform 0.42s cubic-bezier(0.25,0.1,0.25,1);overflow:hidden;font-family:-apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC',sans-serif}
+.cd-card::before{content:'';position:absolute;inset:0;border-radius:28px;background-image:radial-gradient(rgba(0,0,0,0.03) 0.4px,transparent 0.4px);background-size:5px 5px;pointer-events:none;z-index:0}
+.cd-card::after{content:'';position:absolute;inset:0;border-radius:28px;background:rgba(255,255,255,0.12);pointer-events:none;z-index:1}
+.cd-overlay.show .cd-card{transform:translateY(0) scale(1)}
+.cd-card>*{position:relative;z-index:2}
+.cd-ring-wrap{display:flex;align-items:center;justify-content:center;margin:8px 0 18px;position:relative}
+.cd-ring-svg{transform:rotate(-90deg);width:180px;height:180px}
+.cd-ring-bg{fill:none;stroke:rgba(0,0,0,0.12);stroke-width:6}
+.cd-ring-fg{fill:none;stroke:#1a3a00;stroke-width:6;stroke-linecap:round;stroke-dasharray:502.65;stroke-dashoffset:0;transition:stroke-dashoffset 0.3s linear}
+.cd-time-display{position:absolute;text-align:center;pointer-events:none}
+.cd-time-num{font-size:2.8rem;font-weight:200;color:#1a3a00;letter-spacing:2px;font-variant-numeric:tabular-nums;font-family:'SF Pro Display',-apple-system,sans-serif}
+.cd-time-label{font-size:0.65rem;color:rgba(26,58,0,0.5);letter-spacing:3px;margin-top:2px;font-weight:500}
+.cd-task-name{text-align:center;font-size:0.85rem;color:rgba(26,58,0,0.7);font-weight:600;margin-bottom:16px}
+.cd-tasks-label{font-size:0.65rem;color:rgba(26,58,0,0.45);letter-spacing:2px;margin-bottom:8px;font-weight:600}
+.cd-tasks-scroll{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cd-tasks-scroll::-webkit-scrollbar{display:none}
+.cd-task-chip{flex-shrink:0;padding:10px 16px;border-radius:20px;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.12);cursor:pointer;scroll-snap-align:start;transition:all 0.25s ease;position:relative;user-select:none;display:flex;flex-direction:column;gap:2px;min-width:90px}
+.cd-task-chip:hover{background:rgba(0,0,0,0.14);transform:translateY(-1px)}
+.cd-task-chip.selected{background:rgba(26,58,0,0.85);border-color:rgba(26,58,0,0.9);box-shadow:0 2px 16px rgba(0,0,0,0.15)}
+.cd-task-chip-name{font-size:0.8rem;color:#1a3a00;font-weight:600;white-space:nowrap}
+.cd-task-chip.selected .cd-task-chip-name{color:#E0FE44}
+.cd-task-chip-dur{font-size:0.65rem;color:rgba(26,58,0,0.5);font-weight:500}
+.cd-task-chip.selected .cd-task-chip-dur{color:rgba(224,254,68,0.8)}
+.cd-task-chip-del{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.25);border:none;color:#fff;font-size:0.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.cd-task-chip-del:hover{background:#dc3232}
+.cd-task-chip.completed .cd-task-chip-name{text-decoration:line-through;opacity:0.55}
+.cd-task-chip.completed.selected .cd-task-chip-name{text-decoration:line-through;opacity:0.7}
+.cd-add-chip{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.06);border:1.5px dashed rgba(0,0,0,0.25);color:rgba(26,58,0,0.5);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.25s ease;align-self:center;font-weight:300}
+.cd-add-chip:hover{border-color:rgba(26,58,0,0.6);color:#1a3a00;background:rgba(0,0,0,0.12)}
+.cd-add-form{display:none;margin-bottom:10px;gap:8px;flex-direction:column}
+.cd-add-form.show{display:flex}
+.cd-add-row{display:flex;gap:8px}
+.cd-add-input{flex:1;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:14px;padding:10px 14px;color:#1a3a00;font-size:0.82rem;outline:none;font-family:inherit}
+.cd-add-input::placeholder{color:rgba(26,58,0,0.3)}
+.cd-add-input:focus{border-color:rgba(26,58,0,0.45);background:rgba(0,0,0,0.1)}
+.cd-add-min{width:80px;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:14px;padding:10px;color:#1a3a00;font-size:0.82rem;text-align:center;outline:none;font-family:inherit}
+.cd-add-min:focus{border-color:rgba(26,58,0,0.45);background:rgba(0,0,0,0.1)}
+.cd-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.cd-preset{padding:5px 12px;border-radius:12px;border:1px solid rgba(0,0,0,0.12);background:rgba(0,0,0,0.04);color:rgba(26,58,0,0.55);font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.cd-preset:hover{background:rgba(0,0,0,0.1);color:#1a3a00;border-color:rgba(0,0,0,0.2)}
+.cd-preset.active{background:#1a3a00;color:#E0FE44;border-color:#1a3a00}
+.cd-add-confirm{padding:10px;border-radius:14px;border:none;background:#1a3a00;color:#E0FE44;font-weight:700;font-size:0.8rem;cursor:pointer;letter-spacing:1px;transition:all 0.25s}
+.cd-add-confirm:hover{opacity:0.85}
+.cd-add-cancel{font-size:0.7rem;color:rgba(26,58,0,0.5);background:none;border:none;cursor:pointer;align-self:center;font-weight:500}
+.cd-controls{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:18px}
+.cd-ctrl-btn{width:50px;height:50px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.25s cubic-bezier(0.4,0,0.2,1)}
+.cd-ctrl-play{width:62px;height:62px;background:#1a3a00;color:#E0FE44;box-shadow:0 4px 20px rgba(26,58,0,0.3)}
+.cd-ctrl-play:hover{transform:scale(1.06);box-shadow:0 6px 28px rgba(26,58,0,0.45)}
+.cd-ctrl-reset{background:rgba(0,0,0,0.08);color:rgba(26,58,0,0.6);border:1px solid rgba(0,0,0,0.1)}
+.cd-ctrl-reset:hover{background:rgba(0,0,0,0.16);color:#1a3a00}
+.cd-ctrl-group{display:flex;flex-direction:column;align-items:center;gap:4px}
+.cd-ctrl-label{font-size:0.58rem;color:rgba(26,58,0,0.4);font-weight:600;letter-spacing:1px}
+.cd-vibe-btn{position:absolute;top:14px;left:16px;padding:4px 10px;border-radius:12px;background:#1a3a00;border:1px solid #1a3a00;color:#E0FE44;font-size:0.6rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;z-index:2}.cd-vibe-btn.off{background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.12);color:rgba(26,58,0,0.4)}.cd-title{font-size:0.7rem;color:rgba(26,58,0,0.45);letter-spacing:3px;text-align:center;margin-bottom:4px;font-weight:700}
+
+.cd-stats-row{display:flex;gap:8px;margin-top:14px}
+.cd-stat-btn{flex:1;padding:10px 6px;border-radius:14px;border:1px solid rgba(0,0,0,0.1);background:rgba(0,0,0,0.05);color:rgba(26,58,0,0.6);font-size:0.62rem;font-weight:600;letter-spacing:0.5px;cursor:pointer;text-align:center;transition:all 0.2s}
+.cd-stat-btn:hover{background:rgba(0,0,0,0.1);color:#1a3a00}
+.cd-stat-modal{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s ease}
+.cd-stat-modal.show{opacity:1;pointer-events:auto}
+.cd-stat-card{width:340px;max-width:90vw;max-height:75vh;overflow-y:auto;scrollbar-width:none;padding:24px 20px;border-radius:24px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);font-family:-apple-system,"SF Pro Display","PingFang SC",sans-serif}
+.cd-stat-card::-webkit-scrollbar{display:none}
+.cd-stat-title{font-size:0.75rem;font-weight:700;color:#1a3a00;letter-spacing:1px;margin-bottom:16px}
+.cd-stat-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.04);margin-bottom:6px;font-size:0.78rem;color:#1a3a00;font-weight:500}
+.cd-stat-item .task-name{flex:1}.cd-stat-item .task-dur{color:rgba(26,58,0,0.5);font-size:0.7rem}
+.cd-stat-total{text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.1);font-size:0.85rem;font-weight:700;color:#1a3a00}
+.cd-bar-wrap{display:flex;align-items:flex-end;gap:8px;height:160px;padding:0 4px;justify-content:center}
+.cd-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;max-width:40px}
+.cd-bar-fill{width:100%;border-radius:6px 6px 2px 2px;background:#1a3a00;min-height:4px;transition:height 0.4s ease}
+.cd-bar-label{font-size:0.55rem;color:rgba(26,58,0,0.5);font-weight:600}
+.cd-bar-min{font-size:0.5rem;color:rgba(26,58,0,0.35)}
+.cd-week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cd-week-nav button{width:28px;height:28px;border-radius:50%;border:none;background:rgba(0,0,0,0.08);color:rgba(26,58,0,0.6);cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center}
+.cd-week-nav button:hover{background:rgba(0,0,0,0.15);color:#1a3a00}
+.cd-week-label{font-size:0.7rem;font-weight:700;color:#1a3a00}
+
+    
+.cd-stat-top-btn{position:fixed;right:20px;z-index:100;padding:5px 12px;border-radius:14px;border:none;background:linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44);color:#1a3a00;font-size:0.58rem;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(8px)}
+.cd-stat-top-btn:hover{background:rgba(255,255,255,0.12);color:#fff}
+    
+.cd-return-btn{position:absolute;top:12px;right:12px;padding:6px 14px;border-radius:18px;border:none;background:linear-gradient(90deg,#D9FF70,#29E63E);color:#1a3a00;font-size:0.65rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.25s;z-index:2;box-shadow:0 2px 10px rgba(41,230,62,0.22)}
+.cd-return-btn:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(41,230,62,0.38)}
+.cd-return-btn:active{transform:scale(0.97)}
+
+.arc-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease}
+.arc-overlay.show{opacity:1;pointer-events:auto}
+.arc-card{width:370px;max-width:94vw;max-height:85vh;overflow-y:auto;scrollbar-width:none;padding:28px 22px 24px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);font-family:-apple-system,"SF Pro Display","PingFang SC",sans-serif;position:relative}
+.arc-card::-webkit-scrollbar{display:none}
+.arc-card::before{content:"";position:absolute;inset:0;border-radius:28px;background-image:radial-gradient(rgba(0,0,0,0.03) 0.4px,transparent 0.4px);background-size:5px 5px;pointer-events:none;z-index:0}
+.arc-card::after{content:"";position:absolute;inset:0;border-radius:28px;background:rgba(255,255,255,0.12);pointer-events:none;z-index:1}
+.arc-card>*{position:relative;z-index:2}
+.arc-return{position:absolute;top:12px;right:12px;padding:6px 14px;border-radius:18px;border:none;background:linear-gradient(90deg,#D9FF70,#29E63E);color:#1a3a00;font-size:0.65rem;font-weight:700;letter-spacing:1px;cursor:pointer;z-index:3;box-shadow:0 2px 10px rgba(41,230,62,0.22)}
+.arc-title{font-size:0.7rem;color:rgba(26,58,0,0.45);letter-spacing:3px;text-align:center;margin-bottom:2px;font-weight:700}
+.arc-greeting{text-align:center;margin:10px 0 18px}
+.arc-greeting .name{font-size:1.3rem;font-weight:700;color:#1a3a00}
+.arc-greeting .days{font-size:0.65rem;color:rgba(26,58,0,0.4);margin-top:2px;letter-spacing:1px}
+.arc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.arc-stat{background:rgba(0,0,0,0.04);border-radius:16px;padding:14px 12px;text-align:center}
+.arc-stat-val{font-size:1.5rem;font-weight:700;color:#1a3a00;line-height:1}
+.arc-stat-label{font-size:0.55rem;color:rgba(26,58,0,0.45);letter-spacing:1px;margin-top:4px;font-weight:600}
+.arc-section-title{font-size:0.68rem;font-weight:700;color:rgba(26,58,0,0.5);letter-spacing:2px;margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.arc-journal-item{padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.04);margin-bottom:4px;font-size:0.7rem;color:rgba(26,58,0,0.65);line-height:1.5;max-height:40px;overflow:hidden}
+.arc-journal-item.empty{color:rgba(26,58,0,0.2);font-style:italic}
+.arc-posters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:4px 0}
+.arc-posters::-webkit-scrollbar{display:none}
+.arc-poster{width:56px;height:84px;border-radius:10px;flex-shrink:0;background-size:cover;background-position:center;position:relative}
+.arc-poster.locked{opacity:0.2;filter:grayscale(1)}
+.arc-poster .lock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#1a3a00}
+.arc-timeline{display:flex;gap:2px;flex-wrap:wrap;margin-bottom:16px}
+.arc-tl-dot{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,0.1)}
+.arc-tl-dot.done{background:#1a3a00}
+.arc-tl-dot.today{background:#1a3a00;box-shadow:0 0 0 3px rgba(26,58,0,0.2)}
+.arc-quote{text-align:center;padding:12px 0 0;border-top:1px solid rgba(0,0,0,0.06);font-size:0.65rem;color:rgba(26,58,0,0.35);font-style:italic;letter-spacing:0.5px}
+
     </style>
 </head>
 <body style="background-color:#0a0a14;">
+
+<button class="cd-btn" id="cdBtn" onclick="showCountdown()" aria-label="倒计时">
+    <span class="cd-dot"></span>COUNTDOWN
+</button>
+<button class="cd-stat-top-btn" onclick="showTodayStats()" style="top:116px;">今日专注</button>
+<button class="cd-stat-top-btn" onclick="showWeekStats()" style="top:160px;">本周可视</button>
+<button class="back-btn" onclick="location.href='shouye.html'" aria-label="返回首页">←</button>
+<button class="me-btn-top" id="meBtnTop" style="display:none;" onclick="showMeCard()" aria-label="个人中心">
+    <span class="me-btn-avatar" id="meBtnAvatar"></span>我
+</button>
+
+<!-- ===== "我" 卡片弹窗 ===== -->
+<div class="me-modal-overlay" id="meModalOverlay">
+    <div class="me-card">
+        <div class="me-card-header">
+            <div class="me-card-avatar" id="meCardAvatar"></div>
+            <div class="me-card-info">
+                <div class="me-welcome">WELCOME HOME, <span class="me-nickname" id="meCardName"></span></div>
+                <div class="me-greeting">Take good care of yourself today.</div>
+            </div>
+        </div>
+        <div class="me-progress-card">
+            <div class="me-progress-header">
+                <span class="me-progress-label">今日进度 <i>Today's Progress</i></span>
+                <span class="me-progress-val" id="meTodayProgress">0/7 天</span>
+            </div>
+            <div class="me-progress-bar"><div class="me-progress-fill" id="meProgressFill" style="width:0%"></div></div>
+        </div>
+        <div class="me-activity-card">
+            <span class="me-activity-label">今日手环活跃 <i>Band Daily Activity</i></span>
+            <span class="me-activity-val" id="meTodayActive">0 分钟</span>
+        </div>
+        <div class="me-bottom-row">
+            <div class="me-tgp-card">
+                <span class="me-tgp-title">TGP · 累计成长积分</span>
+                <span class="me-tgp-val" id="meTotalPoints">YNG+0</span>
+                <span class="me-tgp-sub" id="meTotalActive">累计活跃 0 min</span>
+                <span class="me-tgp-formula">累计使用时长 × 0.7</span>
+            </div>
+            <button class="me-archive-btn" onclick="showArchive()" style="flex:1.1;border:none;border-radius:18px;background:rgba(255,255,255,0.25);color:#1a3a00;font-size:0.75rem;font-weight:700;letter-spacing:1px;cursor:pointer;padding:14px 10px;transition:all 0.25s;margin-right:8px">成长档案</button>
+<button class="me-return-btn" id="meReturnBtn">返回 RETURN</button>
+        </div>
+    </div>
+</div>
+
+    <div class="cd-overlay" id="cdOverlay">
+<div class="cd-card">
+<button class="cd-vibe-btn" id="cdVibeBtn" onclick="toggleVibe()">震动</button>
+<button class="cd-return-btn" onclick="closeCountdown()">返回 RETURN</button>
+<div class="cd-title">COUNTDOWN</div>
+<div class="cd-ring-wrap">
+<svg class="cd-ring-svg" viewBox="0 0 180 180"><circle class="cd-ring-bg" cx="90" cy="90" r="80"/><circle class="cd-ring-fg" id="cdRing" cx="90" cy="90" r="80"/></svg>
+<div class="cd-time-display"><div class="cd-time-num" id="cdTime">00:00</div><div class="cd-time-label">MIN:SEC</div></div>
+</div>
+<div class="cd-task-name" id="cdTaskLabel">选择一个任务开始专注</div>
+<div class="cd-tasks-label">任务列表</div>
+<div class="cd-tasks-scroll" id="cdTaskList"></div>
+<div class="cd-add-form" id="cdAddForm">
+<div class="cd-add-row"><input class="cd-add-input" id="cdAddName" placeholder="任务名称" maxlength="20"><input class="cd-add-min" id="cdAddMin" type="number" placeholder="分钟" min="1" max="720" value="25"></div>
+<div class="cd-presets"><button class="cd-preset" onclick="setPreset(5)">5 min</button><button class="cd-preset" onclick="setPreset(15)">15 min</button><button class="cd-preset active" onclick="setPreset(25)">25 min</button><button class="cd-preset" onclick="setPreset(45)">45 min</button><button class="cd-preset" onclick="setPreset(60)">60 min</button></div>
+<div class="cd-add-row"><button class="cd-add-confirm" onclick="confirmAddTask()">添加任务</button><button class="cd-add-cancel" onclick="cancelAddTask()">取消</button></div>
+</div>
+<button class="cd-add-chip" id="cdAddBtn" onclick="showAddForm()" style="margin:0 auto;">+</button>
+<div class="cd-controls">
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-reset" onclick="resetCountdown()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.5 15.5A9 9 0 1 0 5.6 5.6L1 10"/></svg></button><span class="cd-ctrl-label">清零</span></div>
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-play" id="cdPlayBtn" onclick="toggleCountdown()"><svg id="cdPlayIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><span class="cd-ctrl-label">开始</span></div>
+<div class="cd-ctrl-group"><button class="cd-ctrl-btn cd-ctrl-reset" onclick="restartCountdown()" style="font-size:0.7rem;font-weight:600;letter-spacing:1px;">RE</button><span class="cd-ctrl-label">重来</span></div>
+</div>
+</div>
+</div>
+
+<div class="cd-stat-modal" id="cdTodayModal">
+    <div class="cd-stat-card">
+        <button class="cd-return-btn" onclick="closeTodayStats()" style="position:static;float:right;">返回 RETURN</button>
+        <div class="cd-stat-title">今日专注</div>
+        <div id="cdTodayContent"></div>
+        <div class="cd-stat-total" id="cdTodayTotal"></div>
+    </div>
+</div>
+
+<div class="cd-stat-modal" id="cdWeekModal">
+    <div class="cd-stat-card">
+        <button class="cd-return-btn" onclick="closeWeekStats()" style="position:static;float:right;">返回 RETURN</button>
+        <div class="cd-week-nav">
+            <button onclick="prevWeek()">&lsaquo;</button>
+            <span class="cd-week-label" id="cdWeekLabel"></span>
+            <button onclick="nextWeek()">&rsaquo;</button>
+        </div>
+        <div class="cd-bar-wrap" id="cdBarWrap"></div>
+    </div>
+</div>
+
+
+<div class="arc-overlay" id="arcOverlay">
+    <div class="arc-card">
+        <button class="arc-return" onclick="closeArchive()">返回 RETURN</button>
+        <div class="arc-title">GROWTH ARCHIVE</div>
+        <div class="arc-greeting">
+            <div class="name" id="arcName"></div>
+            <div class="days" id="arcDays"></div>
+        </div>
+        <div class="arc-grid">
+            <div class="arc-stat"><div class="arc-stat-val" id="arcFocus">0</div><div class="arc-stat-label">分钟 · 累计专注</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcTasks">0</div><div class="arc-stat-label">个 · 完成任务</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcStreak">0</div><div class="arc-stat-label">天 · 连续打卡</div></div>
+            <div class="arc-stat"><div class="arc-stat-val" id="arcTGP">0</div><div class="arc-stat-label">TGP · 成长积分</div></div>
+        </div>
+        <div class="arc-section-title">📝 七日感悟</div>
+        <div id="arcJournals"></div>
+        <div class="arc-section-title">🖼 解锁海报</div>
+        <div class="arc-posters" id="arcPosters"></div>
+        <div class="arc-section-title">📅 坚持足迹</div>
+        <div class="arc-timeline" id="arcTimeline"></div>
+        <div class="arc-quote" id="arcQuote"></div>
+    </div>
+</div>
 
 <div class="fixed-background"></div>
     <canvas id="particleCanvas"></canvas>
@@ -2033,6 +2270,85 @@ if (mePlayerName) {
     meOverlay.addEventListener('click', function(e) { if (e.target === meOverlay) meOverlay.classList.remove('show'); });
 }
 
+// ===== COUNTDOWN =====
+(function(){
+var TASKS_KEY='cdTasks',TIMER_KEY='cdTimerState',tasks=[],selectedTaskId=null,timerInterval=null,remainingSeconds=0,totalSeconds=0,isRunning=false,RING_LEN=502.65;
+var cdOverlay=document.getElementById('cdOverlay'),cdTaskList=document.getElementById('cdTaskList'),cdTaskLabel=document.getElementById('cdTaskLabel'),cdTime=document.getElementById('cdTime'),cdRing=document.getElementById('cdRing'),cdPlayIcon=document.getElementById('cdPlayIcon'),cdAddForm=document.getElementById('cdAddForm'),cdAddBtn=document.getElementById('cdAddBtn'),cdAddName=document.getElementById('cdAddName'),cdAddMin=document.getElementById('cdAddMin'),cdBtn=document.getElementById('cdBtn');
+function L(){try{tasks=JSON.parse(localStorage.getItem(TASKS_KEY))||[]}catch(e){tasks=[]}}
+function S(){localStorage.setItem(TASKS_KEY,JSON.stringify(tasks))}
+function F(s){var m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function U(){if(totalSeconds===0){cdRing.style.strokeDashoffset='0';return}cdRing.style.strokeDashoffset=String(RING_LEN*(1-remainingSeconds/totalSeconds))}
+
+function saveTimerState(){if(isRunning&&selectedTaskId)localStorage.setItem(TIMER_KEY,JSON.stringify({taskId:selectedTaskId,endTs:endTs,total:totalSeconds}));else localStorage.removeItem(TIMER_KEY)}
+	function loadTimerState(){try{var s=JSON.parse(localStorage.getItem(TIMER_KEY));if(!s)return;var now=Date.now();if(s.endTs<=now){localStorage.removeItem(TIMER_KEY);if(s.taskId){var t=tasks.find(function(x){return x.id===s.taskId});if(t)t.completed=true;S()}return}selectedTaskId=s.taskId;totalSeconds=s.total;remainingSeconds=Math.ceil((s.endTs-now)/1000);var t=tasks.find(function(x){return x.id===s.taskId});if(t){cdTaskLabel.textContent=t.name+(t.completed?' ✓':'');cdTime.textContent=F(remainingSeconds);U();if(timerInterval)clearInterval(timerInterval);isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';timerInterval=setInterval(tick,200);updateBtn()}}catch(e){localStorage.removeItem(TIMER_KEY)}}
+function updateBtn(){if(isRunning){cdBtn.innerHTML='<span class="cd-dot" style="animation:none;opacity:1"></span>'+F(remainingSeconds);cdBtn.style.letterSpacing='0.5px'}else{cdBtn.innerHTML='<span class="cd-dot"></span>COUNTDOWN';cdBtn.style.letterSpacing='1.5px'}}
+var endTs=0;
+function tick(){if(remainingSeconds<=0){stopTimer();cdTime.textContent='00:00';cdRing.style.strokeDashoffset=String(RING_LEN);cdTaskLabel.textContent='✓ 任务完成！';var vibeOn=localStorage.getItem('cdVibrate')!=='off';if(vibeOn&&navigator.vibrate)navigator.vibrate([200,100,200]);if(selectedTaskId){var t=tasks.find(function(x){return x.id===selectedTaskId});if(t){t.completed=true;var dk=new Date();var dlk=dk.getFullYear()+'-'+String(dk.getMonth()+1).padStart(2,'0')+'-'+String(dk.getDate()).padStart(2,'0');var dlog={};try{dlog=JSON.parse(localStorage.getItem('cdDailyLog'))||{}}catch(e){}dlog[dlk]=(dlog[dlk]||0)+t.duration;localStorage.setItem('cdDailyLog',JSON.stringify(dlog))}S();renderTasks()}localStorage.removeItem(TIMER_KEY);updateBtn();return}remainingSeconds=Math.max(0,Math.ceil((endTs-Date.now())/1000));cdTime.textContent=F(remainingSeconds);U();updateBtn();saveTimerState()}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}isRunning=false;cdPlayIcon.innerHTML='<path d="M8 5v14l11-7z"/>';saveTimerState();updateBtn();updateCtrlLabel()}
+function startTimer(){if(remainingSeconds<=0)return;if(timerInterval)clearInterval(timerInterval);isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';endTs=Date.now()+remainingSeconds*1000;localStorage.setItem(TIMER_KEY,JSON.stringify({taskId:selectedTaskId,endTs:endTs,total:totalSeconds}));timerInterval=setInterval(tick,200);updateBtn();updateCtrlLabel()}
+function updateCtrlLabel(){var lbl=document.querySelector('.cd-ctrl-group:nth-child(2) .cd-ctrl-label');if(lbl)lbl.textContent=isRunning?'暂停':'开始'}
+window.toggleCountdown=function(){if(!selectedTaskId){cdTaskLabel.textContent='请先选择一个任务';return}var t=tasks.find(function(x){return x.id===selectedTaskId});if(t&&t.completed){cdTaskLabel.textContent='已完成的任务';return}if(isRunning){clearInterval(timerInterval);timerInterval=null;isRunning=false;cdPlayIcon.innerHTML='<path d="M8 5v14l11-7z"/>';updateBtn();updateCtrlLabel();saveTimerState();return}if(remainingSeconds<=0&&t){remainingSeconds=t.duration*60;totalSeconds=remainingSeconds;cdTime.textContent=F(remainingSeconds);U();cdTaskLabel.textContent=t.name}if(timerInterval)clearInterval(timerInterval);isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';endTs=Date.now()+remainingSeconds*1000;localStorage.setItem(TIMER_KEY,JSON.stringify({taskId:selectedTaskId,endTs:endTs,total:totalSeconds}));timerInterval=setInterval(tick,200);updateBtn();updateCtrlLabel()};
+window.resetCountdown=function(){stopTimer();remainingSeconds=0;totalSeconds=0;cdTime.textContent='00:00';cdRing.style.strokeDashoffset='0';cdTaskLabel.textContent='选择一个任务开始专注';localStorage.removeItem(TIMER_KEY);updateBtn()}
+window.restartCountdown=function(){stopTimer();if(!selectedTaskId)return;var t=tasks.find(function(x){return x.id===selectedTaskId});if(t){t.completed=false;S();remainingSeconds=t.duration*60;totalSeconds=remainingSeconds;cdTime.textContent=F(remainingSeconds);U();cdTaskLabel.textContent=t.name;endTs=Date.now()+remainingSeconds*1000;if(timerInterval)clearInterval(timerInterval);isRunning=true;cdPlayIcon.innerHTML='<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>';localStorage.setItem(TIMER_KEY,JSON.stringify({taskId:selectedTaskId,endTs:endTs,total:totalSeconds}));timerInterval=setInterval(tick,200);updateBtn();updateCtrlLabel()}}
+function selectTask(id,noArm){stopTimer();selectedTaskId=id;var t=tasks.find(function(x){return x.id===id});if(t){if(!noArm){remainingSeconds=t.duration*60;totalSeconds=remainingSeconds;cdTime.textContent=F(remainingSeconds);U()}else{remainingSeconds=0;totalSeconds=0;cdTime.textContent='00:00';cdRing.style.strokeDashoffset='0'}cdTaskLabel.textContent=t.name+(t.completed?' ✓':'');if(t.completed){cdRing.style.strokeDashoffset='0';cdTime.textContent='00:00';remainingSeconds=0;totalSeconds=0}}localStorage.removeItem(TIMER_KEY);updateBtn();renderTasks()}
+window.deleteTask=function(id){if(selectedTaskId===id){stopTimer();selectedTaskId=null;remainingSeconds=0;totalSeconds=0;cdTime.textContent='00:00';cdRing.style.strokeDashoffset='0';cdTaskLabel.textContent='选择一个任务开始专注';localStorage.removeItem(TIMER_KEY);updateBtn()}tasks=tasks.filter(function(x){return x.id!==id});S();renderTasks()}
+function renderTasks(){cdTaskList.innerHTML='';tasks.forEach(function(t){var c=document.createElement('div');c.className='cd-task-chip'+(t.id===selectedTaskId?' selected':'')+(t.completed?' completed':'');c.innerHTML='<span class="cd-task-chip-name">'+(t.completed?'✓ ':'')+t.name+'</span><span class="cd-task-chip-dur">'+t.duration+' min</span><button class="cd-task-chip-del" onclick="event.stopPropagation();deleteTask(\''+t.id+'\')">&times;</button>';c.onclick=function(){selectTask(t.id)};cdTaskList.appendChild(c)});cdAddBtn.style.display=tasks.length<8?'flex':'none'}
+window.showAddForm=function(){cdAddForm.classList.add('show');cdAddBtn.style.display='none';cdAddName.focus()}
+window.cancelAddTask=function(){cdAddForm.classList.remove('show');cdAddName.value='';cdAddMin.value='25';resetPresets();cdAddBtn.style.display=tasks.length<8?'flex':'none'}
+window.setPreset=function(m){cdAddMin.value=m;var ps=document.querySelectorAll('.cd-preset');ps.forEach(function(p){p.classList.remove('active')});event.target.classList.add('active')}
+function resetPresets(){var ps=document.querySelectorAll('.cd-preset');ps.forEach(function(p){p.classList.remove('active');if(p.textContent.trim()==='25 min')p.classList.add('active')})}
+window.confirmAddTask=function(){var n=cdAddName.value.trim(),m=parseInt(cdAddMin.value)||25;if(!n){cdAddName.focus();return}if(m<1)m=1;if(m>720)m=720;var newId='cd_'+Date.now();tasks.push({id:newId,name:n,duration:m,completed:false});S();cdAddForm.classList.remove('show');cdAddName.value='';cdAddMin.value='25';resetPresets();cdAddBtn.style.display=tasks.length<8?'flex':'none';renderTasks();selectTask(newId,true)}
+window.toggleVibe=function(){var btn=document.getElementById("cdVibeBtn");var off=localStorage.getItem("cdVibrate")==="off";if(off){localStorage.removeItem("cdVibrate");btn.classList.remove("off")}else{localStorage.setItem("cdVibrate","off");btn.classList.add("off")}};window.showCountdown=function(){L();renderTasks();loadTimerState();var vb=document.getElementById("cdVibeBtn");if(localStorage.getItem("cdVibrate")==="off")vb.classList.add("off");cdOverlay.classList.add("show")}
+window.closeCountdown=function(){cdOverlay.classList.remove('show')}
+cdOverlay.addEventListener('click',function(e){if(e.target===cdOverlay)closeCountdown()});
+L();loadTimerState();
+})();
+
+
+window.showTodayStats=function(){
+    var dlog={};try{dlog=JSON.parse(localStorage.getItem("cdDailyLog"))||{}}catch(e){}
+    var today=new Date();var tk=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+    var todayMin=dlog[tk]||0;
+    var tasks=[];try{tasks=JSON.parse(localStorage.getItem("cdTasks"))||[]}catch(e){}
+    var completed=tasks.filter(function(t){return t.completed});
+    var html="";
+    if(completed.length===0){html="<div style=text-align:center;color:rgba(26,58,0,0.3);padding:20px>还没有完成的任务</div>"}
+    else{completed.forEach(function(t){html+="<div class=cd-stat-item><span class=task-name>✓ "+t.name+"</span><span class=task-dur>"+t.duration+" min</span></div>"})}
+    document.getElementById("cdTodayContent").innerHTML=html;
+    var td=todayMin||0;
+    document.getElementById("cdTodayTotal").innerHTML="<div>今日专注总时长</div><div style=font-size:1.8rem;margin-top:2px>"+td+" <span style=font-size:0.7rem;font-weight:500>分钟</span></div>"+(completed.length?"<div style=font-size:0.65rem;color:rgba(26,58,0,0.4);margin-top:4px>共完成 "+completed.length+" 个任务</div>":"");
+    document.getElementById("cdOverlay").classList.remove("show");document.getElementById("cdTodayModal").classList.add("show")};
+window.closeTodayStats=function(){document.getElementById("cdTodayModal").classList.remove("show")};
+document.getElementById("cdTodayModal").addEventListener("click",function(e){if(e.target===this)closeTodayStats()});
+
+var weekOffset=0;
+window.showWeekStats=function(){weekOffset=0;renderWeek();document.getElementById("cdOverlay").classList.remove("show");document.getElementById("cdWeekModal").classList.add("show")};
+window.closeWeekStats=function(){document.getElementById("cdWeekModal").classList.remove("show")};
+document.getElementById("cdWeekModal").addEventListener("click",function(e){if(e.target===this)closeWeekStats()});
+window.prevWeek=function(){weekOffset--;renderWeek()};
+window.nextWeek=function(){weekOffset++;renderWeek()};
+
+function getWeekRange(offset){
+    var now=new Date();var day=now.getDay();var monday=new Date(now);
+    monday.setDate(now.getDate()-(day===0?6:day-1)+offset*7);
+    monday.setHours(0,0,0,0);var sunday=new Date(monday);sunday.setDate(monday.getDate()+6);
+    return{start:monday,end:sunday,label:monday.getMonth()+1+"/"+monday.getDate()+" - "+(sunday.getMonth()+1)+"/"+sunday.getDate()}}
+function getDayDate(monday,dayIdx){var d=new Date(monday);d.setDate(monday.getDate()+dayIdx);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+
+function renderWeek(){
+    var week=getWeekRange(weekOffset);document.getElementById("cdWeekLabel").textContent=week.label;
+    var days=["一","二","三","四","五","六","日"];var data=[0,0,0,0,0,0,0];
+    var dlog={};try{dlog=JSON.parse(localStorage.getItem("cdDailyLog"))||{}}catch(e){}
+    for(var i=0;i<7;i++){var dk=getDayDate(week.start,i);data[i]=dlog[dk]||0}
+    var maxMin=Math.max.apply(null,data);if(maxMin<10)maxMin=10;
+    var totalWeek=data.reduce(function(a,b){return a+b},0);
+    var html="";var today=new Date();var todayIdx=today.getDay();todayIdx=todayIdx===0?6:todayIdx-1;
+    var isThisWeek=weekOffset===0;
+    for(var i=0;i<7;i++){
+        var h=data[i]/maxMin*130;var isToday=isThisWeek&&i===todayIdx;
+        html+="<div class=cd-bar-col><div class=cd-bar-fill style=height:"+Math.max(h,3)+"px;background:"+(isToday?"#1a3a00":"rgba(26,58,0,0.55)")+"></div><div class=cd-bar-min>"+(data[i]||0)+"m</div><div class=cd-bar-label style="+(isToday?"color:#1a3a00;font-weight:700":"")+">"+days[i]+"</div></div>"}
+    html+="</div><div class=cd-stat-total>本周总专注 "+totalWeek+" 分钟</div>";
+    document.getElementById("cdBarWrap").innerHTML=html}
 
 window.showArchive=function(){
     var pn=localStorage.getItem("playerName")||"旅行者";
