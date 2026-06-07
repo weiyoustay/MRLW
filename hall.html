@@ -2358,7 +2358,7 @@ window.showArchive=function(){
     document.getElementById("arcDays").textContent=joinDays>0?"你已坚持了 "+joinDays+" 天":"成长之路，由此开始";
 
     // Stats
-    var tm=0;try{tm=Math.floor(parseFloat(localStorage.getItem("totalActiveMinutes")||"0"))}catch(e){}
+    var tm=0;try{var dl=JSON.parse(localStorage.getItem("cdDailyLog"))||{};for(var k in dl)tm+=dl[k]}catch(e){}
     var tasks=[];try{tasks=JSON.parse(localStorage.getItem("cdTasks"))||[]}catch(e){}
     var completed=tasks.filter(function(t){return t.completed});
     var ci={};try{ci=JSON.parse(localStorage.getItem("calCheckins"))||{}}catch(e){}
