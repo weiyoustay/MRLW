@@ -8,11 +8,19 @@
 <link rel="preload" as="image" href="jiguang.webp" fetchpriority="high">
 <link rel="preload" as="image" href="https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=800&h=800&dpr=1" fetchpriority="high">
 <link rel="preload" as="image" href="男1.webp" as="image">
-<link rel="preload" as="image" href="男2.webp" as="image">
-<link rel="preload" as="image" href="男3.webp" as="image">
-<link rel="preload" as="image" href="女1.webp" as="image">
-<link rel="preload" as="image" href="女2.webp" as="image">
-<link rel="preload" as="image" href="女3.webp" as="image">
+<link rel="preload" as="image" href="男6.webp" as="image">
+<link rel="preload" as="image" href="男7.webp" as="image">
+<link rel="preload" as="image" href="男10.webp" as="image">
+<link rel="preload" as="image" href="男15.webp" as="image">
+<link rel="preload" as="image" href="男18.webp" as="image">
+<link rel="preload" as="image" href="男19.webp" as="image">
+<link rel="preload" as="image" href="女4.webp" as="image">
+<link rel="preload" as="image" href="女8.webp" as="image">
+<link rel="preload" as="image" href="女10.webp" as="image">
+<link rel="preload" as="image" href="女11.webp" as="image">
+<link rel="preload" as="image" href="女14.webp" as="image">
+<link rel="preload" as="image" href="女15.webp" as="image">
+<link rel="preload" as="image" href="女18.webp" as="image">
 <style>
 :root {
   --bg:#0a0a14;
@@ -753,8 +761,9 @@ var genderBtns = document.querySelectorAll('.gender-btn');
 
 function renderAvatars(gender) {
   avatarGrid.innerHTML = '';
-  for (var i = 1; i <= 20; i++) {
-    var filename = gender + i + '.webp';
+  var list = gender === '男' ? [1,6,7,10,15,18,19] : [4,8,10,11,14,15,18];
+  for (var i = 0; i < list.length; i++) {
+    var filename = gender + list[i] + '.webp';
     var item = document.createElement('div');
     item.className = 'avatar-item';
     item.style.backgroundImage = 'url(' + filename + ')';
