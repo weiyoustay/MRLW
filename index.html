@@ -502,16 +502,7 @@ body.no-page-anim { animation: none !important; }
 	.cal-overlay.show .cal-card { transform: translateY(0) scale(1); }
 	.cal-card > * { position: relative; z-index: 2; }
 
-	.cal-close {
-	    position: absolute; top: 14px; right: 18px; z-index: 3;
-	    width: 30px; height: 30px; border-radius: 50%;
-	    background: rgba(0,0,0,0.14); border: none;
-	    color: rgba(26,58,0,0.7); font-size: 1rem; cursor: pointer;
-	    display: flex; align-items: center; justify-content: center;
-	    transition: all 0.2s;
-	}
-	.cal-close:hover { background: rgba(0,0,0,0.24); color: #1a3a00; }
-
+	
 	.cal-title { font-size: 0.7rem; color: rgba(26,58,0,0.55); letter-spacing: 3px; text-align: center; margin-bottom: 2px; font-weight: 700; }
 
 	/* 月份导航 */
@@ -646,6 +637,11 @@ body.no-page-anim { animation: none !important; }
 .cal-greet-btn{margin-top:28px;padding:14px 36px;border-radius:24px;border:none;background:#1a3a00;color:#E0FE44;font-size:0.9rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(26,58,0,0.25)}
 .cal-greet-btn:hover{transform:scale(1.03)}
 .cal-greet-btn:active{transform:scale(0.97)}
+    
+.cal-return-btn{position:absolute;top:12px;right:12px;padding:6px 14px;border-radius:18px;border:none;background:linear-gradient(90deg,#D9FF70,#29E63E);color:#1a3a00;font-size:0.65rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.25s;z-index:10;box-shadow:0 2px 10px rgba(41,230,62,0.22)}
+.cal-return-btn:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(41,230,62,0.38)}
+.cal-return-btn:active{transform:scale(0.97)}
+
     </style>
 </head>
 <body style="background-color:#0a0a14;">
@@ -656,7 +652,7 @@ body.no-page-anim { animation: none !important; }
 <!-- ===== 日历弹窗 ===== -->
 <div class="cal-overlay" id="calOverlay">
     <div class="cal-card">
-        <button class="cal-close" onclick="closeCalendar()">&times;</button>
+        <button class="cal-return-btn" onclick="closeCalendar()">返回 RETURN</button>
         <div class="cal-title">CALENDAR</div>
         <div class="cal-month-nav">
             <button onclick="prevMonth()">&lsaquo;</button>
