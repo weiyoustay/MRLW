@@ -634,10 +634,10 @@ body.no-page-anim { animation: none !important; }
 	}
     
 .cal-greet-card{position:relative;width:340px;max-width:90vw;padding:36px 28px 28px;border-radius:28px;background:linear-gradient(145deg,#3DB008 40%,#E9F8BC 55%,#E0FE44);box-shadow:0 6px 24px rgba(0,0,0,0.07),0 1px 0 rgba(255,255,255,0.5) inset,0 0 0 1px rgba(255,255,255,0.7);transform:translateY(24px) scale(0.96);transition:all 0.4s cubic-bezier(0.25,0.1,0.25,1);overflow:hidden;font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue","PingFang SC",sans-serif;text-align:center}
-.cal-overlay.show .cal-greet-card{transform:translateY(0) scale(1)}
+.cal-greet-overlay.show .cal-greet-card{transform:translateY(0) scale(1)}
 .cal-greet-card::before{content:"";position:absolute;inset:0;border-radius:28px;background-image:radial-gradient(rgba(0,0,0,0.03) 0.4px,transparent 0.4px);background-size:5px 5px;pointer-events:none;z-index:0}.cal-greet-card::after{content:"";position:absolute;inset:0;border-radius:28px;background:rgba(255,255,255,0.12);pointer-events:none;z-index:1}.cal-greet-card>*{position:relative;z-index:2}.cal-greet-card.fade-out{opacity:0;transform:translateY(-20px) scale(0.95);pointer-events:none}
-.cal-greet-date{font-size:3.5rem;font-weight:200;color:#1a3a00;letter-spacing:1px;line-height:1}
-.cal-greet-week{font-size:1rem;color:rgba(26,58,0,0.55);letter-spacing:2px;margin-top:4px;font-weight:600}
+.cal-greet-date{font-size:4rem;font-weight:300;color:#1a3a00;letter-spacing:1px;line-height:1}
+.cal-greet-week{font-size:1.1rem;color:rgba(26,58,0,0.7);letter-spacing:2px;margin-top:4px;font-weight:600}
 .cal-greet-msg{font-size:1.4rem;color:#1a3a00;font-weight:700;margin-top:20px;letter-spacing:0.5px}
 .cal-greet-sub{font-size:0.75rem;color:rgba(26,58,0,0.45);margin-top:6px;letter-spacing:0.5px}
 .cal-greet-btn{margin-top:28px;padding:14px 32px;border-radius:24px;border:none;background:#1a3a00;color:#E0FE44;font-size:0.9rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(26,58,0,0.2)}
@@ -653,7 +653,7 @@ body.no-page-anim { animation: none !important; }
 
 <!-- ===== 日历弹窗 ===== -->
 <div class="cal-overlay" id="calOverlay">
-    <div class="cal-greet-card" id="calGreetCard">
+    <div class="cal-card" id="calMainCard">
             <div class="cal-greet-date" id="calGreetDate"></div>
             <div class="cal-greet-week" id="calGreetWeek"></div>
             <div class="cal-greet-msg" id="calGreetMsg"></div>
@@ -956,8 +956,6 @@ body.no-page-anim { animation: none !important; }
 
     window.showCalendar=function(){
         var now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();calSelected=K(now);L();LC();
-        var g=document.getElementById('calGreetCard'),m=document.getElementById('calMainCard');
-        g.style.display='block';g.style.position='relative';g.classList.remove('fade-out');m.style.display='none';
         document.getElementById('calGreetDate').innerHTML=now.getDate();
         document.getElementById('calGreetWeek').textContent='星期'+['日','一','二','三','四','五','六'][now.getDay()];
         var h=now.getHours(),msg='',sub='';
@@ -968,11 +966,10 @@ body.no-page-anim { animation: none !important; }
         else{msg='夜深了';sub='早点休息，明天会更好'}
         document.getElementById('calGreetMsg').textContent=msg;
         document.getElementById('calGreetSub').textContent=sub;
-        calOverlay.classList.add('show')}
-    window.closeCalendar=function(){calOverlay.classList.remove("show")};window.openCalendar=function(){
-    var g=document.getElementById('calGreetCard'),m=document.getElementById('calMainCard');
-    g.style.position='absolute';g.classList.add('fade-out');m.style.display='block';renderCalendar();renderDetail();
-    setTimeout(function(){g.style.display='none'},400)}
+        document.getElementById('calGreetOverlay').style.visibility='visible';document.getElementById('calGreetOverlay').style.opacity='1';document.getElementById('calGreetOverlay').style.pointerEvents='auto'}
+    window.closeCalendar=function(){calOverlay.classList.remove("show");document.getElementById("calGreetOverlay").style.visibility="hidden";document.getElementById("calGreetOverlay").style.opacity="0";document.getElementById("calGreetOverlay").style.pointerEvents="none"};window.openCalendar=function(){
+    document.getElementById('calGreetOverlay').style.visibility='hidden';document.getElementById('calGreetOverlay').style.opacity='0';document.getElementById('calGreetOverlay').style.pointerEvents='none';
+    calOverlay.classList.add('show');renderCalendar();renderDetail()}
     calOverlay.addEventListener('click',function(e){if(e.target===calOverlay)closeCalendar()});
 })();
 </script>
