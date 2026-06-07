@@ -960,9 +960,19 @@ body.no-page-anim { animation: none !important; }
     window.prevMonth=function(){calMonth--;if(calMonth<0){calMonth=11;calYear--}renderCalendar();renderDetail()}
     window.nextMonth=function(){calMonth++;if(calMonth>11){calMonth=0;calYear++}renderCalendar();renderDetail()}
 
-    window.showCalendar=function(){
-        var now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();
-        calSelected=K(now);L();LC();renderCalendar();renderDetail();calOverlay.classList.add('show')}
+window.showCalendar=function(){
+var now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();calSelected=K(now);L();LC();
+var d=now.getDate(),wd=["日","一","二","三","四","五","六"][now.getDay()],h=now.getHours(),m="",s="";
+        document.getElementById("calGreetDate").textContent=d;
+        document.getElementById("calGreetWeek").textContent="星期"+wd;
+        if(h>=5&&h<12){m="早上好";s="新的一天，从觉察开始"}
+        else if(h>=12&&h<14){m="中午好";s="休息片刻，再出发"}
+        else if(h>=14&&h<18){m="下午好";s="专注当下，不负时光"}
+        else if(h>=18&&h<22){m="晚上好";s="回顾今日，感恩收获"}
+        else{m="夜深了";s="早点休息，明天会更好"}
+        document.getElementById("calGreetMsg").textContent=m;
+        document.getElementById("calGreetSub").textContent=s;
+        document.getElementById("calGreetOverlay").classList.add("show")}
     window.openCalendar=function(){document.getElementById('calGreetOverlay').classList.remove('show');calOverlay.classList.add('show');renderCalendar();renderDetail()};
     window.closeCalendar=function(){calOverlay.classList.remove('show')}
     calOverlay.addEventListener('click',function(e){if(e.target===calOverlay)closeCalendar()});
