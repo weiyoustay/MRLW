@@ -2253,13 +2253,13 @@ window.showTodayStats=function(){
     else{completed.forEach(function(t){html+="<div class=cd-stat-item><span class=task-name>\u2713 "+t.name+"</span><span class=task-dur>"+t.duration+" min</span></div>";total+=t.duration})}
     document.getElementById("cdTodayContent").innerHTML=html;
     document.getElementById("cdTodayTotal").textContent=completed.length?"共完成 "+completed.length+" 个任务 \u00b7 总专注 "+total+" 分钟":"";
-    document.getElementById("cdTodayModal").classList.add("show")};
-window.closeTodayStats=function(){document.getElementById("cdTodayModal").classList.remove("show")};
+    document.getElementById("cdTodayModal").classList.add("show");};
+window.closeTodayStats=function(){document.getElementById("cdOverlay").classList.add("show");document.getElementById("cdTodayModal").classList.remove("show")};
 document.getElementById("cdTodayModal").addEventListener("click",function(e){if(e.target===this)closeTodayStats()});
 
 var weekOffset=0;
-window.showWeekStats=function(){weekOffset=0;renderWeek();document.getElementById("cdWeekModal").classList.add("show")};
-window.closeWeekStats=function(){document.getElementById("cdWeekModal").classList.remove("show")};
+window.showWeekStats=function(){weekOffset=0;renderWeek();document.getElementById("cdOverlay").classList.remove("show");document.getElementById("cdWeekModal").classList.add("show")};
+window.closeWeekStats=function(){document.getElementById("cdOverlay").classList.add("show");document.getElementById("cdWeekModal").classList.remove("show")};
 document.getElementById("cdWeekModal").addEventListener("click",function(e){if(e.target===this)closeWeekStats()});
 window.prevWeek=function(){weekOffset--;renderWeek()};
 window.nextWeek=function(){weekOffset++;renderWeek()};
