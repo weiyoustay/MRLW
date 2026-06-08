@@ -1219,7 +1219,7 @@
             <div class="cards-section">
                 <div class="poster-stage" id="posterStage">
                     <canvas id="posterCanvas"></canvas>
-                    <div class="explore-row">
+                    <div class="explore-row" id="exploreRow">
                         <a class="explore-btn" id="exploreBtn" href="#">EXPLORE MORE</a>
                         <button class="inspiring-btn" id="inspiringBtn">INSPIRING</button>
                     </div>
@@ -1316,7 +1316,8 @@ const dayBackgrounds = {
     4: '图4.webp',
     5: '图5.webp',
     6: '图6.webp',
-    7: '图7.webp'
+    7: '图7.webp',
+    8: 'day8.png'
 };
 
 const dayList = [
@@ -1326,7 +1327,8 @@ const dayList = [
     { day:4, title:"发现渴望", desc:"描绘理想人生蓝图" },
     { day:5, title:"克服恐惧", desc:"设计你的日常仪式" },
     { day:6, title:"升级心智", desc:"优化你的世界" },
-    { day:7, title:"游戏人生", desc:"成为新版本的自己" }
+    { day:7, title:"游戏人生", desc:"成为新版本的自己" },
+    { day:8, title:"一周复盘", desc:"出发-行动" }
 ];
 
 function editName(){
@@ -1347,14 +1349,14 @@ function getAutoUnlockedDay() {
     const nowDay = new Date(now.setHours(0, 0, 0, 0));
     const diffTime = nowDay - start;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const autoDay = Math.min(diffDays + 1, 7);
-    return autoDay;
+    return Math.min(diffDays + 1, 7);
 }
 
 function getUnlockedDays() {
-    const autoDay = getAutoUnlockedDay();
-    const arr = [];
-    for (let i = 1; i <= autoDay; i++) arr.push(i);
+    var autoDay = getAutoUnlockedDay();
+    var arr = [];
+    for (var i = 1; i <= autoDay; i++) arr.push(i);
+    if (autoDay >= 7) arr.push(8);
     return arr;
 }
 
@@ -1414,17 +1416,17 @@ function getDailyQuoteZh(day) {
     return q[Math.abs(Math.floor(Math.sin(seed)*100000))%q.length];
 }
 window.addEventListener('DOMContentLoaded',function(){
-inspiringBtn=document.getElementById('inspiringBtn');
+	inspiringBtn=document.getElementById('inspiringBtn');
 modalOverlay=document.getElementById('modalOverlay');
 modalQuote=document.getElementById('modalQuote');
+	inspiringBtn.addEventListener('click',function(){
+	    modalQuote.innerText='"'+getDailyQuote(currentPosterDay)+'"';
+	    modalQuoteZh.innerText='「'+getDailyQuoteZh(currentPosterDay)+'」';
+	    modalDate.innerText=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+	    modalOverlay.classList.add('show');
+	});
 modalDate=document.getElementById('modalDate');
 modalClose=document.getElementById('modalClose');
-inspiringBtn.addEventListener('click',function(){
-    modalQuote.innerText='"'+getDailyQuote(currentPosterDay)+'"';
-    modalQuoteZh.innerText='「'+getDailyQuoteZh(currentPosterDay)+'」';
-    modalDate.innerText=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    modalOverlay.classList.add('show');
-});
 modalClose.addEventListener('click',function(){modalOverlay.classList.remove('show')});
 modalOverlay.addEventListener('click',function(e){if(e.target===modalOverlay)modalOverlay.classList.remove('show')});
 });
@@ -1436,7 +1438,8 @@ var posterTaglines = [
     'Your soul knows the way. Listen.',
     'Fear is temporary. Regret is forever.',
     'A better mind builds a better life.',
-    'This is not a drill. This is your life.'
+    'This is not a drill. This is your life.',
+    'Look back. Launch forward.'
 ];
 var posterCache = {};
 var currentPosterDay = 1;
@@ -1487,16 +1490,18 @@ function drawDayPoster(day, skipDisplay) {
         if (ir > cr) { sh = img.naturalHeight; sw = sh * cr; sx = (img.naturalWidth - sw) / 2; sy = 0; }
         else { sw = img.naturalWidth; sh = sw / cr; sx = 0; sy = (img.naturalHeight - sh) / 2; }
         ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
-        var ov = ctx.createLinearGradient(0, 0, 0, H);
-        if (day === 3) {
-            ov.addColorStop(0, 'rgba(0,0,0,0.2)');
-            ov.addColorStop(1, 'rgba(0,0,0,0.2)');
-        } else {
-            ov.addColorStop(0, 'rgba(0,0,0,0.2)');
-            ov.addColorStop(0.5, 'rgba(0,0,0,0.4)');
-            ov.addColorStop(1, 'rgba(0,0,0,0.75)');
+        if (day !== 8) {
+            var ov = ctx.createLinearGradient(0, 0, 0, H);
+            if (day === 3) {
+                ov.addColorStop(0, 'rgba(0,0,0,0.2)');
+                ov.addColorStop(1, 'rgba(0,0,0,0.2)');
+            } else {
+                ov.addColorStop(0, 'rgba(0,0,0,0.2)');
+                ov.addColorStop(0.5, 'rgba(0,0,0,0.4)');
+                ov.addColorStop(1, 'rgba(0,0,0,0.75)');
+            }
+            ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
         }
-        ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
         if (day === 1) drawDay1(ctx, W, H, pad, item);
         else if (day === 2) drawDay2(ctx, W, H, pad, item);
         else if (day === 3) drawDay3(ctx, W, H, pad, item);
@@ -1504,6 +1509,7 @@ function drawDayPoster(day, skipDisplay) {
         else if (day === 5) drawDay5(ctx, W, H, pad, item);
         else if (day === 6) drawDay6(ctx, W, H, pad, item);
         else if (day === 7) drawDay7(ctx, W, H, pad, item);
+        else if (day === 8) drawDay8(ctx, W, H, pad, item);
         posterCache[day] = off;
         if (!skipDisplay) {
             var mc = document.getElementById('posterCanvas');
@@ -2044,8 +2050,724 @@ var posterKeywords = [
     '探索内心  ·  描绘蓝图  ·  找到方向',
     '直面恐惧  ·  突破自我  ·  勇敢前行',
     '重塑思维  ·  优化习惯  ·  迭代进化',
-    '轻松前行  ·  享受过程  ·  成为新我'
+    '轻松前行  ·  享受过程  ·  成为新我',
+    '回望来路  ·  整装待发  ·  再次出发'
 ];
+
+// Day 8 一周复盘 — 仅背景图+按钮
+function drawDay8(ctx, W, H, pad, item) {
+    var btnW = W*0.5, btnH = W*0.12, btnX = (W-btnW)/2, btnY = H*0.78, r = btnH/2;
+    var bg = ctx.createLinearGradient(btnX, 0, btnX+btnW, 0);
+    bg.addColorStop(0, '#3DB008'); bg.addColorStop(0.25, '#E9F8BC');
+    bg.addColorStop(0.5, '#E0FE44'); bg.addColorStop(0.75, '#00f5d4');
+    bg.addColorStop(1, '#0099ff');
+    ctx.fillStyle = bg;
+    ctx.beginPath();
+    ctx.moveTo(btnX+r, btnY); ctx.lineTo(btnX+btnW-r, btnY);
+    ctx.arcTo(btnX+btnW, btnY, btnX+btnW, btnY+r, r);
+    ctx.arcTo(btnX+btnW, btnY+btnH, btnX+btnW-r, btnY+btnH, r);
+    ctx.lineTo(btnX+r, btnY+btnH);
+    ctx.arcTo(btnX, btnY+btnH, btnX, btnY+btnH-r, r);
+    ctx.arcTo(btnX, btnY, btnX+r, btnY, r);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#1a1a1a'; ctx.font = 'bold ' + (W*0.032) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center'; ctx.fillText('WEEKLY  SUMMARY', W/2, btnY + btnH*0.62);
+    addDecorations(ctx, W, H, pad);
+}
+
+var currentPosterDay = 1;
+var pCtx, pW, pH, pDpr;
+
+var posterInited = false;
+function initPosterCanvas() {
+    if (posterInited) return;
+    var canvas = document.getElementById('posterCanvas');
+    var stage = document.getElementById('posterStage');
+    pDpr = Math.min(window.devicePixelRatio || 1, 2);
+    pW = stage.clientWidth;
+    pH = stage.clientHeight;
+    canvas.width = pW * pDpr;
+    canvas.height = pH * pDpr;
+    pCtx = canvas.getContext('2d');
+    pCtx.scale(pDpr, pDpr);
+    pCtx.imageSmoothingEnabled = true;
+    pCtx.imageSmoothingQuality = 'high';
+    posterInited = true;
+}
+
+function drawDayPoster(day, skipDisplay) {
+    if (posterCache[day]) {
+        if (!skipDisplay) {
+            var canvas = document.getElementById('posterCanvas');
+            var ctx = canvas.getContext('2d');
+            canvas.width = pW * pDpr; canvas.height = pH * pDpr;
+            ctx.scale(pDpr, pDpr);
+            ctx.drawImage(posterCache[day], 0, 0, pW, pH);
+        }
+        return;
+    }
+    initPosterCanvas();
+    var off = document.createElement('canvas');
+    off.width = pW * pDpr; off.height = pH * pDpr;
+    var ctx = off.getContext('2d');
+    ctx.scale(pDpr, pDpr);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    var W = pW, H = pH, pad = W * 0.08;
+    var item = dayList[day - 1];
+    var img = new Image();
+    img.src = dayBackgrounds[day];
+    img.onload = function() {
+        var ir = img.naturalWidth / img.naturalHeight;
+        var cr = W / H, sw, sh, sx, sy;
+        if (ir > cr) { sh = img.naturalHeight; sw = sh * cr; sx = (img.naturalWidth - sw) / 2; sy = 0; }
+        else { sw = img.naturalWidth; sh = sw / cr; sx = 0; sy = (img.naturalHeight - sh) / 2; }
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
+        if (day !== 8) {
+            var ov = ctx.createLinearGradient(0, 0, 0, H);
+            if (day === 3) {
+                ov.addColorStop(0, 'rgba(0,0,0,0.2)');
+                ov.addColorStop(1, 'rgba(0,0,0,0.2)');
+            } else {
+                ov.addColorStop(0, 'rgba(0,0,0,0.2)');
+                ov.addColorStop(0.5, 'rgba(0,0,0,0.4)');
+                ov.addColorStop(1, 'rgba(0,0,0,0.75)');
+            }
+            ctx.fillStyle = ov; ctx.fillRect(0, 0, W, H);
+        }
+        if (day === 1) drawDay1(ctx, W, H, pad, item);
+        else if (day === 2) drawDay2(ctx, W, H, pad, item);
+        else if (day === 3) drawDay3(ctx, W, H, pad, item);
+        else if (day === 4) drawDay4(ctx, W, H, pad, item);
+        else if (day === 5) drawDay5(ctx, W, H, pad, item);
+        else if (day === 6) drawDay6(ctx, W, H, pad, item);
+        else if (day === 7) drawDay7(ctx, W, H, pad, item);
+        else if (day === 8) drawDay8(ctx, W, H, pad, item);
+        posterCache[day] = off;
+        if (!skipDisplay) {
+            var mc = document.getElementById('posterCanvas');
+            var mctx = mc.getContext('2d');
+            mc.width = pW * pDpr; mc.height = pH * pDpr;
+            mctx.scale(pDpr, pDpr);
+            mctx.drawImage(off, 0, 0, pW, pH);
+        }
+    };
+    img.onerror = function() {
+        ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#fff'; ctx.font = '16px sans-serif';
+        ctx.textAlign = 'center'; ctx.fillText('图片加载中...', W/2, H/2);
+    };
+}
+
+// ===== 共享装饰层 =====
+function addDecorations(ctx, W, H, pad) {
+    var L = W*0.06, g = pad;
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1;
+    [[g, g, 1, 1], [W-g, g, -1, 1], [g, H-g, 1, -1], [W-g, H-g, -1, -1]].forEach(function(a){
+        ctx.beginPath();
+        ctx.moveTo(a[0], a[1] - a[3]*L); ctx.lineTo(a[0], a[1]); ctx.lineTo(a[0] + a[2]*L, a[1]);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(183,247,0,0.25)';
+        ctx.beginPath(); ctx.arc(a[0], a[1], 2, 0, Math.PI*2); ctx.fill();
+    });
+    for (var i = 0; i < 80; i++) {
+        ctx.fillStyle = 'rgba(255,255,255,'+(0.02+Math.random()*0.05)+')';
+        ctx.beginPath(); ctx.arc(Math.random()*W, Math.random()*H, 0.8+Math.random()*1.2, 0, Math.PI*2); ctx.fill();
+    }
+    var glassGrad = ctx.createLinearGradient(0, 0, 0, H*0.14);
+    glassGrad.addColorStop(0, 'rgba(255,255,255,0.05)');
+    glassGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = glassGrad; ctx.fillRect(pad, H*0.04, W-pad*2, H*0.10);
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 0.6;
+    ctx.strokeRect(pad, H*0.04, W-pad*2, H*0.10);
+    var botGrad = ctx.createLinearGradient(0, H*0.62, 0, H*0.72);
+    botGrad.addColorStop(0, 'rgba(255,255,255,0)');
+    botGrad.addColorStop(0.5, 'rgba(255,255,255,0.04)');
+    botGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = botGrad; ctx.fillRect(pad, H*0.62, W-pad*2, H*0.10);
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(pad, H*0.64); ctx.lineTo(W-pad, H*0.64); ctx.stroke();
+}
+
+// Day 1 看见真相
+function drawDay1(ctx, W, H, pad, item) {
+    var blockGrad = ctx.createLinearGradient(0, 0, W*0.04, 0);
+    blockGrad.addColorStop(0, 'rgba(183,247,0,0.07)');
+    blockGrad.addColorStop(1, 'rgba(183,247,0,0)');
+    ctx.fillStyle = blockGrad; ctx.fillRect(pad, H*0.15, W*0.04, H*0.48);
+    for (var i = 0; i < 4; i++) {
+        var dx = W-pad-W*0.02, dy = H*0.22 + i*W*0.07;
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.6;
+        ctx.beginPath(); ctx.arc(dx, dy, W*0.018, 0, Math.PI*2); ctx.stroke();
+        ctx.fillStyle = 'rgba(183,247,0,0.1)';
+        ctx.beginPath(); ctx.arc(dx, dy, 2, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = (W*0.03) + 'px "Georgia",serif';
+    ctx.fillText('◆  DAY 01', pad+W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    ctx.fillText('7 DAYS REBIRTH', W-pad-W*0.02, H*0.10);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.font = 'bold ' + (W*0.19) + 'px "Georgia",serif';
+    ctx.fillText('SEE', W/2+2, H*0.32+2);
+    var seeGrad = ctx.createLinearGradient(W*0.25, 0, W*0.75, 0);
+    seeGrad.addColorStop(0, '#e0e8ff'); seeGrad.addColorStop(0.5, '#ffffff'); seeGrad.addColorStop(1, '#c0d0ff');
+    ctx.fillStyle = seeGrad; ctx.font = 'bold ' + (W*0.19) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(183,247,0,0.3)'; ctx.shadowBlur = 20;
+    ctx.fillText('SEE', W/2, H*0.32);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    var hl = ctx.createLinearGradient(0, H*0.23, 0, H*0.32);
+    hl.addColorStop(0, 'rgba(255,255,255,0.2)'); hl.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hl; ctx.font = 'bold ' + (W*0.19) + 'px "Georgia",serif';
+    ctx.fillText('SEE', W/2, H*0.32); ctx.restore();
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = 'italic ' + (W*0.045) + 'px "Georgia",serif';
+    ctx.fillText('yourself clearly', W/2, H*0.40);
+    ctx.strokeStyle = 'rgba(183,247,0,0.5)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(W*0.3, H*0.44); ctx.lineTo(W*0.7, H*0.44); ctx.stroke();
+    [W/2-W*0.07, W/2, W/2+W*0.07].forEach(function(x){
+        ctx.fillStyle = 'rgba(183,247,0,0.4)'; ctx.beginPath(); ctx.arc(x, H*0.44, 2.5, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = (W*0.036) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('改变的第一步，是看清自己', W/2, H*0.50);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = (W*0.028) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('自我觉察  ·  直面真实  ·  不再逃避', W/2, H*0.55);
+    // 侧边竖排英文
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = (W*0.022) + 'px "Georgia",serif';
+    ctx.translate(W-pad+W*0.01, H*0.24); ctx.rotate(Math.PI/2);
+    ctx.fillText('CLARITY IS POWER', 0, 0); ctx.restore();
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.03) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(item.title + '  ·  ' + item.desc, W/2, H*0.68);
+    addDecorations(ctx, W, H, pad);
+}
+
+// Day 2 接纳自己 — 磨砂光环 + 高级感
+function drawDay2(ctx, W, H, pad, item) {
+    var cx = W/2, cy = H*0.30, r = W*0.17;
+    // 放射光线
+    for (var i = 0; i < 20; i++) {
+        var a = (i/20)*Math.PI*2;
+        var grad = ctx.createLinearGradient(cx, cy, cx+Math.cos(a)*W*0.55, cy+Math.sin(a)*W*0.55);
+        grad.addColorStop(0, 'rgba(255,255,255,0.04)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.strokeStyle = grad; ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx+Math.cos(a)*W*0.55, cy+Math.sin(a)*W*0.55); ctx.stroke();
+    }
+    // 品牌栏
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = (W*0.03) + 'px "Georgia",serif';
+    ctx.fillText('◆  DAY 02', pad+W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    ctx.fillText('7 DAYS REBIRTH', W-pad-W*0.02, H*0.10);
+    ctx.textAlign = 'center';
+    // 磨砂玻璃环 — 大外环
+    var frostR = r*1.32;
+    var frostGrad = ctx.createRadialGradient(cx, cy, frostR-W*0.02, cx, cy, frostR+W*0.02);
+    frostGrad.addColorStop(0, 'rgba(255,255,255,0)');
+    frostGrad.addColorStop(0.45, 'rgba(255,255,255,0.04)');
+    frostGrad.addColorStop(0.5, 'rgba(255,255,255,0.12)');
+    frostGrad.addColorStop(0.55, 'rgba(255,255,255,0.04)');
+    frostGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = frostGrad;
+    ctx.fillRect(cx-frostR-W*0.03, cy-frostR-W*0.03, (frostR+W*0.03)*2, (frostR+W*0.03)*2);
+    // 磨砂环边框
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(cx, cy, frostR, 0, Math.PI*2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(cx, cy, frostR, 0, Math.PI*2); ctx.stroke();
+    // 内环
+    [0.65, 0.82, 1.0].forEach(function(ratio, i){
+        ctx.strokeStyle = 'rgba(255,255,255,'+(0.04+i*0.04)+')'; ctx.lineWidth = 0.5+i*0.25;
+        ctx.beginPath(); ctx.arc(cx, cy, r*ratio, 0, Math.PI*2); ctx.stroke();
+    });
+    // 虚线装饰环
+    ctx.strokeStyle = 'rgba(183,247,0,0.22)'; ctx.lineWidth = 1;
+    ctx.setLineDash([3, 10]);
+    ctx.beginPath(); ctx.arc(cx, cy, r*1.14, 0, Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+    // 12个环绕光点
+    for (var i = 0; i < 12; i++) {
+        var a = (i/12)*Math.PI*2 - Math.PI/2;
+        var pr = r*(1.05 + Math.sin(i*2.5)*0.05);
+        var dotGlow = ctx.createRadialGradient(cx+Math.cos(a)*pr, cy+Math.sin(a)*pr, 0, cx+Math.cos(a)*pr, cy+Math.sin(a)*pr, 6);
+        dotGlow.addColorStop(0, 'rgba(183,247,0,0.4)'); dotGlow.addColorStop(1, 'rgba(183,247,0,0)');
+        ctx.fillStyle = dotGlow;
+        ctx.beginPath(); ctx.arc(cx+Math.cos(a)*pr, cy+Math.sin(a)*pr, 6, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.beginPath(); ctx.arc(cx+Math.cos(a)*pr, cy+Math.sin(a)*pr, 2, 0, Math.PI*2); ctx.fill();
+    }
+    // 中心磨砂发光盘
+    var centerGlow = ctx.createRadialGradient(cx, cy, r*0.2, cx, cy, r*1.08);
+    centerGlow.addColorStop(0, 'rgba(255,255,255,0.08)');
+    centerGlow.addColorStop(0.5, 'rgba(255,255,255,0.02)');
+    centerGlow.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = centerGlow; ctx.fillRect(cx-r*1.1, cy-r*1.1, r*2.2, r*2.2);
+    // 大字 ACCEPT — 高级金白渐变
+    var acceptGrad = ctx.createLinearGradient(cx-r, 0, cx+r, 0);
+    acceptGrad.addColorStop(0, '#e8d8b0'); acceptGrad.addColorStop(0.25, '#fffef8');
+    acceptGrad.addColorStop(0.5, '#ffffff'); acceptGrad.addColorStop(0.75, '#fffef8');
+    acceptGrad.addColorStop(1, '#e8d8b0');
+    ctx.fillStyle = acceptGrad; ctx.font = 'bold ' + (W*0.13) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(255,220,150,0.25)'; ctx.shadowBlur = 18;
+    ctx.fillText('ACCEPT', cx, cy + W*0.02);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    // 高光
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    var hl2 = ctx.createLinearGradient(0, cy-r*0.6, 0, cy);
+    hl2.addColorStop(0, 'rgba(255,255,255,0.15)'); hl2.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hl2; ctx.font = 'bold ' + (W*0.13) + 'px "Georgia",serif';
+    ctx.fillText('ACCEPT', cx, cy + W*0.02); ctx.restore();
+    // 下方文字 — 磨砂条底
+    var ty = cy + r*1.55;
+    var textBgGrad = ctx.createLinearGradient(0, ty-W*0.04, 0, ty+W*0.22);
+    textBgGrad.addColorStop(0, 'rgba(255,255,255,0)');
+    textBgGrad.addColorStop(0.3, 'rgba(255,255,255,0.04)');
+    textBgGrad.addColorStop(0.7, 'rgba(255,255,255,0.04)');
+    textBgGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = textBgGrad;
+    ctx.fillRect(W*0.08, ty-W*0.02, W*0.84, W*0.22);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = 'italic ' + (W*0.036) + 'px "Georgia",serif';
+    ctx.fillText('who you are  ·  transformation begins', cx, ty);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = (W*0.032) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('接纳自己，蜕变由此开始', cx, ty + W*0.08);
+    // 底部英文细节
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = 'italic ' + (W*0.024) + 'px "Georgia",serif';
+    ctx.fillText('EMBRACE EVERY PART OF YOU', cx, ty + W*0.14);
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.03) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(item.title + '  ·  ' + item.desc, cx, ty + W*0.18);
+    addDecorations(ctx, W, H, pad);
+}
+
+// Day 3 重塑身份 — 斜切几何
+function drawDay3(ctx, W, H, pad, item) {
+    var diagGrad = ctx.createLinearGradient(0, H*0.6, W, H*0.2);
+    diagGrad.addColorStop(0, 'rgba(183,247,0,0.04)');
+    diagGrad.addColorStop(0.3, 'rgba(183,247,0,0.01)');
+    diagGrad.addColorStop(1, 'rgba(66,141,255,0.04)');
+    ctx.fillStyle = diagGrad; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(183,247,0,0.1)'; ctx.lineWidth = 0.6;
+    ctx.beginPath(); ctx.moveTo(pad, H*0.52); ctx.lineTo(W*0.62, H*0.18); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad, H*0.57); ctx.lineTo(W*0.68, H*0.23); ctx.stroke();
+    var dx = W*0.24, dy = H*0.26, dr = W*0.07;
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(dx, dy-dr); ctx.lineTo(dx+dr, dy); ctx.lineTo(dx, dy+dr); ctx.lineTo(dx-dr, dy); ctx.closePath(); ctx.stroke();
+    ctx.fillStyle = 'rgba(183,247,0,0.04)'; ctx.fill();
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = (W*0.03) + 'px "Georgia",serif';
+    ctx.fillText('◆  DAY 03', pad+W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    ctx.fillText('7 DAYS REBIRTH', W-pad-W*0.02, H*0.10);
+    ctx.textAlign = 'left';
+    var reGrad = ctx.createLinearGradient(pad, 0, pad+W*0.5, 0);
+    reGrad.addColorStop(0, '#d0d8ff'); reGrad.addColorStop(0.5, '#ffffff'); reGrad.addColorStop(1, '#90b0ff');
+    ctx.fillStyle = reGrad; ctx.font = 'bold ' + (W*0.14) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(66,141,255,0.2)'; ctx.shadowBlur = 12;
+    ctx.fillText('REDEFINE', pad+W*0.02, H*0.32);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = 'italic ' + (W*0.038) + 'px "Georgia",serif';
+    ctx.fillText('yourself before the world', pad+W*0.02, H*0.40);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = (W*0.034) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('在被世界定义之前，先定义自己', W-pad-W*0.02, H*0.50);
+    // 英文细节
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = 'italic ' + (W*0.024) + 'px "Georgia",serif';
+    ctx.fillText('BREAK THE OLD PATTERN · REBUILD', W-pad-W*0.02, H*0.46);
+    ctx.strokeStyle = 'rgba(183,247,0,0.35)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W-pad-W*0.30, H*0.54); ctx.lineTo(W-pad-W*0.02, H*0.54); ctx.stroke();
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.03) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(item.title + '  ·  ' + item.desc, W-pad-W*0.02, H*0.68);
+    addDecorations(ctx, W, H, pad);
+}
+
+// Day 4 发现渴望 — 留白+星点
+function drawDay4(ctx, W, H, pad, item) {
+    var lx = W*0.10;
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(lx, H*0.16); ctx.lineTo(lx, H*0.60); ctx.stroke();
+    for (var i = 0; i < 6; i++) {
+        var py = H*0.18 + i*H*0.07;
+        ctx.fillStyle = 'rgba(183,247,0,'+(0.07+i*0.05)+')';
+        ctx.beginPath(); ctx.arc(lx, py, 2.2, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.arc(lx, py, W*0.016, 0, Math.PI*2); ctx.stroke();
+    }
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = (W*0.03) + 'px "Georgia",serif';
+    ctx.fillText('◆  DAY 04', pad+W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    ctx.fillText('7 DAYS REBIRTH', W-pad-W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    var discGrad = ctx.createLinearGradient(W*0.4, 0, W, 0);
+    discGrad.addColorStop(0, '#c0e0ff'); discGrad.addColorStop(0.6, '#ffffff'); discGrad.addColorStop(1, '#e0d0ff');
+    ctx.fillStyle = discGrad; ctx.font = 'bold ' + (W*0.14) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(183,247,0,0.2)'; ctx.shadowBlur = 12;
+    ctx.fillText('DISCOVER', W-pad-W*0.02, H*0.33);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = 'italic ' + (W*0.038) + 'px "Georgia",serif';
+    ctx.fillText('what makes your soul come alive', W-pad-W*0.02, H*0.41);
+    ctx.strokeStyle = 'rgba(183,247,0,0.3)'; ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(W-pad-W*0.30, H*0.45); ctx.lineTo(W-pad-W*0.02, H*0.45); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = (W*0.034) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('找到让你灵魂燃烧的东西', W-pad-W*0.02, H*0.51);
+    // 英文细节
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = 'italic ' + (W*0.024) + 'px "Georgia",serif';
+    ctx.fillText('FIND YOUR FIRE · FOLLOW THE SPARK', W-pad-W*0.02, H*0.55);
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.03) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(item.title + '  ·  ' + item.desc, W-pad-W*0.02, H*0.68);
+    addDecorations(ctx, W, H, pad);
+}
+
+// Day 5 克服恐惧 — 竖线分割
+function drawDay5(ctx, W, H, pad, item) {
+    var leftTint = ctx.createLinearGradient(0, 0, W/2, 0);
+    leftTint.addColorStop(0, 'rgba(0,0,0,0.06)'); leftTint.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = leftTint; ctx.fillRect(pad, H*0.14, W/2-pad, H*0.50);
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(W/2, H*0.16); ctx.lineTo(W/2, H*0.56); ctx.stroke();
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = (W*0.03) + 'px "Georgia",serif';
+    ctx.fillText('◆  DAY 05', pad+W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    ctx.fillText('7 DAYS REBIRTH', W-pad-W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    var fearGrad = ctx.createLinearGradient(W*0.15, 0, W/2, 0);
+    fearGrad.addColorStop(0, '#c0c8e0'); fearGrad.addColorStop(1, '#ffffff');
+    ctx.fillStyle = fearGrad; ctx.font = 'bold ' + (W*0.12) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(255,255,255,0.12)'; ctx.shadowBlur = 8;
+    ctx.fillText('FEAR', W/2 - W*0.04, H*0.33);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.07) + 'px "Georgia",serif';
+    ctx.fillText('IS A', W/2 + W*0.04, H*0.28);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold ' + (W*0.09) + 'px "Georgia",serif';
+    ctx.fillText('DOOR', W/2 + W*0.04, H*0.38);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = 'italic ' + (W*0.04) + 'px "Georgia",serif';
+    ctx.fillText('Walk through it', W/2, H*0.50);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = (W*0.034) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('恐惧只是一扇门，走过去就好', W/2, H*0.56);
+    // 英文细节
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = 'italic ' + (W*0.024) + 'px "Georgia",serif';
+    ctx.fillText('COURAGE OVER COMFORT · ALWAYS', W/2, H*0.61);
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.03) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(item.title + '  ·  ' + item.desc, W/2, H*0.68);
+    addDecorations(ctx, W, H, pad);
+}
+
+// Day 6 升级心智 — 几何棱镜（参考poster6）
+function drawDay6(ctx, W, H, pad, item) {
+    // 对角线分割系统
+    var diags = [
+        {x1:0, y1:H*0.18, x2:W*0.48, y2:0},
+        {x1:W*0.52, y1:0, x2:W, y2:H*0.22},
+        {x1:0, y1:H*0.55, x2:W*0.45, y2:H*0.70},
+        {x1:W*0.55, y1:H*0.70, x2:W, y2:H*0.52},
+    ];
+    diags.forEach(function(d){
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(d.x1, d.y1); ctx.lineTo(d.x2, d.y2); ctx.stroke();
+    });
+    // 明暗对比叠层 — 左暗右亮
+    var shadeGrad = ctx.createLinearGradient(0, 0, W, 0);
+    shadeGrad.addColorStop(0, 'rgba(0,0,0,0.32)');
+    shadeGrad.addColorStop(0.3, 'rgba(0,0,0,0.18)');
+    shadeGrad.addColorStop(0.5, 'rgba(0,0,0,0.06)');
+    shadeGrad.addColorStop(0.7, 'rgba(0,0,0,0.02)');
+    shadeGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = shadeGrad; ctx.fillRect(0, 0, W, H);
+    // 顶部额外暗角
+    var topShade = ctx.createLinearGradient(0, 0, 0, H*0.35);
+    topShade.addColorStop(0, 'rgba(0,0,0,0.18)');
+    topShade.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = topShade; ctx.fillRect(0, 0, W, H);
+    // 几何半透明色块 — 菱形/矩形
+    var facets = [
+        {x:W*0.06, y:H*0.18, w:W*0.40, h:H*0.12, c:'rgba(0,245,212,0.04)'},
+        {x:W*0.52, y:H*0.08, w:W*0.44, h:H*0.14, c:'rgba(66,141,255,0.04)'},
+        {x:W*0.04, y:H*0.48, w:W*0.44, h:H*0.15, c:'rgba(66,141,255,0.03)'},
+        {x:W*0.50, y:H*0.46, w:W*0.46, h:H*0.17, c:'rgba(0,245,212,0.04)'},
+    ];
+    facets.forEach(function(f){
+        ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, f.w, f.h);
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.5;
+        ctx.strokeRect(f.x, f.y, f.w, f.h);
+    });
+    // 浮动菱形装饰
+    var diamonds = [
+        {cx:W*0.22, cy:H*0.30, r:W*0.04},
+        {cx:W*0.78, cy:H*0.35, r:W*0.035},
+        {cx:W*0.30, cy:H*0.55, r:W*0.032},
+        {cx:W*0.72, cy:H*0.58, r:W*0.04},
+        {cx:W*0.15, cy:H*0.42, r:W*0.022},
+        {cx:W*0.85, cy:H*0.44, r:W*0.025},
+    ];
+    diamonds.forEach(function(d){
+        ctx.fillStyle = 'rgba(255,255,255,0.02)';
+        ctx.strokeStyle = 'rgba(0,245,212,0.15)'; ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(d.cx, d.cy-d.r);
+        ctx.lineTo(d.cx+d.r*0.7, d.cy);
+        ctx.lineTo(d.cx, d.cy+d.r);
+        ctx.lineTo(d.cx-d.r*0.7, d.cy);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+    });
+    // 品牌栏
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = (W*0.03) + 'px "Georgia",serif';
+    ctx.fillText('◆  DAY 06', pad+W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    ctx.fillText('7 DAYS REBIRTH', W-pad-W*0.02, H*0.10);
+    // 大字 UPGRADE — 棱镜水晶渐变
+    ctx.textAlign = 'center';
+    var cryGrad = ctx.createLinearGradient(W*0.3, H*0.20, W*0.7, H*0.46);
+    cryGrad.addColorStop(0, '#4ae0ff'); cryGrad.addColorStop(0.2, '#c0f0ff');
+    cryGrad.addColorStop(0.4, '#ffffff'); cryGrad.addColorStop(0.6, '#80e8ff');
+    cryGrad.addColorStop(0.8, '#ffffff'); cryGrad.addColorStop(1, '#4ae0ff');
+    ctx.fillStyle = cryGrad; ctx.font = 'bold ' + (W*0.12) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(0,220,255,0.25)'; ctx.shadowBlur = 16;
+    ctx.fillText('UPGRADE', W/2, H*0.35);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    // 高光线
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    var hl6 = ctx.createLinearGradient(0, H*0.23, 0, H*0.35);
+    hl6.addColorStop(0, 'rgba(255,255,255,0.2)'); hl6.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hl6; ctx.font = 'bold ' + (W*0.12) + 'px "Georgia",serif';
+    ctx.fillText('UPGRADE', W/2, H*0.35); ctx.restore();
+    // YOUR MIND
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.046) + 'px "Georgia",serif';
+    ctx.fillText('YOUR MIND', W/2, H*0.45);
+    // 中文
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = (W*0.034) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('心智是操作系统，该升级了', W/2, H*0.52);
+    // 英文细节
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = 'italic ' + (W*0.024) + 'px "Georgia",serif';
+    ctx.fillText('REWIRE · REBUILD · RISE', W/2, H*0.57);
+    // 底部标签
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.03) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(item.title + '  ·  ' + item.desc, W/2, H*0.68);
+    addDecorations(ctx, W, H, pad);
+}
+
+// Day 7 游戏人生 — 磨砂彩色散落 + 高级感
+function drawDay7(ctx, W, H, pad, item) {
+    // 大尺寸磨砂彩色光斑
+    var clrs = ['rgba(183,247,0,0.12)','rgba(66,141,255,0.10)','rgba(0,245,212,0.10)','rgba(255,180,80,0.08)','rgba(200,160,255,0.08)'];
+    for (var i = 0; i < 30; i++) {
+        var bx = W*0.03+Math.random()*W*0.94, by = H*0.14+Math.random()*H*0.50;
+        var br = 4+Math.random()*14;
+        var bglow = ctx.createRadialGradient(bx, by, 0, bx, by, br*1.5);
+        bglow.addColorStop(0, clrs[Math.floor(Math.random()*5)]);
+        bglow.addColorStop(0.5, 'rgba(255,255,255,0.04)');
+        bglow.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = bglow;
+        ctx.beginPath(); ctx.arc(bx, by, br*1.5, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.beginPath(); ctx.arc(bx, by, br*0.35, 0, Math.PI*2); ctx.fill();
+        if (Math.random() > 0.55) {
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.6;
+            ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI*2); ctx.stroke();
+        }
+    }
+    // 品牌栏
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = (W*0.03) + 'px "Georgia",serif';
+    ctx.fillText('◆  DAY 07', pad+W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    ctx.fillText('7 DAYS REBIRTH', W-pad-W*0.02, H*0.10);
+    ctx.textAlign = 'center';
+    // LIFE 大字区磨砂背景盘
+    var lifeBgR = W*0.22;
+    var lifeBg = ctx.createRadialGradient(W*0.42, H*0.30, lifeBgR*0.3, W*0.42, H*0.30, lifeBgR);
+    lifeBg.addColorStop(0, 'rgba(255,255,255,0.06)');
+    lifeBg.addColorStop(0.6, 'rgba(255,255,255,0.02)');
+    lifeBg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = lifeBg;
+    ctx.beginPath(); ctx.arc(W*0.42, H*0.30, lifeBgR, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.6;
+    ctx.beginPath(); ctx.arc(W*0.42, H*0.30, lifeBgR, 0, Math.PI*2); ctx.stroke();
+    // LIFE — 暖金白渐变
+    var lifeGrad = ctx.createLinearGradient(W*0.25, 0, W*0.75, 0);
+    lifeGrad.addColorStop(0, '#e8d0a0'); lifeGrad.addColorStop(0.3, '#ffffff');
+    lifeGrad.addColorStop(0.5, '#fffef8'); lifeGrad.addColorStop(0.7, '#ffffff');
+    lifeGrad.addColorStop(1, '#e8d0a0');
+    ctx.fillStyle = lifeGrad; ctx.font = 'bold ' + (W*0.14) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(255,200,120,0.3)'; ctx.shadowBlur = 20;
+    ctx.fillText('LIFE', W*0.45, H*0.31);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    // 高光
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    var hl7 = ctx.createLinearGradient(0, H*0.20, 0, H*0.31);
+    hl7.addColorStop(0, 'rgba(255,255,255,0.18)'); hl7.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hl7; ctx.font = 'bold ' + (W*0.14) + 'px "Georgia",serif';
+    ctx.fillText('LIFE', W*0.45, H*0.31); ctx.restore();
+    // IS A GAME
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.09) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(183,247,0,0.3)'; ctx.shadowBlur = 10;
+    ctx.fillText('IS A GAME', W*0.58, H*0.41);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    // 倾斜磨砂卡片 — PLAY IT
+    ctx.save(); ctx.translate(W*0.62, H*0.53); ctx.rotate(-0.12);
+    var cardW = W*0.22, cardH = W*0.09;
+    var cardGrad = ctx.createLinearGradient(0, -cardH/2, 0, cardH/2);
+    cardGrad.addColorStop(0, 'rgba(255,255,255,0.12)');
+    cardGrad.addColorStop(0.5, 'rgba(255,255,255,0.04)');
+    cardGrad.addColorStop(1, 'rgba(255,255,255,0.08)');
+    ctx.fillStyle = cardGrad;
+    ctx.fillRect(-cardW/2, -cardH/2, cardW, cardH);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 0.8;
+    ctx.strokeRect(-cardW/2, -cardH/2, cardW, cardH);
+    var playGrad = ctx.createLinearGradient(0, -cardH/2, 0, cardH/2);
+    playGrad.addColorStop(0, 'rgba(255,255,255,0.9)'); playGrad.addColorStop(1, 'rgba(255,255,255,0.5)');
+    ctx.fillStyle = playGrad;
+    ctx.font = 'italic bold ' + (W*0.07) + 'px "Georgia",serif';
+    ctx.fillText('PLAY IT', 0, cardH*0.12); ctx.restore();
+    // 下方文字磨砂条
+    var ty7 = H*0.58;
+    var txtBg = ctx.createLinearGradient(0, ty7-W*0.04, 0, ty7+W*0.10);
+    txtBg.addColorStop(0, 'rgba(255,255,255,0)');
+    txtBg.addColorStop(0.5, 'rgba(255,255,255,0.03)');
+    txtBg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = txtBg;
+    ctx.fillRect(W*0.08, ty7-W*0.02, W*0.84, W*0.10);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = (W*0.034) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('人生不是问题，而是一场游戏', W/2, ty7);
+    // 英文细节
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = 'italic ' + (W*0.024) + 'px "Georgia",serif';
+    ctx.fillText('ENJOY THE RIDE · TRUST THE PROCESS', W/2, ty7 + W*0.04);
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.03) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(item.title + '  ·  ' + item.desc, W/2, H*0.68);
+    addDecorations(ctx, W, H, pad);
+}
+var posterQuotes = [
+    "The first step to change<br>is seeing yourself clearly.",
+    "Accept who you are.<br>That's where transformation begins.",
+    "Redefine yourself<br>before the world does it for you.",
+    "Discover what makes<br>your soul come alive.",
+    "Fear is a door.<br>Walk through it.",
+    "Your mind is the operating system.<br>Upgrade it.",
+    "Life is not a problem to be solved<br>but a game to be played."
+];
+var posterCn = [
+    '改变的第一步，是看清自己。',
+    '接纳自己，蜕变由此开始。',
+    '在被世界定义之前，先定义自己。',
+    '找到让你灵魂燃烧的东西。',
+    '恐惧只是一扇门，走过去就好。',
+    '心智是操作系统，该升级了。',
+    '人生不是问题，而是一场游戏。'
+];
+var posterKeywords = [
+    '自我觉察  ·  直面真实  ·  不再逃避',
+    '放下评判  ·  拥抱不完美  ·  与自己和解',
+    '打破标签  ·  重新定义  ·  我即可能',
+    '探索内心  ·  描绘蓝图  ·  找到方向',
+    '直面恐惧  ·  突破自我  ·  勇敢前行',
+    '重塑思维  ·  优化习惯  ·  迭代进化',
+    '轻松前行  ·  享受过程  ·  成为新我',
+    '回望来路  ·  整装待发  ·  再次出发'
+];
+
+// Day 8 一周复盘 — 参照Day3斜切几何风格
+function drawDay8(ctx, W, H, pad, item) {
+    // 对角渐变底色
+    var diagGrad = ctx.createLinearGradient(0, H*0.6, W, H*0.2);
+    diagGrad.addColorStop(0, 'rgba(183,247,0,0.04)');
+    diagGrad.addColorStop(0.3, 'rgba(183,247,0,0.01)');
+    diagGrad.addColorStop(1, 'rgba(66,141,255,0.04)');
+    ctx.fillStyle = diagGrad; ctx.fillRect(0, 0, W, H);
+
+    // 对角斜线
+    ctx.strokeStyle = 'rgba(183,247,0,0.1)'; ctx.lineWidth = 0.6;
+    ctx.beginPath(); ctx.moveTo(pad, H*0.52); ctx.lineTo(W*0.62, H*0.18); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad, H*0.57); ctx.lineTo(W*0.68, H*0.23); ctx.stroke();
+
+    // 左上菱形
+    var dx = W*0.24, dy = H*0.26, dr = W*0.07;
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(dx, dy-dr); ctx.lineTo(dx+dr, dy); ctx.lineTo(dx, dy+dr); ctx.lineTo(dx-dr, dy); ctx.closePath(); ctx.stroke();
+    ctx.fillStyle = 'rgba(183,247,0,0.04)'; ctx.fill();
+
+    // 品牌栏
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = (W*0.03) + 'px "Georgia",serif';
+    ctx.fillText('◆  WEEKLY REVIEW', pad+W*0.02, H*0.10);
+    ctx.textAlign = 'right';
+    ctx.fillText('7 DAYS REBIRTH', W-pad-W*0.02, H*0.10);
+
+    // 大字 REVIEW — 左对齐
+    ctx.textAlign = 'left';
+    var reGrad = ctx.createLinearGradient(pad, 0, pad+W*0.5, 0);
+    reGrad.addColorStop(0, '#80E0FF'); reGrad.addColorStop(0.5, '#ffffff'); reGrad.addColorStop(1, '#D9FF70');
+    ctx.fillStyle = reGrad; ctx.font = 'bold ' + (W*0.13) + 'px "Georgia",serif';
+    ctx.shadowColor = 'rgba(183,247,0,0.2)'; ctx.shadowBlur = 12;
+    ctx.fillText('REVIEW', pad+W*0.02, H*0.32);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+
+    // 英文副标题 — 左对齐
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = 'italic ' + (W*0.038) + 'px "Georgia",serif';
+    ctx.fillText('Look back. Launch forward.', pad+W*0.02, H*0.40);
+
+    // 右对齐内容
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = (W*0.034) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText('回顾七日蜕变，整装再次出发', W-pad-W*0.02, H*0.50);
+
+    // 英文细节
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = 'italic ' + (W*0.024) + 'px "Georgia",serif';
+    ctx.fillText('REFLECT · REFINE · RELAUNCH', W-pad-W*0.02, H*0.46);
+
+    // 右对齐横线
+    ctx.strokeStyle = 'rgba(183,247,0,0.35)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W-pad-W*0.30, H*0.54); ctx.lineTo(W-pad-W*0.02, H*0.54); ctx.stroke();
+
+    // 5色渐变按钮 — 居中
+    var btnW = W*0.42, btnH = W*0.09, btnX = (W-btnW)/2, btnY = H*0.58, r = btnH/2;
+    var bg = ctx.createLinearGradient(btnX, 0, btnX+btnW, 0);
+    bg.addColorStop(0, '#3DB008'); bg.addColorStop(0.25, '#E9F8BC');
+    bg.addColorStop(0.5, '#E0FE44'); bg.addColorStop(0.75, '#00f5d4');
+    bg.addColorStop(1, '#0099ff');
+    ctx.fillStyle = bg;
+    ctx.beginPath();
+    ctx.moveTo(btnX+r, btnY); ctx.lineTo(btnX+btnW-r, btnY);
+    ctx.arcTo(btnX+btnW, btnY, btnX+btnW, btnY+r, r);
+    ctx.arcTo(btnX+btnW, btnY+btnH, btnX+btnW-r, btnY+btnH, r);
+    ctx.lineTo(btnX+r, btnY+btnH);
+    ctx.arcTo(btnX, btnY+btnH, btnX, btnY+btnH-r, r);
+    ctx.arcTo(btnX, btnY, btnX+r, btnY, r);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#1a1a1a'; ctx.font = 'bold ' + (W*0.028) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center'; ctx.fillText('WEEKLY  SUMMARY', W/2, btnY + btnH*0.62);
+
+    // 底部标签 — 右对齐
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#B7F700'; ctx.font = 'bold ' + (W*0.03) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(item.title + '  ·  ' + item.desc, W-pad-W*0.02, H*0.75);
+
+    addDecorations(ctx, W, H, pad);
+}
 
 var currentPosterDay = 1;
 
@@ -2055,21 +2777,30 @@ function renderPoster(day) {
     var stage = document.getElementById('posterStage');
     var unlocked = isDayUnlocked(day);
     var exploreBtn = document.getElementById('exploreBtn');
+    var exploreRow = document.getElementById('exploreRow');
 
-    if (unlocked) {
-        stage.classList.remove('locked');
-        exploreBtn.classList.remove('locked');
-        exploreBtn.href = 'day' + day + '.html';
-        exploreBtn.innerText = 'EXPLORE MORE';
-        inspiringBtn.style.opacity = '1';
-        inspiringBtn.style.pointerEvents = 'auto';
+    // Day8：半高 + 隐藏按钮
+    if (day === 8) {
+        stage.style.aspectRatio = '2/3';
+        exploreRow.style.display = 'none';
     } else {
-        stage.classList.add('locked');
-        exploreBtn.classList.add('locked');
-        exploreBtn.removeAttribute('href');
-        exploreBtn.innerText = '未解锁';
-        inspiringBtn.style.opacity = '0.3';
-        inspiringBtn.style.pointerEvents = 'none';
+        stage.style.aspectRatio = '2/3';
+        exploreRow.style.display = '';
+        if (unlocked) {
+            stage.classList.remove('locked');
+            exploreBtn.classList.remove('locked');
+            exploreBtn.href = 'day' + day + '.html';
+            exploreBtn.innerText = 'EXPLORE MORE';
+            inspiringBtn.style.opacity = '1';
+            inspiringBtn.style.pointerEvents = 'auto';
+        } else {
+            stage.classList.add('locked');
+            exploreBtn.classList.add('locked');
+            exploreBtn.removeAttribute('href');
+            exploreBtn.innerText = '未解锁';
+            inspiringBtn.style.opacity = '0.3';
+            inspiringBtn.style.pointerEvents = 'none';
+        }
     }
 
     document.querySelectorAll('.day-dot').forEach(function(d) {
@@ -2085,13 +2816,13 @@ function renderDayNav(activeDay) {
     var nav = document.getElementById('dayNav');
     nav.innerHTML = '';
     if (activeDay === undefined) activeDay = getCurrentDay();
-    for (var d = 1; d <= 7; d++) {
+    for (var d = 1; d <= 8; d++) {
         var dot = document.createElement('button');
         dot.className = 'day-dot';
         if (!isDayUnlocked(d)) dot.classList.add('locked');
         if (d === activeDay) dot.classList.add('active');
         dot.dataset.day = d;
-        dot.innerText = 'Day' + d;
+        dot.innerText = d === 8 ? '复盘' : 'Day' + d;
         dot.addEventListener('click', function() {
             var day = parseInt(this.dataset.day);
             if (isDayUnlocked(day)) {
@@ -2117,7 +2848,7 @@ function renderCards() {
     renderPoster(startDay);
     // 后台预加载其余解锁天的海报（只缓存，不显示）
     setTimeout(function() {
-        for (var d = 1; d <= 7; d++) {
+        for (var d = 1; d <= 8; d++) {
             if (d !== startDay && isDayUnlocked(d)) {
                 (function(day){ setTimeout(function(){ drawDayPoster(day, true); }, day*200); })(d);
             }

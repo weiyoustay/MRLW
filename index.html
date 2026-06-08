@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -405,6 +405,164 @@
             box-shadow: 0 2px 10px rgba(41,230,62,0.2);
         }
 
+/* ===== 日记按钮 — 5色渐变 ===== */
+.diary-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #3DB008, #E9F8BC, #E0FE44, #00f5d4, #0099ff);
+    border: none; color: #0a0a14;
+    border-radius: 22px; font-size: 14px; font-weight: 600;
+    letter-spacing: 2px; cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 4px 20px rgba(0,245,212,0.25), 0 0 40px rgba(0,153,255,0.1);
+    position: relative; overflow: hidden;
+}
+.diary-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,245,212,0.4), 0 0 60px rgba(0,153,255,0.2); }
+.diary-btn:active { transform: translateY(0) scale(0.96); }
+
+/* ===== 日记弹窗 · Apple Design ===== */
+.diary-overlay {
+    position: fixed; inset: 0; z-index: 2100;
+    background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.28s ease-out;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.diary-overlay.show { opacity: 1; pointer-events: auto; }
+.diary-panel {
+    position: relative; width: 400px; max-width: 94vw; max-height: 90vh;
+    border-radius: 20px; overflow: hidden;
+    background: #f5f5f7;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 0.5px rgba(0,0,0,0.08);
+    transform: translateY(20px) scale(0.96);
+    transition: transform 0.38s cubic-bezier(0.32,0.72,0,1);
+    display: flex; flex-direction: column;
+}
+.diary-overlay.show .diary-panel { transform: translateY(0) scale(1); }
+.diary-panel > * { position: relative; z-index: 1; }
+
+/* 头部 */
+.diary-header {
+    padding: 22px 24px 0; display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+}
+.diary-header-left { display: flex; flex-direction: column; }
+.diary-header-title {
+    font-size: 1rem; font-weight: 700; color: #1d1d1f; letter-spacing: -0.2px;
+}
+.diary-header-date { font-size: 0.75rem; color: #86868b; font-weight: 500; margin-top: 1px; }
+.diary-close-btn {
+    width: 28px; height: 28px; border-radius: 50%; border: none;
+    background: #e5e5ea; color: #86868b; font-size: 0.75rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+}
+.diary-close-btn:hover { background: #d1d1d6; color: #1d1d1f; }
+.diary-close-btn:active { transform: scale(0.9); }
+
+/* 提示条 · 顶部醒目 */
+.diary-notice {
+    margin: 12px 24px 0; padding: 10px 16px; border-radius: 12px;
+    background: rgba(0,153,255,0.08); color: #0077cc;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2px;
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.diary-notice::before { content: '⚠'; font-size: 0.85rem; }
+
+/* 心情选择 */
+.mood-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 24px 0; flex-shrink: 0;
+}
+.mood-label { font-size: 0.72rem; font-weight: 600; color: #86868b; white-space: nowrap; }
+.mood-options { display: flex; gap: 5px; flex: 1; justify-content: center; flex-wrap: wrap; }
+.mood-chip {
+    width: 42px; height: 48px; border-radius: 13px; border: 1.5px solid #e5e5ea;
+    background: #fff; cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.32,0.72,0,1);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    font-family: inherit;
+}
+.mood-chip:hover { background: #f5f5f7; border-color: #d1d1d6; }
+.mood-chip .mood-emoji { font-size: 1.1rem; line-height: 1; }
+.mood-chip .mood-word { font-size: 0.52rem; color: #86868b; font-weight: 500; }
+.mood-chip.selected {
+    border-color: var(--mc); background: color-mix(in srgb, var(--mc) 12%, #fff);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--mc) 20%, transparent);
+}
+.mood-chip.selected .mood-word { color: var(--mc); font-weight: 600; }
+
+/* 正文区 */
+.diary-body {
+    flex: 1; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
+    padding: 14px 24px 10px; min-height: 180px; max-height: 42vh;
+}
+.diary-body::-webkit-scrollbar { display: none; }
+.diary-textarea {
+    scrollbar-width: none; -ms-overflow-style: none;
+    width: 100%; min-height: 150px; border: none; outline: none;
+    background: #fff; border-radius: 14px;
+    padding: 16px; color: #1d1d1f; font-size: 0.9rem;
+    font-family: -apple-system,'SF Pro Display','PingFang SC','Microsoft YaHei',sans-serif;
+    line-height: 1.8; letter-spacing: 0.3px; resize: none;
+    transition: all 0.25s; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.diary-textarea:focus { box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
+.diary-textarea::placeholder { color: #c7c7cc; }
+
+/* 底部按钮 */
+.diary-footer { padding: 0 24px 20px; display: flex; gap: 10px; flex-shrink: 0; }
+.diary-save-btn {
+    flex: 1; padding: 13px; border-radius: 14px; border: none;
+    background: #1d1d1f; color: #fff; font-size: 0.85rem; font-weight: 600; letter-spacing: -0.2px;
+    cursor: pointer; transition: all 0.2s;
+}
+.diary-save-btn:active { transform: scale(0.96); opacity: 0.85; }
+.diary-save-btn.flash { background: #007aff; }
+.diary-history-btn {
+    padding: 13px 18px; border-radius: 14px; border: 1px solid #d1d1d6;
+    background: #fff; color: #1d1d1f; font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.diary-history-btn:active { background: #f5f5f7; }
+.diary-history-list { padding: 0; }
+/* 往期列表：心情色按钮 */
+.diary-entry {
+    display: inline-block; padding: 10px 16px; border-radius: 18px; margin: 4px;
+    cursor: pointer; transition: all 0.2s; border: none;
+    color: #fff; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.5px;
+}
+.diary-entry:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+.diary-entry:active { transform: scale(0.95); }
+.diary-entry-date { display: flex; align-items: center; gap: 6px; }
+.mood-tag { font-size: 0.65rem; opacity: 0.9; }
+.diary-empty { text-align: center; color: #c7c7cc; font-size: 0.85rem; padding: 40px 0; }
+
+/* 日记详情卡片 · 5色渐变 */
+.diary-view-card {
+    padding: 32px 24px 24px; border-radius: 20px;
+    background: #fff;
+    position: relative;
+}
+.diary-view-card .return-btn {
+    position: absolute; top: 14px; right: 14px; z-index: 3;
+    padding: 6px 16px; border-radius: 18px; border: none;
+    background: linear-gradient(135deg, #3DB008, #E9F8BC, #E0FE44, #00f5d4, #0099ff);
+    color: #1a3a00; font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+    cursor: pointer; transition: all 0.2s;
+}
+.diary-view-card .return-btn:active { transform: scale(0.94); }
+.diary-view-date { font-size: 0.72rem; color: #86868b; margin-bottom: 6px; letter-spacing: 1px; }
+.diary-view-mood { font-size: 1.4rem; margin-bottom: 10px; }
+.diary-view-text { font-size: 0.92rem; color: #1d1d1f; line-height: 2; letter-spacing: 0.4px; white-space: pre-wrap; }
+.diary-view-back {
+    margin-top: 16px; padding: 9px 20px; border-radius: 12px; border: 1px solid rgba(26,58,0,0.2);
+    background: rgba(255,255,255,0.25); color: #1a3a00; font-size: 0.75rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.diary-view-back:hover { background: rgba(255,255,255,0.45); }
+.diary-char-count { font-size: 0.62rem; color: #86868b; text-align: right; padding: 4px 24px 0; flex-shrink: 0; }
+
         .skip-intro .breath-dot { display: none; }
         .skip-intro .logo span {
             animation: none !important;
@@ -581,7 +739,7 @@ body.no-page-anim { animation: none !important; }
 	    outline: none; font-family: inherit; font-weight: 500;
 	}
 	.cal-add-input::placeholder { color: rgba(26,58,0,0.4); }
-	.cal-add-input:focus { border-color: rgba(26,58,0,0.5); background: rgba(0,0,0,0.14); }
+	.cal-add-input:focus { border-color: #86868b; background: rgba(0,0,0,0.14); }
 	.cal-add-type { display: flex; gap: 4px; margin-bottom: 6px; }
 	.cal-type-btn {
 	    padding: 4px 10px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.18);
@@ -717,6 +875,7 @@ body.no-page-anim { animation: none !important; }
         <div class="buttons-wrap" id="buttonsWrap">
             <button class="action-btn" id="btnGrow">向内生长，向外重塑</button>
             <button class="action-btn" id="btnLight">给我一点光</button>
+            <button class="diary-btn" id="btnDiary" onclick="openDiary()">静心日记</button>
         </div>
     </div>
 
@@ -726,6 +885,41 @@ body.no-page-anim { animation: none !important; }
     </div>
 
     <div class="overlay" id="overlay"></div>
+
+<!-- ===== 日记弹窗 ===== -->
+<div class="diary-overlay" id="diaryOverlay">
+    <div class="diary-panel">
+        <div class="diary-header">
+            <div class="diary-header-left">
+                <span class="diary-header-title">静心日记</span>
+                <span class="diary-header-date" id="diaryDate"></span>
+            </div>
+            <button class="diary-close-btn" onclick="closeDiary()">✕</button>
+        </div>
+        <div class="diary-notice" id="diaryNotice">一天只能写一次，重复保存将覆盖今天的内容</div>
+        <div class="mood-row" id="moodRow">
+            <span class="mood-label">今日心情</span>
+            <div class="mood-options" id="moodOptions">
+                <button class="mood-chip" data-mood="7" data-emoji="😌" data-label="平静" data-color="#3DB008" onclick="selectMood(this)"><span class="mood-emoji">😌</span><span class="mood-word">平静</span></button>
+                <button class="mood-chip" data-mood="6" data-emoji="😊" data-label="快乐" data-color="#E0FE44" onclick="selectMood(this)"><span class="mood-emoji">😊</span><span class="mood-word">快乐</span></button>
+                <button class="mood-chip" data-mood="5" data-emoji="😔" data-label="低落" data-color="#58F0FF" onclick="selectMood(this)"><span class="mood-emoji">😔</span><span class="mood-word">低落</span></button>
+                <button class="mood-chip" data-mood="4" data-emoji="😤" data-label="烦躁" data-color="#0EDEFF" onclick="selectMood(this)"><span class="mood-emoji">😤</span><span class="mood-word">烦躁</span></button>
+                <button class="mood-chip" data-mood="3" data-emoji="😰" data-label="焦虑" data-color="#00C1E9" onclick="selectMood(this)"><span class="mood-emoji">😰</span><span class="mood-word">焦虑</span></button>
+                <button class="mood-chip" data-mood="2" data-emoji="😶" data-label="迷茫" data-color="#0098C3" onclick="selectMood(this)"><span class="mood-emoji">😶</span><span class="mood-word">迷茫</span></button>
+                <button class="mood-chip" data-mood="1" data-emoji="😴" data-label="疲惫" data-color="#017598" onclick="selectMood(this)"><span class="mood-emoji">😴</span><span class="mood-word">疲惫</span></button>
+            </div>
+        </div>
+        <div class="diary-char-count"><span id="diaryCharCount">0</span> 字</div>
+        <div class="diary-body" id="diaryBody">
+            <textarea class="diary-textarea" id="diaryTextarea" placeholder="今天发生了什么？" oninput="updateCharCount()"></textarea>
+            <div class="diary-history-list" id="diaryHistoryList" style="display:none;"></div>
+        </div>
+        <div class="diary-footer" id="diaryFooter">
+            <button class="diary-history-btn" id="diaryHistoryBtn" onclick="toggleHistory()">往期</button>
+            <button class="diary-save-btn" id="diarySaveBtn" onclick="saveDiary()">保存</button>
+        </div>
+    </div>
+</div>
 
     <script>
 /* 背景图模糊加载：LQIP占位符瞬间显示，WebP加载完成后清晰淡入 */
@@ -979,6 +1173,105 @@ var d=now.getDate(),wd=["日","一","二","三","四","五","六"][now.getDay()]
 var n=performance.getEntriesByType('navigation')[0];
 if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
 })();
+// ===== 日记 =====
+var DIARY_KEY='njgDiaryEntries', diaryEntries=[], selectedMood=null;
+try{diaryEntries=JSON.parse(localStorage.getItem(DIARY_KEY))||[]}catch(e){}
+(function(){
+  var seen={},migrated=false;
+  diaryEntries.forEach(function(e){
+    if(!e.dateKey&&e.date){var d=new Date(e.date);e.dateKey=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');migrated=true}
+  });
+  diaryEntries=diaryEntries.filter(function(e){if(!e.dateKey)return true;if(seen[e.dateKey])return false;seen[e.dateKey]=true;return true});
+  if(migrated)localStorage.setItem(DIARY_KEY,JSON.stringify(diaryEntries));
+})();
+function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fd(d){var w=['日','一','二','三','四','五','六'];return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')+' 星期'+w[d.getDay()]}
+
+function wmode(){document.getElementById('diaryTextarea').style.display='';document.getElementById('diaryHistoryList').style.display='none';document.getElementById('moodRow').style.display='';document.getElementById('diaryNotice').style.display='';document.getElementById('diaryHistoryBtn').textContent='往期'}
+function vmode(){document.getElementById('diaryTextarea').style.display='none';document.getElementById('diaryHistoryList').style.display='';document.getElementById('moodRow').style.display='none';document.getElementById('diaryNotice').style.display='none';document.getElementById('diaryHistoryBtn').textContent='写日记'}
+
+window.selectMood=function(chip){
+  document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){c.classList.remove('selected');c.style.removeProperty('--mc')});
+  chip.classList.add('selected');
+  chip.style.setProperty('--mc',chip.dataset.color);
+  selectedMood={score:parseInt(chip.dataset.mood),emoji:chip.dataset.emoji,label:chip.dataset.label,color:chip.dataset.color};
+};
+
+window.openDiary=function(){
+  var now=new Date(),tk=dk(now),te=null;
+  for(var i=0;i<diaryEntries.length;i++){if(diaryEntries[i].dateKey===tk){te=diaryEntries[i];break}}
+  document.getElementById('diaryDate').textContent=fd(now);
+  document.getElementById('diaryOverlay').classList.add('show');
+  if(te){vmode();_view(te)}
+  else{
+    wmode();document.getElementById('diaryTextarea').value='';selectedMood=null;
+    document.getElementById('moodIndex').style.display='none';
+    document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){c.classList.remove('selected')});
+    document.getElementById('diarySaveBtn').textContent='保存';
+    document.getElementById('diaryNotice').textContent='一天只能写一次，重复保存将覆盖今天的内容';
+    document.getElementById('diaryCharCount').textContent='0';
+    document.getElementById('diaryTextarea').focus();
+  }
+};
+
+window.saveDiary=function(){
+  var text=document.getElementById('diaryTextarea').value.trim();if(!text)return;
+  var now=new Date(),tk=dk(now);
+  var idx=-1;for(var i=0;i<diaryEntries.length;i++){if(diaryEntries[i].dateKey===tk){idx=i;break}}
+  var entry;
+  if(idx>=0){diaryEntries[idx].text=text;diaryEntries[idx].mood=selectedMood;entry=diaryEntries[idx]}
+  else{entry={id:now.getTime(),dateKey:tk,text:text,mood:selectedMood};diaryEntries.unshift(entry);if(diaryEntries.length>100)diaryEntries.length=100}
+  localStorage.setItem(DIARY_KEY,JSON.stringify(diaryEntries));
+  vmode();_view(entry);
+};
+
+window.toggleHistory=function(){
+  if(document.getElementById('diaryHistoryList').style.display==='none'){vmode();_history()}
+  else{wmode();document.getElementById('diaryTextarea').value='';selectedMood=null;document.getElementById('moodIndex').style.display='none';document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){c.classList.remove('selected')});document.getElementById('diarySaveBtn').textContent='保存';document.getElementById('diaryNotice').textContent='一天只能写一次，重复保存将覆盖今天的内容';document.getElementById('diaryCharCount').textContent='0';document.getElementById('diaryTextarea').focus()}
+};
+
+function _view(entry){
+  var d=new Date(entry.dateKey+'T00:00:00'),isToday=entry.dateKey===dk(new Date());
+  var mood=entry.mood?'<div class="diary-view-mood">'+entry.mood.emoji+' '+entry.mood.label+'</div>':'';
+  var edit=isToday?'<button class="diary-view-back" onclick="_editToday()" style="margin-right:8px;">编辑</button>':'';
+  var pastLine=isToday?'':'<div style="margin-top:18px;padding-top:14px;border-top:1px solid #e5e5ea;font-size:0.7rem;color:#86868b;text-align:center;letter-spacing:0.5px;">过去的就让它过去吧，不必再停留</div>';
+  document.getElementById('diaryHistoryList').innerHTML='<div class="diary-view-card"><button class="return-btn" onclick="_history()">RETURN</button><div class="diary-view-date">'+fd(d)+'</div>'+mood+'<div class="diary-view-text">'+entry.text+'</div>'+pastLine+'<div style="margin-top:10px;">'+edit+'</div></div>';
+}
+
+function _history(){
+  var list=document.getElementById('diaryHistoryList');
+  if(diaryEntries.length===0){list.innerHTML='<div class="diary-empty">还没有日记<br>写下第一篇吧</div>';return}
+  var html='<div style="text-align:center;">';
+  diaryEntries.forEach(function(e){
+    var d=new Date(e.dateKey+'T00:00:00'),isToday=e.dateKey===dk(new Date());
+    var bg=e.mood&&e.mood.color?e.mood.color:'#86868b';
+    var label=e.mood?e.mood.emoji+' '+fd(d):fd(d);
+    var todayMark=isToday?' · 今天':'';
+    html+='<button class="diary-entry" style="background:'+bg+';" onclick="_view(diaryEntries.find(function(x){return x.id==='+e.id+'}))">'+label+todayMark+'</button>';
+  });
+  html+='</div>';
+  list.innerHTML=html;
+}
+
+window._editToday=function(){
+  var tk=dk(new Date()),entry=null;
+  for(var i=0;i<diaryEntries.length;i++){if(diaryEntries[i].dateKey===tk){entry=diaryEntries[i];break}}
+  if(!entry)return;
+  wmode();
+  document.getElementById('diaryTextarea').value=entry.text;
+  selectedMood=entry.mood||null;
+  document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){c.classList.remove('selected');c.style.removeProperty('--mc')});
+  if(entry.mood){document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){if(c.dataset.mood==entry.mood.score){c.classList.add('selected');c.style.setProperty('--mc',c.dataset.color)}})}
+  document.getElementById('diarySaveBtn').textContent='更新';
+  document.getElementById('diaryNotice').textContent='正在编辑今天的记录，保存后将覆盖之前的内容';
+  document.getElementById('diaryCharCount').textContent=entry.text.length;
+  document.getElementById('diaryTextarea').focus();
+};
+
+window.updateCharCount=function(){document.getElementById('diaryCharCount').textContent=document.getElementById('diaryTextarea').value.length};
+window.closeDiary=function(){document.getElementById('diaryOverlay').classList.remove('show')};
+document.getElementById('diaryOverlay').addEventListener('click',function(e){if(e.target===this)closeDiary()});
 </script>
+
 </body>
 </html>
