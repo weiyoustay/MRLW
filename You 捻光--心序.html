@@ -66,33 +66,39 @@ body { background:#0a0a14; }
 .prog .lbl { font-size:0.55rem; color:rgba(255,255,255,0.35); letter-spacing:1px; }
 .prog .range { font-size:0.55rem; color:rgba(255,255,255,0.2); letter-spacing:0.5px; }
 
-.board-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-.board { display:grid; gap:5px; padding:12px; border-radius:18px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.05); }
+.board-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
+.board { display:grid; gap:5px; padding:14px; border-radius:20px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.05); box-shadow:0 8px 32px rgba(0,0,0,0.15); position:relative; }
+.board::before { content:''; position:absolute; inset:-1px; border-radius:20px; padding:1px; background:linear-gradient(135deg,rgba(255,255,255,0.03),transparent 40%,rgba(255,255,255,0.03)); -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
 .board.s3 { grid-template-columns:repeat(3,1fr); }
 .board.s4 { grid-template-columns:repeat(4,1fr); }
-.tile { aspect-ratio:1; border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:1.2rem; text-shadow:0 1px 3px rgba(0,0,0,0.3); position:relative; user-select:none; box-shadow:0 3px 12px rgba(0,0,0,0.25); transition:transform 0.12s ease; }
-.tile::after { content:''; position:absolute; inset:0; border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 35%); pointer-events:none; }
+.tile { aspect-ratio:1; border-radius:15px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:1.2rem; text-shadow:0 1px 3px rgba(0,0,0,0.3); position:relative; user-select:none; box-shadow:0 4px 14px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.06) inset; transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s ease; cursor:pointer; }
+.tile::after { content:''; position:absolute; inset:0; border-radius:15px; background:linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 40%); pointer-events:none; }
+.tile:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1) inset; }
 .tile:active { transform:scale(0.88); }
-.tile.gone { background:rgba(255,255,255,0.03); cursor:default; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,0.05); }
+.tile.gone { background:rgba(255,255,255,0.025); cursor:default; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,0.04); }
 .tile.gone::after { display:none; }
+.tile.gone:hover { transform:none; }
 .tile.gone:active { transform:none; }
-.tile.wait { background:rgba(255,255,255,0.015); cursor:default; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.03); color:rgba(255,255,255,0.07); font-size:0.85rem; }
+.tile.wait { background:rgba(255,255,255,0.012); cursor:default; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.025); color:rgba(255,255,255,0.06); font-size:0.85rem; }
 .tile.wait::after { display:none; }
+.tile.wait:hover { transform:none; }
 .board.s3 .tile { width:78px; font-size:1.35rem; }
 .board.s4 .tile { width:55px; font-size:0.95rem; }
 .tile.lit { color:#1a3a00; text-shadow:none; }
-.tile.lit::after { background:linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 35%); }
+.tile.lit::after { background:linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 40%); }
 
-.hint { font-size:0.65rem; color:rgba(255,255,255,0.3); text-align:center; margin:8px 0; letter-spacing:0.5px; min-height:16px; }
-.action { padding:13px 40px; border-radius:24px; border:none; font-weight:600; font-size:0.82rem; letter-spacing:2px; cursor:pointer; font-family:inherit; background:linear-gradient(135deg,#3DB008,#B8E620); color:#1a3a00; box-shadow:0 4px 20px rgba(61,176,8,0.25); transition:all 0.3s; }
-.action:disabled { opacity:0.18; }
-.action:active { transform:scale(0.95); }
+.hint { font-size:0.65rem; color:rgba(255,255,255,0.3); text-align:center; letter-spacing:0.5px; min-height:16px; }
+.action { padding:14px 44px; border-radius:26px; border:none; font-weight:600; font-size:0.85rem; letter-spacing:2px; cursor:pointer; font-family:inherit; background:linear-gradient(135deg,#3DB008,#B8E620); color:#1a3a00; box-shadow:0 4px 22px rgba(61,176,8,0.3); transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); position:relative; overflow:hidden; }
+.action::after { content:''; position:absolute; inset:0; border-radius:26px; background:linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%); pointer-events:none; }
+.action:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 6px 28px rgba(61,176,8,0.45); }
+.action:disabled { opacity:0.15; }
+.action:active:not(:disabled) { transform:scale(0.94); }
 
-.tip { position:fixed; z-index:100; padding:8px 14px; border-radius:10px; background:rgba(18,18,32,0.96); color:#fff; font-size:0.7rem; text-align:center; white-space:nowrap; border:1px solid rgba(255,255,255,0.08); opacity:0; pointer-events:none; transition:opacity 0.2s; }
+.tip { position:fixed; z-index:100; padding:8px 14px; border-radius:10px; background:rgba(18,18,32,0.96); color:#fff; font-size:0.7rem; text-align:center; white-space:nowrap; border:1px solid rgba(255,255,255,0.08); box-shadow:0 8px 24px rgba(0,0,0,0.3); opacity:0; pointer-events:none; transition:opacity 0.2s; }
 .tip.on { opacity:1; }
 
-.confetti { position:fixed; z-index:200; width:8px; height:8px; border-radius:2px; animation:fall 1.6s ease-out forwards; }
-@keyframes fall { from{opacity:1;transform:translate(0,0) rotate(0)} to{opacity:0;transform:translate(var(--x),105vh) rotate(var(--r))} }
+.confetti { position:fixed; z-index:200; pointer-events:none; width:10px; height:10px; border-radius:3px; animation:fall 1.8s ease-out forwards; }
+@keyframes fall { 0%{opacity:1;transform:translate(0,0) rotate(0deg) scale(1)} 100%{opacity:0;transform:translate(var(--x),110vh) rotate(var(--r)) scale(0.3)} }
 </style>
 </head>
 <body>
@@ -169,7 +175,7 @@ var M=['','疲惫','迷茫','焦虑','烦躁','低落','快乐','平静'];
 var Q=['别执着过往得失，别焦虑未知以后，好好握住当下的时光就足够。','不必困在回忆里内耗，也不用为未来惴惴不安，眼前此刻便是礼物。','所有的情绪都会过去，就像色块终将归位。','焦虑是心在说话，低落是心在休息。','心乱的时候，把色块一个个归位，也是在整理自己。'];
 var pn=localStorage.getItem('playerName')||'朋友';
 
-var mode=3, tiles=[], empty, playing=false, done=false;
+var mode=3, tiles=[], empty, playing=false, done=false, steps=0;
 
 function fm(dk){var p=dk.split('-');return p[0]+'.'+parseInt(p[1])+'月'+parseInt(p[2])+'日'}
 
@@ -223,7 +229,7 @@ function draw(){
 
   var b=document.getElementById('board'), h=document.getElementById('hint'), a=document.getElementById('goBtn');
   if(done){
-    b.innerHTML='<div style="text-align:center;padding:28px 20px;color:#fff;max-width:320px;"><div style="display:inline-block;padding:6px 16px;border-radius:14px;background:rgba(168,230,0,0.06);border:1px solid rgba(168,230,0,0.15);font-size:0.55rem;color:rgba(168,230,0,0.6);letter-spacing:3px;margin-bottom:14px;">◆ 心 序 签 ◆</div><div style="font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:2;letter-spacing:0.5px;">'+Q[Math.floor(Math.random()*Q.length)]+'</div><div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:16px;">'+ms.map(function(m){return '<div style="width:13px;height:13px;border-radius:4px;background:'+m.c+';box-shadow:0 2px 6px rgba(0,0,0,0.2);"></div>'}).join('')+'</div></div>';
+    b.innerHTML='<div style="text-align:center;padding:32px 20px;color:#fff;max-width:320px;"><div style="display:inline-block;padding:6px 16px;border-radius:14px;background:rgba(168,230,0,0.06);border:1px solid rgba(168,230,0,0.15);font-size:0.55rem;color:rgba(168,230,0,0.6);letter-spacing:3px;margin-bottom:14px;">◆ 心 序 签 ◆</div><div style="font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:2;letter-spacing:0.5px;margin-bottom:8px;">'+Q[Math.floor(Math.random()*Q.length)]+'</div><div style="font-size:0.6rem;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:16px;">共 '+steps+' 步完成归序</div><div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;">'+ms.map(function(m){return '<div style="width:13px;height:13px;border-radius:4px;background:'+m.c+';box-shadow:0 2px 6px rgba(0,0,0,0.2);"></div>'}).join('')+'</div></div>';
     b.className=''; h.textContent='心序归位，内心也安顿好了'; a.textContent='再归一次'; a.disabled=false; return;
   }
   if(got<n){
@@ -249,11 +255,11 @@ function render(){
 }
 
 function start(){
-  if(done){done=false;playing=false;draw();return}
+  if(done){done=false;playing=false;steps=0;draw();return}
   var n=mode===3?8:15, ms=moods(n); if(ms.length<n)return;
-  tiles=ms.map(function(m,i){return {d:m.d,c:m.c,s:m.s,l:m.l,dk:m.dk}}); tiles.push({gone:true}); empty=tiles.length-1; playing=true;
+  tiles=ms.map(function(m,i){return {d:m.d,c:m.c,s:m.s,l:m.l,dk:m.dk}}); tiles.push({gone:true}); empty=tiles.length-1; playing=true; steps=0;
   for(var s=0;s<(mode===3?120:280);s++){var nb=nbr(empty);var p=nb[Math.floor(Math.random()*nb.length)];swp(p,empty);empty=p}
-  render(); document.getElementById('hint').textContent='移动色块，按 1-'+n+' 顺序归位';
+  render(); document.getElementById('hint').textContent='移动色块，按 1-'+n+' 顺序归位 · 0 步';
 }
 
 function nbr(i){var s=mode,n=[];var r=Math.floor(i/s),c=i%s;if(r>0)n.push(i-s);if(r<s-1)n.push(i+s);if(c>0)n.push(i-1);if(c<s-1)n.push(i+1);return n}
@@ -261,8 +267,9 @@ function swp(a,b){var t=tiles[a];tiles[a]=tiles[b];tiles[b]=t}
 
 function mv(i){
   if(!playing)return; if(nbr(empty).indexOf(i)===-1)return;
-  swp(i,empty); empty=i; render();
-  if(win()){playing=false;done=true;document.getElementById('hint').textContent='✨ 心序归位';pop();draw()}
+  swp(i,empty); empty=i; steps++; render();
+  var n=mode===3?8:15; document.getElementById('hint').textContent='移动色块，按 1-'+n+' 顺序归位 · '+steps+' 步';
+  if(win()){playing=false;done=true;document.getElementById('hint').textContent='✨ 心序归位！共 '+steps+' 步';pop();draw()}
 }
 function win(){for(var i=0;i<tiles.length-1;i++){if(tiles[i].d!==i+1)return false}return tiles[tiles.length-1].gone}
 
