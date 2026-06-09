@@ -49,50 +49,53 @@ body { background:#0a0a14; }
 .intro .start-btn:disabled { opacity:0.2; }
 
 /* ── 游戏页 ── */
-.game { display:none; flex-direction:column; align-items:center; width:100%; height:100%; padding:14px 16px; color:#fff; animation:fadeIn 0.4s ease; }
+.game { display:none; flex-direction:column; align-items:center; width:100%; height:100%; color:#fff; animation:fadeIn 0.5s ease; }
 .game.on { display:flex; }
-.game .top { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:420px; margin-bottom:4px; }
-.game .label { font-size:0.72rem; color:rgba(255,255,255,0.35); letter-spacing:2px; }
-.game .tabs { position:fixed; top:18px; right:18px; z-index:10; display:flex; gap:5px; }
-.game .tab { padding:6px 14px; border-radius:14px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.3); font-size:0.68rem; cursor:pointer; font-family:inherit; letter-spacing:1px; transition:all 0.3s; }
-.game .tab.on { background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2); }
 
-/* 进度环 */
-.prog { display:flex; align-items:center; gap:10px; margin:6px 0; }
-.prog svg { width:36px; height:36px; flex-shrink:0; }
-.prog .pbg { fill:none; stroke:rgba(255,255,255,0.06); stroke-width:2.5; }
-.prog .pfg { fill:none; stroke:url(#pg); stroke-width:2.5; stroke-linecap:round; transform:rotate(-90deg); transform-origin:center; transition:stroke-dashoffset 0.6s ease; }
-.prog .num { font-size:1rem; font-weight:600; color:#fff; }
-.prog .lbl { font-size:0.55rem; color:rgba(255,255,255,0.35); letter-spacing:1px; }
-.prog .range { font-size:0.55rem; color:rgba(255,255,255,0.2); letter-spacing:0.5px; }
+/* 进度卡片 */
+.prog-card { display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:18px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); margin:60px 0 8px; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+.prog-card svg { width:42px; height:42px; flex-shrink:0; }
+.prog-card .pbg { fill:none; stroke:rgba(255,255,255,0.06); stroke-width:3; }
+.prog-card .pfg { fill:none; stroke:url(#pg); stroke-width:3; stroke-linecap:round; transform:rotate(-90deg); transform-origin:center; transition:stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); }
+.prog-card .info { display:flex; flex-direction:column; }
+.prog-card .num { font-size:1.3rem; font-weight:600; color:#fff; letter-spacing:1px; }
+.prog-card .lbl { font-size:0.58rem; color:rgba(255,255,255,0.3); letter-spacing:2px; }
+.prog-card .range { font-size:0.55rem; color:rgba(255,255,255,0.18); letter-spacing:0.5px; margin-top:1px; }
 
-.board-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
-.board { display:grid; gap:5px; padding:14px; border-radius:20px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.05); box-shadow:0 8px 32px rgba(0,0,0,0.15); position:relative; }
-.board::before { content:''; position:absolute; inset:-1px; border-radius:20px; padding:1px; background:linear-gradient(135deg,rgba(255,255,255,0.03),transparent 40%,rgba(255,255,255,0.03)); -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
+/* 模式选择 */
+.game .mode-row { margin-bottom:6px; }
+.game .mode-btn { padding:8px 20px; border-radius:16px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.35); font-size:0.72rem; cursor:pointer; font-family:inherit; letter-spacing:1px; transition:all 0.3s; }
+.game .mode-btn.on { background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2); }
+.game .mode-btn .sm { font-size:0.5rem; opacity:0.4; display:block; }
+
+/* 棋盘 */
+.board-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:0 16px; width:100%; }
+.board { display:grid; gap:6px; padding:16px; border-radius:22px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 40px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.03); position:relative; }
+.board::before { content:''; position:absolute; inset:-1px; border-radius:22px; padding:1px; background:linear-gradient(160deg,rgba(255,255,255,0.04),transparent 50%,rgba(255,255,255,0.02)); -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
 .board.s3 { grid-template-columns:repeat(3,1fr); }
 .board.s4 { grid-template-columns:repeat(4,1fr); }
-.tile { aspect-ratio:1; border-radius:15px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:1.2rem; text-shadow:0 1px 3px rgba(0,0,0,0.3); position:relative; user-select:none; box-shadow:0 4px 14px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.06) inset; transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s ease; cursor:pointer; }
-.tile::after { content:''; position:absolute; inset:0; border-radius:15px; background:linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 40%); pointer-events:none; }
-.tile:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1) inset; }
-.tile:active { transform:scale(0.88); }
-.tile.gone { background:rgba(255,255,255,0.025); cursor:default; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,0.04); }
-.tile.gone::after { display:none; }
-.tile.gone:hover { transform:none; }
-.tile.gone:active { transform:none; }
-.tile.wait { background:rgba(255,255,255,0.012); cursor:default; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.025); color:rgba(255,255,255,0.06); font-size:0.85rem; }
-.tile.wait::after { display:none; }
-.tile.wait:hover { transform:none; }
-.board.s3 .tile { width:78px; font-size:1.35rem; }
-.board.s4 .tile { width:55px; font-size:0.95rem; }
-.tile.lit { color:#1a3a00; text-shadow:none; }
-.tile.lit::after { background:linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 40%); }
 
-.hint { font-size:0.65rem; color:rgba(255,255,255,0.3); text-align:center; letter-spacing:0.5px; min-height:16px; }
-.action { padding:14px 44px; border-radius:26px; border:none; font-weight:600; font-size:0.85rem; letter-spacing:2px; cursor:pointer; font-family:inherit; background:linear-gradient(135deg,#3DB008,#B8E620); color:#1a3a00; box-shadow:0 4px 22px rgba(61,176,8,0.3); transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); position:relative; overflow:hidden; }
-.action::after { content:''; position:absolute; inset:0; border-radius:26px; background:linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%); pointer-events:none; }
-.action:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 6px 28px rgba(61,176,8,0.45); }
-.action:disabled { opacity:0.15; }
-.action:active:not(:disabled) { transform:scale(0.94); }
+.tile { aspect-ratio:1; border-radius:16px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:1.25rem; text-shadow:0 1px 4px rgba(0,0,0,0.35); position:relative; user-select:none; box-shadow:0 4px 16px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08) inset; transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; cursor:pointer; }
+.tile::after { content:''; position:absolute; inset:0; border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,0.14) 0%, transparent 45%); pointer-events:none; }
+.tile:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.12) inset; }
+.tile:active { transform:scale(0.86); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+.tile.gone { background:rgba(255,255,255,0.025) !important; cursor:default; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,0.04); }
+.tile.gone::after,.tile.gone:hover { display:none; transform:none; }
+.tile.wait { background:rgba(255,255,255,0.012) !important; cursor:default; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.025); color:rgba(255,255,255,0.06); font-size:0.9rem; }
+.tile.wait::after,.tile.wait:hover { display:none; transform:none; }
+.board.s3 .tile { width:80px; font-size:1.4rem; }
+.board.s4 .tile { width:56px; font-size:0.95rem; }
+.tile.lit { color:#1a3a00; text-shadow:none; }
+.tile.lit::after { background:linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 45%); }
+
+/* 控制区 */
+.ctrl { display:flex; flex-direction:column; align-items:center; gap:6px; padding-bottom:8px; }
+.hint { font-size:0.62rem; color:rgba(255,255,255,0.25); text-align:center; letter-spacing:0.5px; min-height:14px; }
+.action { padding:15px 48px; border-radius:28px; border:none; font-weight:600; font-size:0.88rem; letter-spacing:2px; cursor:pointer; font-family:inherit; background:linear-gradient(135deg,#3DB008,#B8E620); color:#1a3a00; box-shadow:0 4px 24px rgba(61,176,8,0.35); transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); position:relative; overflow:hidden; }
+.action::after { content:''; position:absolute; inset:0; border-radius:28px; background:linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 50%); pointer-events:none; }
+.action:hover:not(:disabled) { transform:translateY(-3px); box-shadow:0 8px 32px rgba(61,176,8,0.55); }
+.action:disabled { opacity:0.12; transform:none; box-shadow:none; }
+.action:active:not(:disabled) { transform:scale(0.93); }
 
 .tip { position:fixed; z-index:100; padding:8px 14px; border-radius:10px; background:rgba(18,18,32,0.96); color:#fff; font-size:0.7rem; text-align:center; white-space:nowrap; border:1px solid rgba(255,255,255,0.08); box-shadow:0 8px 24px rgba(0,0,0,0.3); opacity:0; pointer-events:none; transition:opacity 0.2s; }
 .tip.on { opacity:1; }
@@ -136,27 +139,30 @@ body { background:#0a0a14; }
     <!-- ── 游戏页 ── -->
     <div class="game" id="game">
         <button class="back-btn" style="position:fixed;top:18px;left:18px;z-index:10;" onclick="back()">← 返回</button>
-        <div class="tabs">
-            <button class="tab on" id="gt3" onclick="setMode(3)">3×3</button>
-            <button class="tab" id="gt4" onclick="setMode(4)">4×4</button>
-        </div>
-        <div class="top">
-            <span class="label" id="gLabel">心序·周</span>
+
+        <div class="prog-card">
+            <svg viewBox="0 0 42 42">
+                <defs><linearGradient id="pg"><stop offset="0%" stop-color="#3DB008"/><stop offset="50%" stop-color="#E0FE44"/><stop offset="100%" stop-color="#00f5d4"/></linearGradient></defs>
+                <circle class="pbg" cx="21" cy="21" r="18"/>
+                <circle class="pfg" id="pFg" cx="21" cy="21" r="18" stroke-dasharray="113.1" stroke-dashoffset="113.1"/>
+            </svg>
+            <div class="info">
+                <span class="num" id="pNum">0</span>
+                <span class="lbl" id="pLbl">/ 8 天</span>
+                <span class="range" id="pRange"></span>
+            </div>
         </div>
 
-        <!-- 进度环 -->
-        <div class="prog">
-            <svg viewBox="0 0 36 36">
-                <defs><linearGradient id="pg"><stop offset="0%" stop-color="#3DB008"/><stop offset="50%" stop-color="#E0FE44"/><stop offset="100%" stop-color="#00f5d4"/></linearGradient></defs>
-                <circle class="pbg" cx="18" cy="18" r="15"/>
-                <circle class="pfg" id="pFg" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/>
-            </svg>
-            <div><span class="num" id="pNum">0</span><span class="lbl" id="pLbl"> /8 天</span></div>
-            <span class="range" id="pRange"></span>
+        <div class="mode-row">
+            <button class="mode-btn on" id="gt3" onclick="setMode(3)">心序·周<span class="sm">3×3 · 8天</span></button>
+            <button class="mode-btn" id="gt4" onclick="setMode(4)">心序·半月<span class="sm">4×4 · 15天</span></button>
         </div>
 
         <div class="board-wrap">
             <div class="board" id="board"></div>
+        </div>
+
+        <div class="ctrl">
             <div class="hint" id="hint"></div>
             <button class="action" id="goBtn" onclick="start()" disabled>开始归序</button>
         </div>
@@ -209,7 +215,7 @@ function pickMode(m,el){
 function enter(){
   document.getElementById('intro').style.display='none';
   var g=document.getElementById('game'); g.style.display='flex'; g.classList.add('on');
-  document.getElementById('gLabel').textContent=mode===3?'心序·周':'心序·半月';
+  document.querySelectorAll('#game .mode-btn').forEach(function(b){b.classList.remove('on')});
   document.getElementById('gt3').classList.toggle('on',mode===3);
   document.getElementById('gt4').classList.toggle('on',mode===4);
   draw();
@@ -217,13 +223,13 @@ function enter(){
 
 function back(){document.getElementById('game').style.display='none';document.getElementById('game').classList.remove('on');document.getElementById('intro').style.display='';playing=false;done=false;refreshIntro()}
 
-function setMode(m){if(playing)return;mode=m;done=false;document.getElementById('gt3').classList.toggle('on',m===3);document.getElementById('gt4').classList.toggle('on',m===4);document.getElementById('gLabel').textContent=m===3?'心序·周':'心序·半月';draw()}
+function setMode(m){if(playing)return;mode=m;done=false;document.querySelectorAll('#game .mode-btn').forEach(function(b){b.classList.remove('on')});document.getElementById('gt3').classList.toggle('on',m===3);document.getElementById('gt4').classList.toggle('on',m===4);draw()}
 
 function draw(){
   var n=mode===3?8:15, ms=moods(n), got=ms.length;
   // 进度环
-  var circ=94.25; document.getElementById('pFg').style.strokeDashoffset=circ-(got/n)*circ;
-  document.getElementById('pNum').textContent=got; document.getElementById('pLbl').textContent=' /'+n+' 天';
+  var circ=113.1; document.getElementById('pFg').style.strokeDashoffset=circ-(got/n)*circ;
+  document.getElementById('pNum').textContent=got; document.getElementById('pLbl').textContent='/ '+n+' 天';
   var pr=document.getElementById('pRange');
   if(got>=n&&ms.length>0){pr.textContent=fm(ms[0].dk)+' — '+fm(ms[ms.length-1].dk)}else{pr.textContent='';}
 
