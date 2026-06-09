@@ -122,7 +122,7 @@
 
         /* ============ HERO SECTION ============ */
         .hero-section {
-            width: 100%; min-height: 100vh;
+            position: relative; width: 100%; min-height: 100vh;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 60px 0 30px;
@@ -174,7 +174,7 @@
             width: 5px; height: 5px; border-radius: 50%;
             background: var(--accent);
             box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
-            animation: dotGlow 2s ease-in-out infinite;
+            /* animation: dotGlow 2s ease-in-out infinite; */
         }
         @keyframes dotGlow {
             0%,100% { opacity: 0.5; transform: scale(1); }
@@ -713,12 +713,6 @@
 
 <div class="top-bar">
     <button class="back-btn" onclick="location.href='index.html'" aria-label="返回">←</button>
-    <div style="display:flex;align-items:center;gap:10px;">
-        <button class="answer-btn-top" id="answerBtnTop" onclick="showAnswer()" aria-label="光之指引">ANSWER</button>
-        <button class="me-btn-top" id="meBtnTop" style="display:none;" onclick="showMeCard()" aria-label="个人中心">
-            <span class="me-btn-avatar" id="meBtnAvatar"></span>我
-        </button>
-    </div>
 </div>
 
 <!-- ===== "我" 卡片弹窗 — Apple iOS 18 ===== -->
@@ -758,6 +752,12 @@
 <div class="wrap">
 
     <div class="hero-section">
+        <div style="position:fixed;top:14px;right:14px;display:flex;gap:10px;z-index:101;">
+            <button class="answer-btn-top" id="answerBtnTop" onclick="showAnswer()">ANSWER</button>
+            <button class="me-btn-top" id="meBtnTop" style="display:none;" onclick="showMeCard()">
+                <span class="me-btn-avatar" id="meBtnAvatar"></span>我
+            </button>
+        </div>
         <div class="hero">
             <h1><span>G</span><span>i</span><span>v</span><span>e</span> <span>M</span><span>e</span> <span>S</span><span>o</span><span>m</span><span>e</span> <span>L</span><span>i</span><span>g</span><span>h</span><span>t</span></h1>
             <p class="sub" id="welcomeText">深呼吸，你并不孤单</p>

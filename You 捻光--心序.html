@@ -38,7 +38,7 @@ body { background:#0a0a14; }
 .intro .status .msg { font-size:0.68rem; color:rgba(255,255,255,0.4); margin-top:8px; letter-spacing:0.5px; }
 .intro .status .msg b { color:#fff; font-weight:600; }
 .intro .status .dots { display:flex; gap:3px; justify-content:center; margin-top:10px; flex-wrap:wrap; }
-.intro .status .dot { width:16px; height:16px; border-radius:5px; }
+.intro .status .dot { width:16px; height:16px; border-radius:5px; background-size:cover; background-position:center; }
 
 .intro .mode-row { display:flex; gap:8px; justify-content:center; margin-bottom:28px; }
 .intro .mode-btn { padding:10px 22px; border-radius:18px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.4); font-size:0.78rem; cursor:pointer; font-family:inherit; letter-spacing:1px; transition:all 0.3s; }
@@ -75,18 +75,17 @@ body { background:#0a0a14; }
 .board.s3 { grid-template-columns:repeat(3,1fr); }
 .board.s4 { grid-template-columns:repeat(4,1fr); }
 
-.tile { aspect-ratio:1; border-radius:16px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:1.25rem; text-shadow:0 1px 4px rgba(0,0,0,0.35); position:relative; user-select:none; box-shadow:0 4px 16px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08) inset; transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; cursor:pointer; }
-.tile::after { content:''; position:absolute; inset:0; border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,0.14) 0%, transparent 45%); pointer-events:none; }
-.tile:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.12) inset; }
+.tile { aspect-ratio:1; border-radius:16px; display:flex; align-items:flex-end; justify-content:flex-end; background-size:cover; background-position:center; position:relative; user-select:none; box-shadow:0 4px 16px rgba(0,0,0,0.3); transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; cursor:pointer; overflow:hidden; }
+.tile::after { content:''; position:absolute; inset:0; border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 40%); pointer-events:none; }
+.tile .num { position:absolute; bottom:2px; right:4px; z-index:1; font-weight:700; font-size:0.7rem; color:#000; text-shadow:0 1px 0 rgba(255,255,255,0.3); line-height:1; }
+.tile:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.4); }
 .tile:active { transform:scale(0.86); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
 .tile.gone { background:rgba(255,255,255,0.025) !important; cursor:default; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,0.04); }
-.tile.gone::after,.tile.gone:hover { display:none; transform:none; }
-.tile.wait { background:rgba(255,255,255,0.012) !important; cursor:default; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.025); color:rgba(255,255,255,0.06); font-size:0.9rem; }
+.tile.gone::after,.tile.gone .num,.tile.gone:hover { display:none; transform:none; }
+.tile.wait { background:rgba(255,255,255,0.012) !important; cursor:default; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.025); color:rgba(255,255,255,0.06); font-size:0.9rem; align-items:center; justify-content:center; }
 .tile.wait::after,.tile.wait:hover { display:none; transform:none; }
-.board.s3 .tile { width:80px; font-size:1.4rem; }
-.board.s4 .tile { width:56px; font-size:0.95rem; }
-.tile.lit { color:#1a3a00; text-shadow:none; }
-.tile.lit::after { background:linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 45%); }
+.board.s3 .tile { width:80px; }
+.board.s4 .tile { width:56px; }
 
 /* 控制区 */
 .ctrl { display:flex; flex-direction:column; align-items:center; gap:6px; padding-bottom:8px; }
@@ -176,7 +175,7 @@ body { background:#0a0a14; }
 var DK='njgDiaryEntries';
 (function(){var e;try{e=JSON.parse(localStorage.getItem(DK))||[]}catch(e){e=[]}var c=false;e=e.filter(function(x){if(x.text&&x.text.slice(0,5)==='[DEV]'){c=true;return false}return true});if(c)localStorage.setItem(DK,JSON.stringify(e));})();
 
-var G={7:'linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44)',6:'linear-gradient(135deg,#E9F8BC,#E0FE44,#00f5d4)',5:'linear-gradient(135deg,#E0FE44,#00f5d4,#076CAB)',4:'linear-gradient(135deg,#ade5fe,#7ad6fb,#44bcf9)',3:'linear-gradient(135deg,#7ad6fb,#44bcf9,#2499f8)',2:'linear-gradient(135deg,#2499f8,#157cf5,#1062ec)',1:'linear-gradient(135deg,#157cf5,#1062ec,#104fb9)'};
+var IMG={7:'url(平静.webp)',6:'url(快乐.webp)',5:'url(低落.webp)',4:'url(烦躁.webp)',3:'url(焦虑.webp)',2:'url(迷茫.webp)',1:'url(疲惫.webp)'};
 var M=['','疲惫','迷茫','焦虑','烦躁','低落','快乐','平静'];
 var Q=['别执着过往得失，别焦虑未知以后，好好握住当下的时光就足够。','不必困在回忆里内耗，也不用为未来惴惴不安，眼前此刻便是礼物。','所有的情绪都会过去，就像色块终将归位。','焦虑是心在说话，低落是心在休息。','心乱的时候，把色块一个个归位，也是在整理自己。'];
 var pn=localStorage.getItem('playerName')||'朋友';
@@ -189,7 +188,7 @@ function moods(n){
   var e;try{e=JSON.parse(localStorage.getItem(DK))||[]}catch(e){e=[]}
   e.sort(function(a,b){return a.dateKey<b.dateKey?1:-1});
   var r=[];
-  for(var i=0;i<e.length&&r.length<n;i++){if(e[i].mood)r.push({s:e[i].mood.score,c:G[e[i].mood.score]||'#666',l:M[e[i].mood.score]||'',dk:e[i].dateKey})}
+  for(var i=0;i<e.length&&r.length<n;i++){if(e[i].mood)r.push({s:e[i].mood.score,c:IMG[e[i].mood.score]||'',l:M[e[i].mood.score]||'',dk:e[i].dateKey})}
   r.reverse(); for(var j=0;j<r.length;j++)r[j].d=j+1; return r;
 }
 
@@ -202,7 +201,7 @@ function refreshIntro(){
   var remain=n-got;
   var msgEl=document.getElementById('introMsg');
   if(got>=n){msgEl.innerHTML='<b>'+pn+'</b>，色块已集齐，可以开始归序了'}else{msgEl.innerHTML='<b>'+pn+'</b>，还差 <b>'+remain+'</b> 天的心情色块';}
-  var dots=ms.map(function(m){return '<span class="dot" style="background:'+m.c+'"></span>'}).join('');
+  var dots=ms.map(function(m){return '<span class="dot" style="background-image:'+m.c+';background-size:cover;"></span>'}).join('');
   if(got===0)dots='<span style="font-size:0.65rem;color:rgba(255,255,255,0.2);">还没有心情记录，去首页写静心日记吧</span>';
   document.getElementById('introDots').innerHTML=dots;
 }
@@ -235,7 +234,7 @@ function draw(){
 
   var b=document.getElementById('board'), h=document.getElementById('hint'), a=document.getElementById('goBtn');
   if(done){
-    b.innerHTML='<div style="text-align:center;padding:32px 20px;color:#fff;max-width:320px;"><div style="display:inline-block;padding:6px 16px;border-radius:14px;background:rgba(168,230,0,0.06);border:1px solid rgba(168,230,0,0.15);font-size:0.55rem;color:rgba(168,230,0,0.6);letter-spacing:3px;margin-bottom:14px;">◆ 心 序 签 ◆</div><div style="font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:2;letter-spacing:0.5px;margin-bottom:8px;">'+Q[Math.floor(Math.random()*Q.length)]+'</div><div style="font-size:0.6rem;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:16px;">共 '+steps+' 步完成归序</div><div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;">'+ms.map(function(m){return '<div style="width:13px;height:13px;border-radius:4px;background:'+m.c+';box-shadow:0 2px 6px rgba(0,0,0,0.2);"></div>'}).join('')+'</div></div>';
+    b.innerHTML='<div style="text-align:center;padding:32px 20px;color:#fff;max-width:320px;"><div style="display:inline-block;padding:6px 16px;border-radius:14px;background:rgba(168,230,0,0.06);border:1px solid rgba(168,230,0,0.15);font-size:0.55rem;color:rgba(168,230,0,0.6);letter-spacing:3px;margin-bottom:14px;">◆ 心 序 签 ◆</div><div style="font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:2;letter-spacing:0.5px;margin-bottom:8px;">'+Q[Math.floor(Math.random()*Q.length)]+'</div><div style="font-size:0.6rem;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:16px;">共 '+steps+' 步完成归序</div><div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;">'+ms.map(function(m){return '<div style="width:13px;height:13px;border-radius:4px;background-image:'+m.c+';background-size:cover;box-shadow:0 2px 6px rgba(0,0,0,0.2);"></div>'}).join('')+'</div></div>';
     b.className=''; h.textContent='心序归位，内心也安顿好了'; a.textContent='再归一次'; a.disabled=false; return;
   }
   if(got<n){
@@ -255,7 +254,7 @@ function render(){
     var t=tiles[i];
     if(t.wait)h+='<div class="tile wait" data-i="'+i+'">?</div>';
     else if(t.gone)h+='<div class="tile gone" data-i="'+i+'"></div>';
-    else{var c='tile'; if(t.s===7||t.s===6)c+=' lit'; h+='<div class="'+c+'" style="background:'+t.c+';" data-i="'+i+'" data-r="'+Math.floor(i/mode)+'" data-c="'+(i%mode)+'" onclick="mv('+i+')" ondblclick="ti(event,'+i+')">'+t.d+'</div>'}
+    else{h+='<div class="tile" style="background-image:'+t.c+';" data-i="'+i+'" data-r="'+Math.floor(i/mode)+'" data-c="'+(i%mode)+'" onclick="mv('+i+')" ondblclick="ti(event,'+i+')"><span class="num">'+t.d+'</span></div>'}
   }
   b.innerHTML=h;
 }
