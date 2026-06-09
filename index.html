@@ -477,13 +477,13 @@
 .mood-label { font-size: 0.72rem; font-weight: 600; color: #86868b; white-space: nowrap; }
 .mood-options { display: flex; gap: 5px; flex: 1; justify-content: center; flex-wrap: wrap; }
 .mood-chip {
-    width: 42px; height: 48px; border-radius: 13px; border: 1.5px solid #e5e5ea;
-    background: #fff; cursor: pointer;
+    width: 42px; height: 48px; border-radius: 13px; border: none;
+    cursor: pointer;
     transition: all 0.2s cubic-bezier(0.32,0.72,0,1);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
     font-family: inherit;
 }
-.mood-chip:hover { background: #f5f5f7; border-color: #d1d1d6; }
+.mood-chip:hover { }
 .mood-chip .mood-emoji { font-size: 1.1rem; line-height: 1; }
 .mood-chip .mood-word { font-size: 0.52rem; color: #86868b; font-weight: 500; }
 .mood-chip.selected {
@@ -537,6 +537,39 @@
 .diary-entry-date { display: flex; align-items: center; gap: 6px; }
 .mood-tag { font-size: 0.65rem; opacity: 0.9; }
 .diary-empty { text-align: center; color: #c7c7cc; font-size: 0.85rem; padding: 40px 0; }
+
+	/* 画廊日历 */
+	.mood-cal-wrap { display: none; }
+	.mood-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+	.mood-cal-nav button {
+	    width: 30px; height: 30px; border-radius: 50%; border: none;
+	    background: #e5e5ea; color: #1d1d1f; font-size: 1rem; cursor: pointer;
+	    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+	}
+	.mood-cal-nav button:hover { background: #d1d1d6; }
+	.mood-cal-label { font-size: 0.85rem; font-weight: 700; color: #1d1d1f; }
+	.mood-cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; margin-bottom: 4px; }
+	.mood-cal-weekdays span { font-size: 0.6rem; color: #86868b; font-weight: 600; padding: 4px 0; }
+	.mood-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; text-align: center; }
+	.mood-cal-day {
+	    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+	    border-radius: 10px; font-size: 0.78rem; color: #c7c7cc; font-weight: 500;
+	    cursor: default; position: relative; transition: transform 0.2s;
+	}
+	.mood-cal-day.has-mood {
+	    color: #fff; font-weight: 700; cursor: pointer;
+	}
+	.mood-cal-day.has-mood:hover { transform: scale(1.12); }
+	.mood-cal-day.today { box-shadow: 0 0 0 2px #1d1d1f; }
+	.mood-cal-back {
+	    margin-top: 12px; padding: 8px 20px; border-radius: 12px; border: 1px solid #d1d1d6;
+	    background: #fff; color: #1d1d1f; font-size: 0.75rem; font-weight: 600;
+	    cursor: pointer; transition: all 0.2s; font-family: inherit;
+	}
+	.mood-cal-back:hover { background: #f5f5f7; }
+	.mood-cal-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; justify-content: center; }
+	.mood-cal-legend span { font-size: 0.6rem; color: #86868b; display: flex; align-items: center; gap: 3px; }
+	.mood-cal-legend-dot { width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0; }
 
 /* 日记详情卡片 · 5色渐变 */
 .diary-view-card {
@@ -900,22 +933,34 @@ body.no-page-anim { animation: none !important; }
         <div class="mood-row" id="moodRow">
             <span class="mood-label">今日心情</span>
             <div class="mood-options" id="moodOptions">
-                <button class="mood-chip" data-mood="7" data-emoji="😌" data-label="平静" data-color="#3DB008" onclick="selectMood(this)"><span class="mood-emoji">😌</span><span class="mood-word">平静</span></button>
-                <button class="mood-chip" data-mood="6" data-emoji="😊" data-label="快乐" data-color="#E0FE44" onclick="selectMood(this)"><span class="mood-emoji">😊</span><span class="mood-word">快乐</span></button>
-                <button class="mood-chip" data-mood="5" data-emoji="😔" data-label="低落" data-color="#58F0FF" onclick="selectMood(this)"><span class="mood-emoji">😔</span><span class="mood-word">低落</span></button>
-                <button class="mood-chip" data-mood="4" data-emoji="😤" data-label="烦躁" data-color="#0EDEFF" onclick="selectMood(this)"><span class="mood-emoji">😤</span><span class="mood-word">烦躁</span></button>
-                <button class="mood-chip" data-mood="3" data-emoji="😰" data-label="焦虑" data-color="#00C1E9" onclick="selectMood(this)"><span class="mood-emoji">😰</span><span class="mood-word">焦虑</span></button>
-                <button class="mood-chip" data-mood="2" data-emoji="😶" data-label="迷茫" data-color="#0098C3" onclick="selectMood(this)"><span class="mood-emoji">😶</span><span class="mood-word">迷茫</span></button>
-                <button class="mood-chip" data-mood="1" data-emoji="😴" data-label="疲惫" data-color="#017598" onclick="selectMood(this)"><span class="mood-emoji">😴</span><span class="mood-word">疲惫</span></button>
+                <button class="mood-chip" data-mood="7" data-emoji="😌" data-label="平静" data-color="linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44)" style="background:linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44);border-color:transparent" onclick="selectMood(this)"><span class="mood-emoji">😌</span><span class="mood-word">平静</span></button>
+                <button class="mood-chip" data-mood="6" data-emoji="😊" data-label="快乐" data-color="linear-gradient(135deg,#E9F8BC,#E0FE44,#00f5d4)" style="background:linear-gradient(135deg,#E9F8BC,#E0FE44,#00f5d4);border-color:transparent" onclick="selectMood(this)"><span class="mood-emoji">😊</span><span class="mood-word">快乐</span></button>
+                <button class="mood-chip" data-mood="5" data-emoji="😔" data-label="低落" data-color="linear-gradient(135deg,#E0FE44,#00f5d4,#076CAB)" style="background:linear-gradient(135deg,#E0FE44,#00f5d4,#076CAB);border-color:transparent" onclick="selectMood(this)"><span class="mood-emoji">😔</span><span class="mood-word">低落</span></button>
+                <button class="mood-chip" data-mood="4" data-emoji="😤" data-label="烦躁" data-color="linear-gradient(135deg,#ade5fe,#7ad6fb,#44bcf9)" style="background:linear-gradient(135deg,#ade5fe,#7ad6fb,#44bcf9);border-color:transparent" onclick="selectMood(this)"><span class="mood-emoji">😤</span><span class="mood-word">烦躁</span></button>
+                <button class="mood-chip" data-mood="3" data-emoji="😰" data-label="焦虑" data-color="linear-gradient(135deg,#7ad6fb,#44bcf9,#2499f8)" style="background:linear-gradient(135deg,#7ad6fb,#44bcf9,#2499f8);border-color:transparent" onclick="selectMood(this)"><span class="mood-emoji">😰</span><span class="mood-word">焦虑</span></button>
+                <button class="mood-chip" data-mood="2" data-emoji="😶" data-label="迷茫" data-color="linear-gradient(135deg,#2499f8,#157cf5,#1062ec)" style="background:linear-gradient(135deg,#2499f8,#157cf5,#1062ec);border-color:transparent" onclick="selectMood(this)"><span class="mood-emoji">😶</span><span class="mood-word">迷茫</span></button>
+                <button class="mood-chip" data-mood="1" data-emoji="😴" data-label="疲惫" data-color="linear-gradient(135deg,#157cf5,#1062ec,#104fb9)" style="background:linear-gradient(135deg,#157cf5,#1062ec,#104fb9);border-color:transparent" onclick="selectMood(this)"><span class="mood-emoji">😴</span><span class="mood-word">疲惫</span></button>
             </div>
         </div>
         <div class="diary-char-count"><span id="diaryCharCount">0</span> 字</div>
         <div class="diary-body" id="diaryBody">
             <textarea class="diary-textarea" id="diaryTextarea" placeholder="今天发生了什么？" oninput="updateCharCount()"></textarea>
             <div class="diary-history-list" id="diaryHistoryList" style="display:none;"></div>
+            <div class="mood-cal-wrap" id="moodCalWrap">
+                <div class="mood-cal-nav">
+                    <button onclick="prevMoodMonth()">&lsaquo;</button>
+                    <span class="mood-cal-label" id="moodCalLabel"></span>
+                    <button onclick="nextMoodMonth()">&rsaquo;</button>
+                </div>
+                <div class="mood-cal-weekdays"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+                <div class="mood-cal-grid" id="moodCalGrid"></div>
+                <div class="mood-cal-legend" id="moodCalLegend"></div>
+                <button class="mood-cal-back" onclick="closeMoodCalendar()">返回</button>
+            </div>
         </div>
         <div class="diary-footer" id="diaryFooter">
             <button class="diary-history-btn" id="diaryHistoryBtn" onclick="toggleHistory()">往期</button>
+            <button class="diary-history-btn" id="moodCalBtn" onclick="showMoodCalendar()">画廊日历</button>
             <button class="diary-save-btn" id="diarySaveBtn" onclick="saveDiary()">保存</button>
         </div>
     </div>
@@ -1176,6 +1221,10 @@ if(n&&n.type==='back_forward') document.body.classList.add('no-page-anim');
 // ===== 日记 =====
 var DIARY_KEY='njgDiaryEntries', diaryEntries=[], selectedMood=null;
 try{diaryEntries=JSON.parse(localStorage.getItem(DIARY_KEY))||[]}catch(e){}
+// 清理DEV测试数据
+var cleaned=false;
+diaryEntries=diaryEntries.filter(function(e){if(e.text&&e.text.indexOf('[DEV]')===0){cleaned=true;return false}return true});
+if(cleaned)localStorage.setItem(DIARY_KEY,JSON.stringify(diaryEntries));
 (function(){
   var seen={},migrated=false;
   diaryEntries.forEach(function(e){
@@ -1187,13 +1236,14 @@ try{diaryEntries=JSON.parse(localStorage.getItem(DIARY_KEY))||[]}catch(e){}
 function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function fd(d){var w=['日','一','二','三','四','五','六'];return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')+' 星期'+w[d.getDay()]}
 
-function wmode(){document.getElementById('diaryTextarea').style.display='';document.getElementById('diaryHistoryList').style.display='none';document.getElementById('moodRow').style.display='';document.getElementById('diaryNotice').style.display='';document.getElementById('diaryHistoryBtn').textContent='往期'}
-function vmode(){document.getElementById('diaryTextarea').style.display='none';document.getElementById('diaryHistoryList').style.display='';document.getElementById('moodRow').style.display='none';document.getElementById('diaryNotice').style.display='none';document.getElementById('diaryHistoryBtn').textContent='写日记'}
+function wmode(){document.getElementById('diaryTextarea').style.display='';document.getElementById('diaryHistoryList').style.display='none';document.getElementById('moodCalWrap').style.display='none';document.getElementById('moodRow').style.display='';document.getElementById('diaryNotice').style.display='';document.getElementById('diaryHistoryBtn').textContent='往期'}
+function vmode(){document.getElementById('diaryTextarea').style.display='none';document.getElementById('diaryHistoryList').style.display='';document.getElementById('moodCalWrap').style.display='none';document.getElementById('moodRow').style.display='none';document.getElementById('diaryNotice').style.display='none';document.getElementById('diaryHistoryBtn').textContent='写日记'}
 
 window.selectMood=function(chip){
-  document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){c.classList.remove('selected');c.style.removeProperty('--mc')});
+  document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){c.classList.remove('selected');c.style.background='';c.style.borderColor='';c.style.removeProperty('--mc')});
   chip.classList.add('selected');
-  chip.style.setProperty('--mc',chip.dataset.color);
+  if(chip.dataset.color.indexOf('gradient')>=0){chip.style.background=chip.dataset.color;chip.style.borderColor='transparent';chip.style.setProperty('--mc','#1a3a00')}
+  else{chip.style.setProperty('--mc',chip.dataset.color)}
   selectedMood={score:parseInt(chip.dataset.mood),emoji:chip.dataset.emoji,label:chip.dataset.label,color:chip.dataset.color};
 };
 
@@ -1238,16 +1288,18 @@ function _view(entry){
   document.getElementById('diaryHistoryList').innerHTML='<div class="diary-view-card"><button class="return-btn" onclick="_history()">RETURN</button><div class="diary-view-date">'+fd(d)+'</div>'+mood+'<div class="diary-view-text">'+entry.text+'</div>'+pastLine+'<div style="margin-top:10px;">'+edit+'</div></div>';
 }
 
+function moodBg(score){var map={7:'linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44)',6:'linear-gradient(135deg,#E9F8BC,#E0FE44,#00f5d4)',5:'linear-gradient(135deg,#E0FE44,#00f5d4,#076CAB)',4:'linear-gradient(135deg,#ade5fe,#7ad6fb,#44bcf9)',3:'linear-gradient(135deg,#7ad6fb,#44bcf9,#2499f8)',2:'linear-gradient(135deg,#2499f8,#157cf5,#1062ec)',1:'linear-gradient(135deg,#157cf5,#1062ec,#104fb9)'};return map[score]||'#86868b';}
 function _history(){
   var list=document.getElementById('diaryHistoryList');
   if(diaryEntries.length===0){list.innerHTML='<div class="diary-empty">还没有日记<br>写下第一篇吧</div>';return}
   var html='<div style="text-align:center;">';
   diaryEntries.forEach(function(e){
     var d=new Date(e.dateKey+'T00:00:00'),isToday=e.dateKey===dk(new Date());
-    var bg=e.mood&&e.mood.color?e.mood.color:'#86868b';
+    var bg=e.mood&&e.mood.score?moodBg(e.mood.score):'#86868b';
     var label=e.mood?e.mood.emoji+' '+fd(d):fd(d);
     var todayMark=isToday?' · 今天':'';
-    html+='<button class="diary-entry" style="background:'+bg+';" onclick="_view(diaryEntries.find(function(x){return x.id==='+e.id+'}))">'+label+todayMark+'</button>';
+    var tc=(e.mood&&(e.mood.score===7||e.mood.score===6))?'#1a3a00':'#fff';
+    html+='<button class="diary-entry" style="background:'+bg+';color:'+tc+';" onclick="_view(diaryEntries.find(function(x){return x.id==='+e.id+'}))">'+label+todayMark+'</button>';
   });
   html+='</div>';
   list.innerHTML=html;
@@ -1261,7 +1313,7 @@ window._editToday=function(){
   document.getElementById('diaryTextarea').value=entry.text;
   selectedMood=entry.mood||null;
   document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){c.classList.remove('selected');c.style.removeProperty('--mc')});
-  if(entry.mood){document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){if(c.dataset.mood==entry.mood.score){c.classList.add('selected');c.style.setProperty('--mc',c.dataset.color)}})}
+  if(entry.mood){document.querySelectorAll('#moodOptions .mood-chip').forEach(function(c){if(c.dataset.mood==entry.mood.score){c.classList.add('selected');if(c.dataset.color.indexOf('gradient')>=0){c.style.background=c.dataset.color;c.style.borderColor='transparent';c.style.setProperty('--mc','#1a3a00')}else{c.style.setProperty('--mc',c.dataset.color)}}})}
   document.getElementById('diarySaveBtn').textContent='更新';
   document.getElementById('diaryNotice').textContent='正在编辑今天的记录，保存后将覆盖之前的内容';
   document.getElementById('diaryCharCount').textContent=entry.text.length;
@@ -1270,6 +1322,58 @@ window._editToday=function(){
 
 window.updateCharCount=function(){document.getElementById('diaryCharCount').textContent=document.getElementById('diaryTextarea').value.length};
 window.closeDiary=function(){document.getElementById('diaryOverlay').classList.remove('show')};
+
+// ===== 画廊日历 =====
+var moodCalYear, moodCalMonth;
+window.showMoodCalendar=function(){
+  var now=new Date(); moodCalYear=now.getFullYear(); moodCalMonth=now.getMonth();
+  document.getElementById('diaryTextarea').style.display='none';
+  document.getElementById('diaryHistoryList').style.display='none';
+  document.getElementById('moodCalWrap').style.display='block';
+  document.getElementById('moodRow').style.display='none';
+  document.getElementById('diaryNotice').style.display='none';
+  document.getElementById('diaryHistoryBtn').textContent='往期';
+  renderMoodCalendar();
+};
+window.closeMoodCalendar=function(){
+  wmode(); document.getElementById('moodCalWrap').style.display='none';
+};
+function renderMoodCalendar(){
+  document.getElementById('moodCalLabel').textContent=moodCalYear+'年 '+(moodCalMonth+1)+'月';
+  var moodMap={};
+  diaryEntries.forEach(function(e){if(e.mood)moodMap[e.dateKey]=e.mood});
+  var firstDay=new Date(moodCalYear,moodCalMonth,1).getDay();
+  var daysInMonth=new Date(moodCalYear,moodCalMonth+1,0).getDate();
+  var daysInPrev=new Date(moodCalYear,moodCalMonth,0).getDate();
+  var today=new Date(), todayKey=dk(today);
+  var html='';
+  for(var i=firstDay-1;i>=0;i--){html+='<div class="mood-cal-day" style="opacity:0.25">'+(daysInPrev-i)+'</div>'}
+  for(var d=1;d<=daysInMonth;d++){
+    var dateKey=moodCalYear+'-'+String(moodCalMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var mood=moodMap[dateKey];
+    var cls='mood-cal-day';
+    if(mood)cls+=' has-mood';
+    if(dateKey===todayKey)cls+=' today';
+    var style='';
+    if(mood&&mood.score){style='background:'+moodBg(mood.score)+';'; if(mood.score===7||mood.score===6)style+='color:#1a3a00;'}
+    var onclick=mood?' onclick="viewMoodEntry(\''+dateKey+'\')"':'';
+    html+='<div class="'+cls+'" style="'+style+'"'+onclick+'>'+d+'</div>';
+  }
+  var totalCells=firstDay+daysInMonth, remaining=totalCells%7===0?0:7-(totalCells%7);
+  for(var d=1;d<=remaining;d++){html+='<div class="mood-cal-day" style="opacity:0.25">'+d+'</div>'}
+  document.getElementById('moodCalGrid').innerHTML=html;
+  var moods=[{score:7,label:'平静',color:'linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44)'},{score:6,label:'快乐',color:'linear-gradient(135deg,#E9F8BC,#E0FE44,#00f5d4)'},{score:5,label:'低落',color:'linear-gradient(135deg,#E0FE44,#00f5d4,#076CAB)'},{score:4,label:'烦躁',color:'linear-gradient(135deg,#ade5fe,#7ad6fb,#44bcf9)'},{score:3,label:'焦虑',color:'linear-gradient(135deg,#7ad6fb,#44bcf9,#2499f8)'},{score:2,label:'迷茫',color:'linear-gradient(135deg,#2499f8,#157cf5,#1062ec)'},{score:1,label:'疲惫',color:'linear-gradient(135deg,#157cf5,#1062ec,#104fb9)'}];
+  var legendHtml='';
+  moods.forEach(function(m){legendHtml+='<span><span class="mood-cal-legend-dot" style="background:'+m.color+';"></span>'+m.label+'</span>'});
+  document.getElementById('moodCalLegend').innerHTML=legendHtml;
+}
+window.prevMoodMonth=function(){moodCalMonth--;if(moodCalMonth<0){moodCalMonth=11;moodCalYear--}renderMoodCalendar()};
+window.nextMoodMonth=function(){moodCalMonth++;if(moodCalMonth>11){moodCalMonth=0;moodCalYear++}renderMoodCalendar()};
+window.viewMoodEntry=function(dateKey){
+  var entry=null;
+  for(var i=0;i<diaryEntries.length;i++){if(diaryEntries[i].dateKey===dateKey){entry=diaryEntries[i];break}}
+  if(entry){document.getElementById('moodCalWrap').style.display='none';document.getElementById('diaryHistoryList').style.display='';_view(entry)}
+};
 document.getElementById('diaryOverlay').addEventListener('click',function(e){if(e.target===this)closeDiary()});
 </script>
 

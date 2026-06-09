@@ -162,7 +162,9 @@
       "Bash(sed -i '907s/#40F0B0/#00C1E9/' index.html)",
       "Bash(sed -i '908s/#00f5d4/#0098C3/' index.html)",
       "Bash(sed -i '1419,1420d' hall.html)",
-      "Bash(sed -n '1417,1420p' hall.html)"
+      "Bash(sed -n '1417,1420p' hall.html)",
+      "Bash(sed -i 's/data-color=\"#3DB008\">😌平静/data-color=\"linear-gradient\\(135deg, #3DB008, #E9F8BC\\)\" style=\"background:linear-gradient\\(135deg,#3DB008,#E9F8BC\\);border-color:transparent\">😌平静/' index.html)",
+      "Bash(sed -i 's/data-color=\"#E0FE44\">😊快乐/data-color=\"linear-gradient\\(135deg, #E9F8BC, #E0FE44\\)\" style=\"background:linear-gradient\\(135deg,#E9F8BC,#E0FE44\\);border-color:transparent\">😊快乐/' index.html)"
     ]
   }
 }
