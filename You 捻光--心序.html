@@ -74,6 +74,7 @@ body { background:#0a0a14; }
 .board::before { content:''; position:absolute; inset:-1px; border-radius:22px; padding:1px; background:linear-gradient(160deg,rgba(255,255,255,0.04),transparent 50%,rgba(255,255,255,0.02)); -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
 .board.s3 { grid-template-columns:repeat(3,1fr); }
 .board.s4 { grid-template-columns:repeat(4,1fr); }
+.board.s5 { grid-template-columns:repeat(5,1fr); }
 
 .tile { aspect-ratio:1; border-radius:16px; display:flex; align-items:flex-end; justify-content:flex-end; background-size:cover; background-position:center; position:relative; user-select:none; box-shadow:0 4px 16px rgba(0,0,0,0.3); transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; cursor:pointer; overflow:hidden; }
 .tile::after { content:''; position:absolute; inset:0; border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 40%); pointer-events:none; }
@@ -88,6 +89,7 @@ body { background:#0a0a14; }
 .tile.wait:hover { transform:none; }
 .board.s3 .tile { width:80px; }
 .board.s4 .tile { width:56px; }
+.board.s5 .tile { width:48px; }
 
 /* 控制区 */
 .ctrl { display:flex; flex-direction:column; align-items:center; gap:6px; padding-bottom:8px; }
@@ -133,6 +135,7 @@ body { background:#0a0a14; }
         <div class="mode-row">
             <button class="mode-btn on" onclick="pickMode(3,this)">心序·周<span class="sm">3×3 · 8天</span></button>
             <button class="mode-btn" onclick="pickMode(4,this)">心序·半月<span class="sm">4×4 · 15天</span></button>
+            <button class="mode-btn" onclick="pickMode(5,this)">心序·月<span class="sm">5×5 · 24天</span></button>
         </div>
         <button class="start-btn" id="introStart" onclick="enter()">开始游戏</button>
     </div>
@@ -157,6 +160,7 @@ body { background:#0a0a14; }
         <div class="mode-row">
             <button class="mode-btn on" id="gt3" onclick="setMode(3)">心序·周<span class="sm">3×3 · 8天</span></button>
             <button class="mode-btn" id="gt4" onclick="setMode(4)">心序·半月<span class="sm">4×4 · 15天</span></button>
+            <button class="mode-btn" id="gt5" onclick="setMode(5)">心序·月<span class="sm">5×5 · 24天</span></button>
         </div>
 
         <div class="board-wrap">
@@ -191,6 +195,7 @@ var pn=localStorage.getItem('playerName')||'朋友';
 localStorage.removeItem('xinxu_seeded');
 
 var mode=3, tiles=[], empty, playing=false, done=false, steps=0;
+function needN(){return mode===3?8:mode===4?15:24}
 
 function fm(dk){var p=dk.split('-');return p[0]+'.'+parseInt(p[1])+'月'+parseInt(p[2])+'日'}
 
@@ -204,7 +209,7 @@ function moods(n){
 
 // ── 介绍页进度刷新 ──
 function refreshIntro(){
-  var n=mode===3?8:15, ms=moods(n), got=ms.length;
+  var n=needN(), ms=moods(n), got=ms.length;
   document.getElementById('introGot').textContent=got;
   document.getElementById('introNeed').textContent='/ '+n+' 天';
   document.getElementById('introBar').style.width=(got/n*100)+'%';
@@ -225,17 +230,16 @@ function enter(){
   document.getElementById('intro').style.display='none';
   var g=document.getElementById('game'); g.style.display='flex'; g.classList.add('on');
   document.querySelectorAll('#game .mode-btn').forEach(function(b){b.classList.remove('on')});
-  document.getElementById('gt3').classList.toggle('on',mode===3);
-  document.getElementById('gt4').classList.toggle('on',mode===4);
+  document.getElementById('gt'+mode).classList.add('on');
   draw();
 }
 
 function back(){document.getElementById('game').style.display='none';document.getElementById('game').classList.remove('on');document.getElementById('intro').style.display='';playing=false;done=false;refreshIntro()}
 
-function setMode(m){if(playing)return;mode=m;done=false;document.querySelectorAll('#game .mode-btn').forEach(function(b){b.classList.remove('on')});document.getElementById('gt3').classList.toggle('on',m===3);document.getElementById('gt4').classList.toggle('on',m===4);draw()}
+function setMode(m){if(playing)return;mode=m;done=false;document.querySelectorAll('#game .mode-btn').forEach(function(b){b.classList.remove('on')});document.getElementById('gt'+m).classList.add('on');draw()}
 
 function draw(){
-  var n=mode===3?8:15, ms=moods(n), got=ms.length;
+  var n=needN(), ms=moods(n), got=ms.length;
   // 进度环
   var circ=113.1; document.getElementById('pFg').style.strokeDashoffset=circ-(got/n)*circ;
   document.getElementById('pNum').textContent=got; document.getElementById('pLbl').textContent='/ '+n+' 天';
@@ -271,9 +275,9 @@ function render(){
 
 function start(){
   if(done){done=false;playing=false;steps=0;draw();return}
-  var n=mode===3?8:15, ms=moods(n); if(ms.length<n)return;
+  var n=needN(), ms=moods(n); if(ms.length<n)return;
   tiles=ms.map(function(m,i){return {d:m.d,c:m.c,s:m.s,l:m.l,dk:m.dk}}); tiles.push({gone:true}); empty=tiles.length-1; playing=true; steps=0;
-  for(var s=0;s<(mode===3?120:280);s++){var nb=nbr(empty);var p=nb[Math.floor(Math.random()*nb.length)];swp(p,empty);empty=p}
+  for(var s=0;s<(mode===3?120:mode===4?280:500);s++){var nb=nbr(empty);var p=nb[Math.floor(Math.random()*nb.length)];swp(p,empty);empty=p}
   render(); document.getElementById('hint').textContent='移动色块，按 1-'+n+' 顺序归位 · 0 步';
 }
 
@@ -283,7 +287,7 @@ function swp(a,b){var t=tiles[a];tiles[a]=tiles[b];tiles[b]=t}
 function mv(i){
   if(!playing)return; if(nbr(empty).indexOf(i)===-1)return;
   swp(i,empty); empty=i; steps++; render();
-  var n=mode===3?8:15; document.getElementById('hint').textContent='移动色块，按 1-'+n+' 顺序归位 · '+steps+' 步';
+  var n=needN(); document.getElementById('hint').textContent='移动色块，按 1-'+n+' 顺序归位 · '+steps+' 步';
   if(win()){playing=false;done=true;document.getElementById('hint').textContent='✨ 心序归位！共 '+steps+' 步';pop();draw()}
 }
 function win(){for(var i=0;i<tiles.length-1;i++){if(tiles[i].d!==i+1)return false}return tiles[tiles.length-1].gone}
@@ -301,7 +305,7 @@ document.getElementById('board').addEventListener('touchend',function(e){
   var er=Math.floor(empty/mode),ec=empty%mode,tr=Math.floor(ts.i/mode),tc=ts.i%mode,match=false;
   if(Math.abs(dx)>Math.abs(dy)){if(dx>0&&tc+1===ec&&tr===er)match=true;if(dx<0&&tc-1===ec&&tr===er)match=true}
   else{if(dy>0&&tr+1===er&&tc===ec)match=true;if(dy<0&&tr-1===er&&tc===ec)match=true}
-  if(match){var s=mode===3?83:60; ts.el.style.transition='transform 0.1s ease-out'; ts.el.style.transform='translate('+(dx>0?s:dx<0?-s:0)+'px,'+(dy>0?s:dy<0?-s:0)+'px)'; ts.el.style.opacity='0.5'; setTimeout(function(){mv(ts.i)},80)}
+  if(match){var s=mode===3?86:mode===4?62:54; ts.el.style.transition='transform 0.1s ease-out'; ts.el.style.transform='translate('+(dx>0?s:dx<0?-s:0)+'px,'+(dy>0?s:dy<0?-s:0)+'px)'; ts.el.style.opacity='0.5'; setTimeout(function(){mv(ts.i)},80)}
   ts=null;
 });
 
