@@ -182,24 +182,13 @@ var M=['','疲惫','迷茫','焦虑','烦躁','低落','快乐','平静'];
 var Q=['别执着过往得失，别焦虑未知以后，好好握住当下的时光就足够。','不必困在回忆里内耗，也不用为未来惴惴不安，眼前此刻便是礼物。','所有的情绪都会过去，就像色块终将归位。','焦虑是心在说话，低落是心在休息。','心乱的时候，把色块一个个归位，也是在整理自己。'];
 var pn=localStorage.getItem('playerName')||'朋友';
 
-// [DEV] 补未来5天测试数据（仅执行一次）
-if(!localStorage.getItem('xinxu_seeded')){
-  localStorage.setItem('xinxu_seeded','1');
-  (function(){
-    var e;try{e=JSON.parse(localStorage.getItem(DK))||[]}catch(e2){e=[]}
-    var today=new Date(); today.setHours(0,0,0,0);
-    for(var i=-3;i<=5;i++){
-      var d=new Date(today); d.setDate(today.getDate()+i);
-      var dk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-      var ok=false; for(var j=0;j<e.length;j++){if(e[j].dateKey===dk&&e[j].mood){ok=true;break}}
-      if(ok)continue;
-      var s=[7,6,5,4,3,2,1][(i+10)%7];
-      e.push({id:Date.now()+i,dateKey:dk,text:'DEV',mood:{score:s,emoji:'',label:M[s]}});
-    }
-    e.sort(function(a,b){return a.dateKey<b.dateKey?1:-1});
-    localStorage.setItem(DK,JSON.stringify(e));
-  })();
-}
+// 清理测试数据
+(function(){
+  var e;try{e=JSON.parse(localStorage.getItem(DK))||[]}catch(e2){e=[]}
+  var c=false; e=e.filter(function(x){if(x.text==='DEV'||x.text==='测试心情'||(x.text&&x.text.indexOf('[DEV]')===0)){c=true;return false}return true});
+  if(c)localStorage.setItem(DK,JSON.stringify(e));
+})();
+localStorage.removeItem('xinxu_seeded');
 
 var mode=3, tiles=[], empty, playing=false, done=false, steps=0;
 

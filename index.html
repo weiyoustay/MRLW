@@ -1223,7 +1223,7 @@ var DIARY_KEY='njgDiaryEntries', diaryEntries=[], selectedMood=null;
 try{diaryEntries=JSON.parse(localStorage.getItem(DIARY_KEY))||[]}catch(e){}
 // 清理DEV测试数据
 var cleaned=false;
-diaryEntries=diaryEntries.filter(function(e){if(e.text&&e.text.indexOf('[DEV]')===0){cleaned=true;return false}return true});
+diaryEntries=diaryEntries.filter(function(e){if(e.text==='DEV'||e.text==='测试心情'||(e.text&&e.text.indexOf('[DEV]')===0)){cleaned=true;return false}return true});
 if(cleaned)localStorage.setItem(DIARY_KEY,JSON.stringify(diaryEntries));
 (function(){
   var seen={},migrated=false;
