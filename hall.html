@@ -1189,7 +1189,6 @@
 
                     <h1><span>R</span><span>e</span><span>i</span><span>n</span><span>v</span><span>e</span><span>n</span><span>t</span> <span>y</span><span>o</span><span>u</span><span>r</span><span>s</span><span>e</span><span>l</span><span>f</span></h1>
                     <p class="hero-en-line">The person you will be in seven days <br>begins with the choice you make today.</p>
-                    <p id="journeySub">按顺序完成每一天的成长任务，逐步蜕变成为全新的自己</p>
                     <p class="hero-cn-line">每天一小步，七天一大步</p>
 
                     <div class="progress-box">
@@ -2879,18 +2878,17 @@ function renderUserInfo() {
             '只剩两天，你已经不是原来的自己。',
             '最后一天，崭新的你即将诞生。'
         ];
-        document.getElementById('journeySub').innerText = subs[journeyDay-1] || subs[6];
     }
-    document.getElementById('progressText').innerText = `第 ${journeyDay} 天 · ${count}/7 已完成`;
-    document.getElementById('progressFill').style.width = `${(count / 7) * 100}%`;
+    document.getElementById('progressText').innerText = `第 ${journeyDay} 天 · ${Math.min(count,7)}/7 已完成`;
+    document.getElementById('progressFill').style.width = `${Math.min(count/7,1) * 100}%`;
     var cheers = [
-        'The journey of transformation has just begun.',
-        'Two days in. You are already ahead of most.',
-        'Day three. Real change is taking root.',
-        'Halfway there. Momentum is on your side.',
-        'Five days. New habits are replacing old patterns.',
-        'Almost there. You are not the same person anymore.',
-        'Seven days complete. A new version of you has emerged.'
+        '蜕变之旅刚刚开始。',
+        '第二天，你已经走在前面。',
+        '第三天，真正的改变正在扎根。',
+        '过半了，势头在你这边。',
+        '第五天，新习惯正在取代旧模式。',
+        '快到了，你已经不是原来的自己。',
+        '七天完成，全新的你已然诞生。'
     ];
     document.getElementById('progressCheer').innerText = cheers[journeyDay-1] || cheers[6];
 }
