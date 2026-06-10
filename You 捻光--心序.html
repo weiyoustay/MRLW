@@ -6,8 +6,7 @@
 <title>心序 · 整理心绪的华容道</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; font-family:'PingFang SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
-body { background:#0a0a14; }
+html { width:100%; height:100%; } body { width:100%; min-height:100vh; overflow-x:hidden; font-family:'PingFang SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; background:#0a0a14; }
 
 .bg { position:fixed; inset:0; z-index:0; }
 .bg img { width:100%; height:100%; object-fit:cover; opacity:0.5; }
@@ -17,7 +16,8 @@ body { background:#0a0a14; }
 
 /* ── 介绍页 ── */
 .back-btn { padding:7px 16px; border-radius:18px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.5); font-size:0.72rem; cursor:pointer; font-family:inherit; letter-spacing:1px; }
-.intro { text-align:center; padding:40px 28px; color:#fff; max-width:400px; animation:fadeIn 0.5s ease; }
+.intro { text-align:center; padding:40px 28px 20px; color:#fff; max-width:400px; animation:fadeIn 0.5s ease; overflow-y:auto; max-height:100vh; scrollbar-width:none; }
+.intro::-webkit-scrollbar { display:none; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} }
 .intro .tag { display:inline-block; padding:5px 14px; border-radius:14px; background:rgba(168,230,0,0.08); border:1px solid rgba(168,230,0,0.15); font-size:0.58rem; color:#A8E600; letter-spacing:3px; margin-bottom:18px; }
 .intro h1 { font-size:3rem; font-weight:100; letter-spacing:14px; background:linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44,#00f5d4,#0099ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; }
@@ -137,8 +137,8 @@ body { background:#0a0a14; }
             <button class="mode-btn" onclick="pickMode(4,this)">心序·半月<span class="sm">4×4 · 15天</span></button>
             <button class="mode-btn" onclick="pickMode(5,this)">心序·月<span class="sm">5×5 · 24天</span></button>
         </div>
-        <div style="text-align:center;padding:20px 0 8px;font-size:0.55rem;color:#fff;letter-spacing:0.5px;opacity:0.5;">©2026 唯 you stay 全部页面原创，禁止复制商用</div>
         <button class="start-btn" id="introStart" onclick="enter()">开始游戏</button>
+        <div style="text-align:center;padding:36px 0 16px;font-size:0.7rem;color:#fff;letter-spacing:0.5px;opacity:0.5;">©2026 唯 you stay 全部页面原创，禁止复制商用</div>
     </div>
 
     <!-- ── 游戏页 ── -->

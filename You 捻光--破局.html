@@ -6,8 +6,7 @@
 <title>破局 · 华容道</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; font-family:'PingFang SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
-body { background:#0a0a14; }
+html { width:100%; height:100%; } body { width:100%; min-height:100vh; overflow-x:hidden; font-family:'PingFang SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; background:#0a0a14; }
 .bg { position:fixed; inset:0; z-index:0; }
 .bg img { width:100%; height:100%; object-fit:cover; opacity:0.5; }
 .bg::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 30%, rgba(10,10,20,0.7) 100%); }
@@ -69,8 +68,8 @@ body { background:#0a0a14; }
     <div class="poem">断桥在前，暗礁在下，迷雾四起。<br>残垣挡道，而你只有自己。<br>破局而出，方能见自己。</div>
 
     <div class="diff-grid" id="diffGrid"></div>
-        <div style="text-align:center;padding:20px 0 8px;font-size:0.55rem;color:#fff;letter-spacing:0.5px;opacity:0.5;">©2026 唯 you stay 全部页面原创，禁止复制商用</div>
     <button class="start-btn" onclick="enter()">开始破局</button>
+    <div style="text-align:center;padding:36px 0 16px;font-size:0.7rem;color:#fff;letter-spacing:0.5px;opacity:0.5;">©2026 唯 you stay 全部页面原创，禁止复制商用</div>
 </div>
 
 <div class="game" id="game">
