@@ -144,55 +144,51 @@ function nextSeed(){curSeed=curSeed<30?curSeed+1:1;document.getElementById('seed
 
 function clonePieces(src){return src.map(function(p){return {id:p.id,w:p.w,h:p.h,r:p.r,c:p.c,img:p.img}})}
 
-// Shuffle from classic position with N random moves
+// Shuffle: make N random valid moves from current piece positions
 function shufflePieces(pcs, moves, seed){
   var rng=srand(seed);
-  var allDirs=['up','down','left','right'];
-  // Find empty cells from piece grid
-  function getEmpty(pieces){
-    var g=[]; for(var r=0;r<ROWS;r++){g[r]=[];for(var c=0;c<COLS;c++)g[r][c]=0}
-    pieces.forEach(function(p){for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++)g[p.r+dr][p.c+dc]=1});
-    var empties=[]; for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++)if(!g[r][c])empties.push({r:r,c:c});
-    return empties;
-  }
-  function canMovePiece(p, dir, pieces){
-    var nr=p.r, nc=p.c;
-    if(dir==='up')nr--; else if(dir==='down')nr++; else if(dir==='left')nc--; else if(dir==='right')nc++;
-    if(nr<0||nc<0||nr+p.h>ROWS||nc+p.w>COLS)return false;
-    // Build occupied grid excluding this piece
-    var g=[]; for(var r=0;r<ROWS;r++){g[r]=[];for(var c=0;c<COLS;c++)g[r][c]=null}
-    pieces.forEach(function(pp){if(pp!==p){for(var dr=0;dr<pp.h;dr++)for(var dc=0;dc<pp.w;dc++)g[pp.r+dr][pp.c+dc]=1}});
-    for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++)if(g[nr+dr][nc+dc])return false;
-    return true;
-  }
   for(var s=0;s<moves;s++){
-    var empties=getEmpty(pcs);
+    // Build grid
+    var grid=[]; for(var r=0;r<ROWS;r++){grid[r]=[];for(var c=0;c<COLS;c++)grid[r][c]=-1}
+    for(var i=0;i<pcs.length;i++){var p=pcs[i];for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++)grid[p.r+dr][p.c+dc]=i}
+    // Find all empty cells
+    var empties=[]; for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++)if(grid[r][c]===-1)empties.push({r:r,c:c});
     if(empties.length===0)break;
-    // Pick a random empty cell, find adjacent pieces that can move into it
-    var tried=0, moved=false;
-    while(tried<50&&!moved){
+    // Try random empty cells to find a movable piece
+    var moved=false;
+    for(var tries=0;tries<100&&!moved;tries++){
       var ec=empties[Math.floor(rng()*empties.length)];
-      // Check 4 directions for pieces that can slide into this empty
-      var candidates=[];
-      // Up: piece below empty
-      if(ec.r+1<ROWS){for(var i=0;i<pcs.length;i++){var p=pcs[i];if(p.r+p.h===ec.r+1&&p.c<=ec.c&&p.c+p.w>ec.c){if(canMovePiece(p,'up',pcs))candidates.push({p:p,dir:'up'})}}}
-      // Down: piece above empty
-      if(ec.r-1>=0){for(var i=0;i<pcs.length;i++){var p=pcs[i];if(p.r-1===ec.r&&p.c<=ec.c&&p.c+p.w>ec.c){if(canMovePiece(p,'down',pcs))candidates.push({p:p,dir:'down'})}}}
-      // Left: piece right of empty
-      if(ec.c+1<COLS){for(var i=0;i<pcs.length;i++){var p=pcs[i];if(p.c+p.w===ec.c+1&&p.r<=ec.r&&p.r+p.h>ec.r){if(canMovePiece(p,'left',pcs))candidates.push({p:p,dir:'left'})}}}
-      // Right: piece left of empty
-      if(ec.c-1>=0){for(var i=0;i<pcs.length;i++){var p=pcs[i];if(p.c-1===ec.c&&p.r<=ec.r&&p.r+p.h>ec.r){if(canMovePiece(p,'right',pcs))candidates.push({p:p,dir:'right'})}}}
-      if(candidates.length>0){
-        var cand=candidates[Math.floor(rng()*candidates.length)];
-        if(cand.dir==='up')cand.p.r--; else if(cand.dir==='down')cand.p.r++;
-        else if(cand.dir==='left')cand.p.c--; else if(cand.dir==='right')cand.p.c++;
-        moved=true;
+      var dirs=[{dr:-1,dc:0,d:'down'},{dr:1,dc:0,d:'up'},{dr:0,dc:-1,d:'right'},{dr:0,dc:1,d:'left'}];
+      // Shuffle dirs
+      for(var di=dirs.length-1;di>0;di--){var dj=Math.floor(rng()*(di+1));var tmp=dirs[di];dirs[di]=dirs[dj];dirs[dj]=tmp}
+      for(var di=0;di<dirs.length&&!moved;di++){
+        var nr=ec.r+dirs[di].dr, nc=ec.c+dirs[di].dc;
+        if(nr<0||nr>=ROWS||nc<0||nc>=COLS)continue;
+        var idx=grid[nr][nc]; if(idx===-1)continue;
+        var pp=pcs[idx];
+        // Check if pp can move in direction dirs[di].d
+        if(canMovePiece(pp, dirs[di].d, grid, pcs, idx)){
+          if(dirs[di].d==='up')pp.r--; else if(dirs[di].d==='down')pp.r++;
+          else if(dirs[di].d==='left')pp.c--; else if(dirs[di].d==='right')pp.c++;
+          moved=true;
+        }
       }
-      tried++;
     }
     if(!moved)break;
   }
   return pcs;
+}
+
+// Check if piece p (at index pidx in pcs) can move in direction dir given the grid
+function canMovePiece(p, dir, grid, pcs, pidx){
+  var nr=p.r, nc=p.c;
+  if(dir==='up')nr--; else if(dir==='down')nr++; else if(dir==='left')nc--; else if(dir==='right')nc++;
+  if(nr<0||nc<0||nr+p.h>ROWS||nc+p.w>COLS)return false;
+  for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++){
+    var cell=grid[nr+dr][nc+dc];
+    if(cell!==-1&&cell!==pidx)return false;
+  }
+  return true;
 }
 
 function enter(){
