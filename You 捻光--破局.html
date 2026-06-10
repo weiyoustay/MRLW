@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>破局 · 华容道</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; font-family:'PingFang SC','Microsoft YaHei',sans-serif; -webkit-font-smoothing:antialiased; }
+body { background:#0a0a14; }
+
+.bg { position:fixed; inset:0; z-index:0; }
+.bg img { width:100%; height:100%; object-fit:cover; opacity:0.5; }
+.bg::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 35%, rgba(10,10,20,0.7) 100%); }
+
+.scene { position:fixed; inset:0; z-index:1; display:flex; align-items:center; justify-content:center; }
+
+.back-btn { position:fixed; top:18px; left:18px; z-index:10; padding:7px 16px; border-radius:18px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.5); font-size:0.72rem; cursor:pointer; font-family:inherit; letter-spacing:1px; }
+
+.intro { text-align:center; padding:40px 28px; color:#fff; max-width:400px; animation:fadeIn 0.5s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(12px)} }
+.intro .tag { display:inline-block; padding:5px 14px; border-radius:14px; background:rgba(168,230,0,0.08); border:1px solid rgba(168,230,0,0.15); font-size:0.58rem; color:#A8E600; letter-spacing:3px; margin-bottom:18px; }
+.intro h1 { font-size:2.8rem; font-weight:100; letter-spacing:12px; background:linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44,#00f5d4,#0099ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; }
+.intro .en { font-size:0.6rem; letter-spacing:6px; color:rgba(255,255,255,0.3); margin-bottom:20px; }
+.intro .divider { display:flex; align-items:center; gap:10px; width:80px; margin:0 auto 22px; }
+.intro .divider i { flex:1; height:1px; background:rgba(255,255,255,0.1); }
+.intro .divider b { width:4px; height:4px; border-radius:50%; background:rgba(168,230,0,0.4); }
+.intro .poem { font-size:0.85rem; color:rgba(255,255,255,0.5); line-height:2.3; letter-spacing:1px; margin-bottom:28px; }
+.intro .start-btn { padding:15px 52px; border-radius:26px; border:none; font-size:0.95rem; font-weight:600; letter-spacing:3px; cursor:pointer; font-family:inherit; background:linear-gradient(135deg,#3DB008,#B8E620); color:#1a3a00; box-shadow:0 4px 22px rgba(61,176,8,0.3); transition:all 0.3s; }
+.intro .start-btn:active { transform:scale(0.95); }
+
+.game { display:none; flex-direction:column; align-items:center; width:100%; height:100%; color:#fff; animation:fadeIn 0.5s ease; }
+.game.on { display:flex; }
+
+.game-top { display:flex; align-items:center; justify-content:center; padding:50px 16px 8px; width:100%; }
+.game-label { font-size:0.75rem; color:rgba(255,255,255,0.35); letter-spacing:3px; }
+
+.board-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:0 12px; width:100%; }
+
+/* 4×5 board */
+.board { position:relative; width:312px; height:390px; border-radius:20px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 40px rgba(0,0,0,0.2); }
+.board .cell { position:absolute; width:78px; height:78px; }
+
+/* Exit marker at bottom-center */
+.board::after { content:''; position:absolute; bottom:-3px; left:50%; transform:translateX(-50%); width:80px; height:6px; border-radius:3px; background:linear-gradient(90deg,transparent,rgba(168,230,0,0.5),transparent); }
+
+.piece { position:absolute; border-radius:12px; background-size:cover; background-position:center; cursor:pointer; transition:left 0.18s ease, top 0.18s ease; box-shadow:0 3px 12px rgba(0,0,0,0.3); z-index:1; }
+.piece::after { content:''; position:absolute; inset:0; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 40%); pointer-events:none; }
+.piece:active { filter:brightness(1.1); }
+.piece.goal { box-shadow:0 3px 16px rgba(168,230,0,0.4), 0 0 0 2px rgba(168,230,0,0.3); }
+
+.hint { font-size:0.62rem; color:rgba(255,255,255,0.25); text-align:center; letter-spacing:0.5px; min-height:14px; }
+.btn-row { display:flex; gap:10px; padding-bottom:12px; }
+.action { padding:13px 40px; border-radius:24px; border:none; font-weight:600; font-size:0.82rem; letter-spacing:2px; cursor:pointer; font-family:inherit; background:linear-gradient(135deg,#3DB008,#B8E620); color:#1a3a00; box-shadow:0 4px 22px rgba(61,176,8,0.3); transition:all 0.3s; }
+.action:active { transform:scale(0.95); }
+
+.confetti { position:fixed; z-index:200; pointer-events:none; width:10px; height:10px; border-radius:3px; animation:fall 1.8s ease-out forwards; }
+@keyframes fall { 0%{opacity:1;transform:translate(0,0) rotate(0deg) scale(1)} 100%{opacity:0;transform:translate(var(--x),110vh) rotate(var(--r)) scale(0.3)} }
+</style>
+</head>
+<body>
+
+<div class="bg"><img src="youxi4.webp" alt=""></div>
+
+<div class="scene">
+
+    <div class="intro" id="intro">
+        <button class="back-btn" style="position:fixed;top:18px;left:18px;z-index:10;" onclick="location.href='hall2.html'">← 返回</button>
+        <div class="tag">BREAK THROUGH · 破局</div>
+        <h1>破 局</h1>
+        <div class="en">B R E A K  ·  T H R O U G H</div>
+        <div class="divider"><i></i><b></b><i></i></div>
+        <div class="poem">
+            断桥在前，暗礁在下，迷雾四起，逆流涌动。<br>
+            残垣挡道，而你只有自己。<br>
+            篝火为引，浮桥为路，舟楫为渡，灯塔为向。<br>
+            破局而出，方能见自己。
+        </div>
+        <button class="start-btn" onclick="enter()">开始破局</button>
+    </div>
+
+    <div class="game" id="game">
+        <button class="back-btn" style="position:fixed;top:18px;left:18px;z-index:10;" onclick="back()">← 返回</button>
+        <div class="game-top"><span class="game-label">破 局 · 华 容 道</span></div>
+        <div class="board-wrap">
+            <div class="board" id="board"></div>
+            <div class="hint" id="hint">点击方块滑入空位，将「自己」移至底部出口</div>
+            <div class="btn-row">
+                <button class="action" onclick="resetGame()">重新开始</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+var ROWS=5, COLS=4, CELL=78, GAP=0, steps=0, done=false;
+
+// Piece definitions: id, name, w(cols), h(rows), row, col, image
+var initPieces = [
+  {id:'自己', w:2, h:2, r:1, c:1, img:'自己.webp'},
+  {id:'断桥', w:1, h:2, r:0, c:0, img:'断桥.webp'},
+  {id:'暗礁', w:1, h:2, r:3, c:0, img:'暗礁.webp'},
+  {id:'迷雾', w:1, h:2, r:0, c:3, img:'迷雾.webp'},
+  {id:'逆流', w:1, h:2, r:3, c:3, img:'逆流.webp'},
+  {id:'残垣', w:2, h:1, r:0, c:1, img:'残垣.webp'},
+  {id:'篝火', w:1, h:1, r:2, c:0, img:'篝火.webp'},
+  {id:'浮桥', w:1, h:1, r:2, c:3, img:'浮桥.webp'},
+  {id:'舟楫', w:1, h:1, r:4, c:1, img:'舟楫.webp'},
+  {id:'灯塔', w:1, h:1, r:4, c:2, img:'灯塔.webp'}
+];
+
+var pieces = [];
+
+function clonePieces(){
+  return initPieces.map(function(p){return {id:p.id,w:p.w,h:p.h,r:p.r,c:p.c,img:p.img}});
+}
+
+function enter(){
+  document.getElementById('intro').style.display='none';
+  var g=document.getElementById('game'); g.style.display='flex'; g.classList.add('on');
+  steps=0; done=false; pieces=clonePieces();
+  renderBoard();
+}
+
+function back(){
+  document.getElementById('game').style.display='none'; document.getElementById('game').classList.remove('on');
+  document.getElementById('intro').style.display=''; done=false;
+}
+
+function resetGame(){
+  steps=0; done=false; pieces=clonePieces(); renderBoard();
+  document.getElementById('hint').textContent='点击方块滑入空位，将「自己」移至底部出口';
+}
+
+// Get occupied cells map
+function getGrid(){
+  var grid=[]; for(var r=0;r<ROWS;r++){grid[r]=[];for(var c=0;c<COLS;c++)grid[r][c]=null}
+  pieces.forEach(function(p){
+    for(var dr=0;dr<p.h;dr++){for(var dc=0;dc<p.w;dc++){grid[p.r+dr][p.c+dc]=p.id}}
+  });
+  return grid;
+}
+
+// Can piece move in direction? dir: 'up','down','left','right'
+function canMove(p, dir){
+  var grid=getGrid();
+  var nr=p.r, nc=p.c;
+  if(dir==='up') nr--; else if(dir==='down') nr++; else if(dir==='left') nc--; else if(dir==='right') nc++;
+  if(nr<0||nc<0||nr+p.h>ROWS||nc+p.w>COLS)return false;
+  for(var dr=0;dr<p.h;dr++){
+    for(var dc=0;dc<p.w;dc++){
+      var cell=grid[nr+dr][nc+dc];
+      if(cell!==null&&cell!==p.id)return false;
+    }
+  }
+  return true;
+}
+
+function movePiece(p, dir){
+  if(dir==='up') p.r--; else if(dir==='down') p.r++;
+  else if(dir==='left') p.c--; else if(dir==='right') p.c++;
+}
+
+function checkWin(){
+  var self=null; pieces.forEach(function(p){if(p.id==='自己')self=p});
+  // 自己 reaches bottom row (row 3 or 4 for 2-height piece, bottom edge is row 4, so row 3 means it spans rows 3-4)
+  return self && self.r+self.h===ROWS && self.c===1;
+}
+
+function renderBoard(){
+  var b=document.getElementById('board'); b.innerHTML='';
+  pieces.forEach(function(p){
+    var el=document.createElement('div');
+    el.className='piece'+(p.id==='自己'?' goal':'');
+    el.style.left=(p.c*CELL)+'px';
+    el.style.top=(p.r*CELL)+'px';
+    el.style.width=(p.w*CELL)+'px';
+    el.style.height=(p.h*CELL)+'px';
+    el.style.backgroundImage='url('+p.img+')';
+    el.onclick=function(){onClick(p)};
+    b.appendChild(el);
+  });
+  // Empty cell indicators
+  var grid=getGrid();
+  for(var r=0;r<ROWS;r++){
+    for(var c=0;c<COLS;c++){
+      if(!grid[r][c]){
+        var dot=document.createElement('div');
+        dot.style.cssText='position:absolute;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.06);left:'+(c*CELL+CELL/2-4)+'px;top:'+(r*CELL+CELL/2-4)+'px;pointer-events:none;';
+        b.appendChild(dot);
+      }
+    }
+  }
+}
+
+function onClick(p){
+  if(done)return;
+  // Try to find a direction to move - prefer toward empty spaces
+  var dirs=['up','down','left','right'];
+  var moved=false;
+  for(var i=0;i<dirs.length;i++){
+    if(canMove(p, dirs[i])){
+      movePiece(p, dirs[i]); steps++; moved=true;
+      document.getElementById('hint').textContent='第 '+steps+' 步';
+      break;
+    }
+  }
+  if(moved){
+    renderBoard();
+    if(checkWin()){
+      done=true;
+      document.getElementById('hint').textContent='✨ 破局成功！共 '+steps+' 步，你找到了自己';
+      pop();
+    }
+  }
+}
+
+function pop(){
+  var cs=['#3DB008','#E0FE44','#00f5d4','#0099ff','#ade5fe','#7ad6fb','#E9F8BC'];
+  for(var i=0;i<30;i++){var el=document.createElement('div');el.className='confetti';el.style.left=Math.random()*100+'%';el.style.top='-10px';el.style.setProperty('--x',(Math.random()-0.5)*200+'px');el.style.setProperty('--r',(Math.random()-0.5)*720+'deg');el.style.background=cs[Math.floor(Math.random()*cs.length)];el.style.animationDelay=Math.random()*0.4+'s';document.body.appendChild(el);setTimeout(function(){el.remove()},2000)}
+}
+
+// Touch swipe support
+var touchPiece=null, touchStartX=0, touchStartY=0;
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('board').addEventListener('touchstart',function(e){
+    if(done)return;
+    var el=e.target.closest('.piece'); if(!el)return;
+    var idx=-1; for(var i=0;i<pieces.length;i++){if(el.style.backgroundImage.indexOf(pieces[i].img)>=0){idx=i;break}}
+    if(idx>=0){touchPiece=pieces[idx]; touchStartX=e.touches[0].clientX; touchStartY=e.touches[0].clientY;}
+  },{passive:true});
+
+  document.getElementById('board').addEventListener('touchend',function(e){
+    if(!touchPiece||done)return;
+    var dx=e.changedTouches[0].clientX-touchStartX, dy=e.changedTouches[0].clientY-touchStartY;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<15){touchPiece=null;return}
+    var dir;
+    if(Math.abs(dx)>Math.abs(dy)){dir=dx>0?'right':'left'}
+    else{dir=dy>0?'down':'up'}
+    if(canMove(touchPiece, dir)){
+      movePiece(touchPiece, dir); steps++;
+      document.getElementById('hint').textContent='第 '+steps+' 步';
+      renderBoard();
+      if(checkWin()){
+        done=true;
+        document.getElementById('hint').textContent='✨ 破局成功！共 '+steps+' 步，你找到了自己';
+        pop();
+      }
+    }
+    touchPiece=null;
+  });
+});
+</script>
+</body>
+</html>

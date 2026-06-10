@@ -317,6 +317,8 @@
         }
         .b-fuyao .b-img { background-image: url('You 捻光--扶摇上.webp'); }
         .b-xingyue .b-img { background-image: url('You 捻光--星跃.webp'); }
+        .b-hrd .b-img { background: linear-gradient(135deg,#3DB008,#E9F8BC,#E0FE44,#00f5d4,#0099ff); }
+        .b-pj .b-img { background: linear-gradient(135deg,#0099ff,#428DFF,#7B2D8E,#C44D34,#E0A800); }
         .b-btn:hover .b-img { transform: scale(1.03); }
         .b-btn .b-text {
             font-size:0.5rem; font-weight:700;
@@ -752,7 +754,7 @@
 <div class="wrap">
 
     <div class="hero-section">
-        <div style="position:fixed;top:14px;right:14px;display:flex;gap:10px;z-index:101;">
+        <div style="position:absolute;top:14px;right:14px;display:flex;gap:10px;z-index:10;">
             <button class="answer-btn-top" id="answerBtnTop" onclick="showAnswer()">ANSWER</button>
             <button class="me-btn-top" id="meBtnTop" style="display:none;" onclick="showMeCard()">
                 <span class="me-btn-avatar" id="meBtnAvatar"></span>我
@@ -835,6 +837,9 @@
             </div>
             <div class="b-btn b-hrd rise" data-href="You 捻光--心序.html" data-label="心序" style="animation-delay:0s">
                 <div class="b-img"></div><span class="b-text">心序</span>
+            </div>
+            <div class="b-btn b-pj rise" data-href="You 捻光--破局.html" data-label="破局" style="animation-delay:0s">
+                <div class="b-img"></div><span class="b-text">破局</span>
             </div>
         </div>
         <div class="light-btn-wrap">
