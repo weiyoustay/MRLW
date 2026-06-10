@@ -43,9 +43,11 @@ html { width:100%; height:100%; } body { width:100%; min-height:100vh; overflow-
 .board-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:0 12px; width:100%; }
 .board { position:relative; width:312px; height:390px; border-radius:20px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 40px rgba(0,0,0,0.2); }
 .board::after { content:''; position:absolute; bottom:-3px; left:50%; transform:translateX(-50%); width:80px; height:6px; border-radius:3px; background:linear-gradient(90deg,transparent,rgba(168,230,0,0.5),transparent); }
-.piece { position:absolute; border-radius:12px; background-size:cover; background-position:center; cursor:pointer; box-shadow:0 3px 12px rgba(0,0,0,0.3); z-index:1; will-change:transform; }
+.piece { position:absolute; border-radius:12px; background-size:cover; background-position:center; cursor:pointer; box-shadow:0 3px 12px rgba(0,0,0,0.3); z-index:1; will-change:left,top,transform; transition:left 0.16s cubic-bezier(0.25,0.1,0.25,1), top 0.16s cubic-bezier(0.25,0.1,0.25,1); }
 .piece::after { content:''; position:absolute; inset:0; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 40%); pointer-events:none; }
 .piece.goal { box-shadow:0 3px 16px rgba(168,230,0,0.4), 0 0 0 2px rgba(168,230,0,0.3); }
+.piece.dragging { transition:none; z-index:10; box-shadow:0 8px 28px rgba(0,0,0,0.5); }
+.piece.snapping { transition:left 0.15s cubic-bezier(0.34,1.56,0.64,1), top 0.15s cubic-bezier(0.34,1.56,0.64,1); }
 .hint { font-size:0.62rem; color:rgba(255,255,255,0.25); text-align:center; letter-spacing:0.5px; min-height:14px; }
 .btn-row { display:flex; gap:10px; padding-bottom:12px; }
 .action { padding:10px 24px; border-radius:20px; border:none; font-weight:600; font-size:0.75rem; letter-spacing:2px; cursor:pointer; font-family:inherit; transition:all 0.3s; }
@@ -103,8 +105,6 @@ var CLASSIC=[
   {id:'篝火',w:1,h:1,r:4,c:0,img:'篝火.webp'},
   {id:'浮桥',w:1,h:1,r:4,c:3,img:'浮桥.webp'}
 ];
-
-// 入门基础布局：自己已到第三行，更靠近出口
 var EASY_BASE=[
   {id:'自己',w:2,h:2,r:2,c:1,img:'自己.webp'},
   {id:'断桥',w:1,h:2,r:0,c:0,img:'断桥.webp'},
@@ -117,7 +117,6 @@ var EASY_BASE=[
   {id:'篝火',w:1,h:1,r:4,c:0,img:'篝火.webp'},
   {id:'浮桥',w:1,h:1,r:4,c:3,img:'浮桥.webp'}
 ];
-// 初级基础布局：自己到了第二行
 var NORMAL_BASE=[
   {id:'自己',w:2,h:2,r:1,c:1,img:'自己.webp'},
   {id:'断桥',w:1,h:2,r:0,c:0,img:'断桥.webp'},
@@ -130,7 +129,6 @@ var NORMAL_BASE=[
   {id:'篝火',w:1,h:1,r:4,c:0,img:'篝火.webp'},
   {id:'浮桥',w:1,h:1,r:4,c:3,img:'浮桥.webp'}
 ];
-
 var DIFFS=[
   {id:0, name:'经典', sub:'Classic', base:CLASSIC, moves:0},
   {id:1, name:'入门', sub:'微澜', base:EASY_BASE, moves:200},
@@ -140,9 +138,8 @@ var DIFFS=[
   {id:5, name:'专家', sub:'潮涌', base:CLASSIC, moves:600},
   {id:6, name:'大师', sub:'深海', base:CLASSIC, moves:1200}
 ];
-var curDiff=0, pieces=[], puzzleSeed=0;
+var curDiff=0, pieces=[], puzzleSeed=0, pieceEls={};
 
-// Seeded random (mulberry32)
 function srand(s){return function(){s|=0;s=s+1831565813|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 
 function buildDiffGrid(){
@@ -152,34 +149,26 @@ function buildDiffGrid(){
   });
   document.getElementById('diffGrid').innerHTML=h;
 }
-
 function pickDiff(i){curDiff=i;buildDiffGrid()}
-
 function clonePieces(src){return src.map(function(p){return {id:p.id,w:p.w,h:p.h,r:p.r,c:p.c,img:p.img}})}
 
-// Shuffle: make N random valid moves from current piece positions
 function shufflePieces(pcs, moves, seed){
   var rng=srand(seed);
   for(var s=0;s<moves;s++){
-    // Build grid
     var grid=[]; for(var r=0;r<ROWS;r++){grid[r]=[];for(var c=0;c<COLS;c++)grid[r][c]=-1}
     for(var i=0;i<pcs.length;i++){var p=pcs[i];for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++)grid[p.r+dr][p.c+dc]=i}
-    // Find all empty cells
     var empties=[]; for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++)if(grid[r][c]===-1)empties.push({r:r,c:c});
     if(empties.length===0)break;
-    // Try random empty cells to find a movable piece
     var moved=false;
     for(var tries=0;tries<100&&!moved;tries++){
       var ec=empties[Math.floor(rng()*empties.length)];
       var dirs=[{dr:-1,dc:0,d:'down'},{dr:1,dc:0,d:'up'},{dr:0,dc:-1,d:'right'},{dr:0,dc:1,d:'left'}];
-      // Shuffle dirs
       for(var di=dirs.length-1;di>0;di--){var dj=Math.floor(rng()*(di+1));var tmp=dirs[di];dirs[di]=dirs[dj];dirs[dj]=tmp}
       for(var di=0;di<dirs.length&&!moved;di++){
         var nr=ec.r+dirs[di].dr, nc=ec.c+dirs[di].dc;
         if(nr<0||nr>=ROWS||nc<0||nc>=COLS)continue;
         var idx=grid[nr][nc]; if(idx===-1)continue;
         var pp=pcs[idx];
-        // Check if pp can move in direction dirs[di].d
         if(canMovePiece(pp, dirs[di].d, grid, pcs, idx)){
           if(dirs[di].d==='up')pp.r--; else if(dirs[di].d==='down')pp.r++;
           else if(dirs[di].d==='left')pp.c--; else if(dirs[di].d==='right')pp.c++;
@@ -191,16 +180,11 @@ function shufflePieces(pcs, moves, seed){
   }
   return pcs;
 }
-
-// Check if piece p (at index pidx in pcs) can move in direction dir given the grid
 function canMovePiece(p, dir, grid, pcs, pidx){
   var nr=p.r, nc=p.c;
   if(dir==='up')nr--; else if(dir==='down')nr++; else if(dir==='left')nc--; else if(dir==='right')nc++;
   if(nr<0||nc<0||nr+p.h>ROWS||nc+p.w>COLS)return false;
-  for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++){
-    var cell=grid[nr+dr][nc+dc];
-    if(cell!==-1&&cell!==pidx)return false;
-  }
+  for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++){var cell=grid[nr+dr][nc+dc];if(cell!==-1&&cell!==pidx)return false}
   return true;
 }
 
@@ -221,24 +205,21 @@ function enter(){
       if(moved>=6)ok=true;
     }
   }
-  renderBoard();
+  pieceEls={}; renderBoard();
   document.getElementById('hint').textContent='拖动方块，将「自己」移至底部出口';
 }
-
 function back(){
   document.getElementById('game').style.display='none'; document.getElementById('game').classList.remove('on');
-  document.getElementById('intro').style.display=''; done=false;
+  document.getElementById('intro').style.display=''; done=false; pieceEls={};
 }
-
 function resetGame(){
   steps=0; done=false;
   var d=DIFFS[curDiff];
   if(d.moves===0){pieces=clonePieces(d.base)}
   else{pieces=shufflePieces(clonePieces(d.base), d.moves, puzzleSeed)}
-  renderBoard();
+  pieceEls={}; renderBoard();
   document.getElementById('hint').textContent='拖动方块，将「自己」移至底部出口';
 }
-
 function nextPuzzle(){
   steps=0; done=false;
   var d=DIFFS[curDiff];
@@ -253,7 +234,7 @@ function nextPuzzle(){
       if(moved>=6)ok=true;
     }
   }
-  renderBoard();
+  pieceEls={}; renderBoard();
   document.getElementById('hint').textContent='拖动方块，将「自己」移至底部出口';
 }
 
@@ -262,40 +243,150 @@ function getGrid(){
   pieces.forEach(function(p){for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++)grid[p.r+dr][p.c+dc]=p.id});
   return grid;
 }
-function canMove(p, dir){
-  var grid=getGrid(); var nr=p.r, nc=p.c;
-  if(dir==='up')nr--; else if(dir==='down')nr++; else if(dir==='left')nc--; else if(dir==='right')nc++;
-  if(nr<0||nc<0||nr+p.h>ROWS||nc+p.w>COLS)return false;
-  for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++){var cell=grid[nr+dr][nc+dc]; if(cell!==null&&cell!==p.id)return false}
-  return true;
+
+// How many cells can piece move in direction before hitting obstacle?
+function maxSlide(p, dir){
+  var grid=getGrid();
+  for(var n=1;;n++){
+    var nr=p.r, nc=p.c;
+    if(dir==='up')nr-=n; else if(dir==='down')nr+=n; else if(dir==='left')nc-=n; else if(dir==='right')nc+=n;
+    if(nr<0||nc<0||nr+p.h>ROWS||nc+p.w>COLS)return n-1;
+    for(var dr=0;dr<p.h;dr++)for(var dc=0;dc<p.w;dc++){
+      var cell=grid[nr+dr][nc+dc];
+      if(cell!==null&&cell!==p.id)return n-1;
+    }
+  }
 }
-function movePiece(p, dir){if(dir==='up')p.r--; else if(dir==='down')p.r++; else if(dir==='left')p.c--; else if(dir==='right')p.c++}
+function canMove(p, dir){return maxSlide(p,dir)>=1}
+function movePiece(p, dir, n){n=n||1;if(dir==='up')p.r-=n; else if(dir==='down')p.r+=n; else if(dir==='left')p.c-=n; else if(dir==='right')p.c+=n}
 function checkWin(){var self=null; pieces.forEach(function(p){if(p.id==='自己')self=p}); return self&&self.r+self.h===ROWS&&self.c===1}
 
+// ── Smooth board sync (reuse DOM, CSS transition) ──
 function renderBoard(){
-  var b=document.getElementById('board'); b.innerHTML='';
+  var b=document.getElementById('board');
+  // Remove dots
+  var dots=b.querySelectorAll('div[style*="border-radius:50%"]');
+  for(var i=0;i<dots.length;i++)dots[i].remove();
+  // Sync piece elements
+  var seen={};
   pieces.forEach(function(p,i){
-    var el=document.createElement('div');
-    el.className='piece'+(p.id==='自己'?' goal':'');
-    el.style.left=(p.c*CELL)+'px'; el.style.top=(p.r*CELL)+'px';
-    el.style.width=(p.w*CELL)+'px'; el.style.height=(p.h*CELL)+'px';
-    el.style.backgroundImage='url('+p.img+')'; el.dataset.idx=i;
-    b.appendChild(el);
+    seen[p.id]=true;
+    var el=pieceEls[p.id];
+    if(!el||!el.parentNode){
+      el=document.createElement('div');
+      el.className='piece'+(p.id==='自己'?' goal':'');
+      el.style.width=(p.w*CELL)+'px'; el.style.height=(p.h*CELL)+'px';
+      el.style.backgroundImage='url('+p.img+')';
+      el.dataset.pid=p.id;
+      el.style.left=(p.c*CELL)+'px'; el.style.top=(p.r*CELL)+'px';
+      b.appendChild(el);
+      pieceEls[p.id]=el;
+    } else {
+      el.style.left=(p.c*CELL)+'px'; el.style.top=(p.r*CELL)+'px';
+    }
   });
+  // Remove stale
+  for(var k in pieceEls){if(!seen[k]){if(pieceEls[k].parentNode)pieceEls[k].remove();delete pieceEls[k]}}
+  // Dots
   var grid=getGrid();
   for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){if(!grid[r][c]){var dot=document.createElement('div');dot.style.cssText='position:absolute;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.06);left:'+(c*CELL+CELL/2-4)+'px;top:'+(r*CELL+CELL/2-4)+'px;pointer-events:none;';b.appendChild(dot)}}
 }
 
-var dragPiece=null, dragEl=null, dragStartX=0, dragStartY=0;
-function doMove(){steps++;document.getElementById('hint').textContent='第 '+steps+' 步';renderBoard();if(checkWin()){done=true;document.getElementById('hint').textContent='✨ 破局成功！共 '+steps+' 步';pop()}}
+// Quick position sync without dot rebuild (for live drag snap)
+function syncPositions(){
+  pieces.forEach(function(p){
+    var el=pieceEls[p.id];
+    if(el){el.style.left=(p.c*CELL)+'px';el.style.top=(p.r*CELL)+'px';}
+  });
+}
+function doMove(n){steps+=n;document.getElementById('hint').textContent='第 '+steps+' 步';syncPositions();if(checkWin()){done=true;document.getElementById('hint').textContent='✨ 破局成功！共 '+steps+' 步';pop()}}
 function pop(){var cs=['#3DB008','#E0FE44','#00f5d4','#0099ff','#ade5fe','#7ad6fb','#E9F8BC'];for(var i=0;i<30;i++){var el=document.createElement('div');el.className='confetti';el.style.left=Math.random()*100+'%';el.style.top='-10px';el.style.setProperty('--x',(Math.random()-0.5)*200+'px');el.style.setProperty('--r',(Math.random()-0.5)*720+'deg');el.style.background=cs[Math.floor(Math.random()*cs.length)];el.style.animationDelay=Math.random()*0.4+'s';document.body.appendChild(el);setTimeout(function(){el.remove()},2000)}}
 
-// Touch drag
+// ── Unified drag (touch + mouse) ──
 (function(){
   var board=document.getElementById('board');
-  board.addEventListener('touchstart',function(e){if(done||dragPiece)return;var el=e.target.closest('.piece');if(!el)return;var idx=parseInt(el.dataset.idx);if(isNaN(idx))return;dragPiece=pieces[idx];dragEl=el;dragStartX=e.touches[0].clientX;dragStartY=e.touches[0].clientY;el.style.zIndex=5},{passive:true});
-  board.addEventListener('touchmove',function(e){if(!dragPiece)return;var dx=e.touches[0].clientX-dragStartX,dy=e.touches[0].clientY-dragStartY;var cx=Math.max(-CELL,Math.min(CELL,dx)),cy=Math.max(-CELL,Math.min(CELL,dy));var adx=Math.abs(dx),ady=Math.abs(dy);if(adx<8&&ady<8){dragEl.style.transform='translate(0,0)';return}if(adx>ady){if(dx>0&&canMove(dragPiece,'right'))cy=0;else if(dx<0&&canMove(dragPiece,'left'))cy=0;else{cx=0;if(canMove(dragPiece,'down')&&dy>0)cy=dy;else if(canMove(dragPiece,'up')&&dy<0)cy=dy;else cy=0}}else{if(dy>0&&canMove(dragPiece,'down'))cx=0;else if(dy<0&&canMove(dragPiece,'up'))cx=0;else{cy=0;if(canMove(dragPiece,'right')&&dx>0)cx=dx;else if(canMove(dragPiece,'left')&&dx<0)cx=dx;else cx=0}}dragEl.style.transform='translate('+cx+'px,'+cy+'px)'},{passive:true});
-  board.addEventListener('touchend',function(e){if(!dragPiece){dragEl=null;return}dragEl.style.transition='transform 0.12s ease-out';dragEl.style.transform='';dragEl.style.zIndex='';var dx=e.changedTouches[0].clientX-dragStartX,dy=e.changedTouches[0].clientY-dragStartY;var adx=Math.abs(dx),ady=Math.abs(dy);var dir=null;if(adx>ady&&adx>CELL*0.3)dir=dx>0?'right':'left';else if(ady>adx&&ady>CELL*0.3)dir=dy>0?'down':'up';if(dir&&canMove(dragPiece,dir)){movePiece(dragPiece,dir);doMove()}dragPiece=null;dragEl=null;setTimeout(function(){if(dragEl)dragEl.style.transition=''},150)});
+  var dragPiece=null, dragEl=null, sx=0, sy=0, lx=0, ly=0, raf=0;
+  function start(x,y,el){
+    if(done||dragPiece)return;
+    var pid=el.dataset.pid; if(!pid)return;
+    for(var i=0;i<pieces.length;i++){if(pieces[i].id===pid){dragPiece=pieces[i];break}}
+    if(!dragPiece)return;
+    dragEl=el; sx=x; sy=y; lx=x; ly=y;
+    el.classList.add('dragging');
+    el.style.zIndex=10;
+  }
+  function move(x,y){
+    if(!dragPiece)return; lx=x; ly=y;
+    var dx=x-sx, dy=y-sy;
+    var adx=Math.abs(dx), ady=Math.abs(dy);
+    if(adx<6&&ady<6){dragEl.style.transform='translate(0,0)';return}
+    var lockDir=null;
+    if(adx>ady*1.2)lockDir='h';
+    else if(ady>adx*1.2)lockDir='v';
+    if(lockDir==='h'){
+      if(dx>0&&canMove(dragPiece,'right'))dragEl.style.transform='translate('+Math.min(dx,CELL*2)+'px,0)';
+      else if(dx<0&&canMove(dragPiece,'left'))dragEl.style.transform='translate('+Math.max(dx,-CELL*2)+'px,0)';
+      else dragEl.style.transform='translate(0,0)';
+    } else if(lockDir==='v'){
+      if(dy>0&&canMove(dragPiece,'down'))dragEl.style.transform='translate(0,'+Math.min(dy,CELL*2)+'px)';
+      else if(dy<0&&canMove(dragPiece,'up'))dragEl.style.transform='translate(0,'+Math.max(dy,-CELL*2)+'px)';
+      else dragEl.style.transform='translate(0,0)';
+    } else {
+      dragEl.style.transform='translate(0,0)';
+    }
+  }
+  function end(x,y){
+    if(!dragPiece){dragEl=null;return}
+    var el=dragEl, p=dragPiece;
+    el.classList.remove('dragging'); el.classList.add('snapping');
+    el.style.transform=''; el.style.zIndex='';
+    var dx=x-sx, dy=y-sy;
+    var adx=Math.abs(dx), ady=Math.abs(dy);
+    var threshold=CELL*0.22;
+    var dir=null;
+    if(adx>ady&&adx>threshold)dir=dx>0?'right':'left';
+    else if(ady>adx&&ady>threshold)dir=dy>0?'down':'up';
+    if(dir){
+      var n=maxSlide(p,dir);
+      if(n>=1){movePiece(p,dir,n); doMove(n);}
+      else{el.style.left=(p.c*CELL)+'px'; el.style.top=(p.r*CELL)+'px';}
+    } else {
+      el.style.left=(p.c*CELL)+'px'; el.style.top=(p.r*CELL)+'px';
+    }
+    dragPiece=null; dragEl=null;
+    setTimeout(function(){el.classList.remove('snapping')},200);
+  }
+
+  // Touch
+  board.addEventListener('touchstart',function(e){
+    var el=e.target.closest('.piece'); if(!el)return;
+    start(e.touches[0].clientX, e.touches[0].clientY, el);
+  },{passive:true});
+  board.addEventListener('touchmove',function(e){
+    if(!dragPiece)return;
+    move(e.touches[0].clientX, e.touches[0].clientY);
+  },{passive:true});
+  board.addEventListener('touchend',function(e){
+    end(lx,ly);
+  });
+  board.addEventListener('touchcancel',function(e){
+    if(dragPiece){end(lx,ly);}
+  });
+
+  // Mouse
+  board.addEventListener('mousedown',function(e){
+    var el=e.target.closest('.piece'); if(!el)return;
+    e.preventDefault();
+    start(e.clientX, e.clientY, el);
+  });
+  window.addEventListener('mousemove',function(e){
+    if(!dragPiece)return;
+    move(e.clientX, e.clientY);
+  });
+  window.addEventListener('mouseup',function(e){
+    if(!dragPiece)return;
+    end(e.clientX, e.clientY);
+  });
 })();
 
 buildDiffGrid();
