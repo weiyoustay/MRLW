@@ -31,7 +31,7 @@ body { background:#0a0a14; }
 .intro .status { padding:14px 20px; border-radius:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); margin-bottom:24px; }
 .intro .status .row { display:flex; align-items:center; justify-content:center; gap:10px; }
 .intro .status .big { font-size:1.6rem; font-weight:600; color:#fff; letter-spacing:1px; }
-.intro .status .sep { color:rgba(255,255,255,0.2); font-size:0.9rem; }
+.intro .status .sep { color:#fff; font-size:0.9rem; }
 .intro .status .small { font-size:0.7rem; color:rgba(255,255,255,0.35); letter-spacing:1px; }
 .intro .status .bar-wrap { height:4px; background:rgba(255,255,255,0.06); border-radius:4px; margin-top:10px; overflow:hidden; }
 .intro .status .bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,#3DB008,#E0FE44,#00f5d4); transition:width 0.6s ease; }
@@ -65,7 +65,7 @@ body { background:#0a0a14; }
 /* 模式选择 */
 .game .mode-row { margin-bottom:6px; }
 .game .mode-btn { padding:8px 20px; border-radius:16px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.35); font-size:0.72rem; cursor:pointer; font-family:inherit; letter-spacing:1px; transition:all 0.3s; }
-.game .mode-btn.on { background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2); }
+.game .mode-btn.on { background:rgba(255,255,255,0.1); color:#fff; border-color:#fff; }
 .game .mode-btn .sm { font-size:0.5rem; opacity:0.4; display:block; }
 
 /* 棋盘 */
@@ -217,7 +217,7 @@ function refreshIntro(){
   var msgEl=document.getElementById('introMsg');
   if(got>=n){msgEl.innerHTML='<b>'+pn+'</b>，色块已集齐，可以开始归序了'}else{msgEl.innerHTML='<b>'+pn+'</b>，还差 <b>'+remain+'</b> 天的心情色块';}
   var dots=ms.map(function(m){return '<span class="dot" style="background-image:'+m.c+';background-size:cover;"></span>'}).join('');
-  if(got===0)dots='<span style="font-size:0.65rem;color:rgba(255,255,255,0.2);">还没有心情记录，去首页写静心日记吧</span>';
+  if(got===0)dots='<span style="font-size:0.65rem;color:#fff;">还没有心情记录，去首页写静心日记吧</span>';
   document.getElementById('introDots').innerHTML=dots;
 }
 
@@ -312,6 +312,6 @@ document.getElementById('board').addEventListener('touchend',function(e){
 // 初始化
 refreshIntro();
 </script>
-<div style="position:fixed;bottom:6px;left:0;right:0;text-align:center;z-index:999;font-size:0.55rem;color:rgba(255,255,255,0.2);letter-spacing:0.5px;pointer-events:none;">©2026 唯 you stay 全部页面原创，禁止复制商用</div>
+<div style="position:fixed;bottom:6px;left:0;right:0;text-align:center;z-index:999;font-size:0.55rem;color:#fff;letter-spacing:0.5px;pointer-events:none;">©2026 唯 you stay 全部页面原创，禁止复制商用</div>
 </body>
 </html>
