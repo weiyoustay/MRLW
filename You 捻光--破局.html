@@ -144,8 +144,8 @@ var NORMAL_BASE=[
 
 var DIFFS=[
   {id:0, name:'经典', sub:'Classic', base:CLASSIC, moves:0},
-  {id:1, name:'入门', sub:'微澜', base:EASY_BASE, moves:30},
-  {id:2, name:'初级', sub:'涟漪', base:NORMAL_BASE, moves:60},
+  {id:1, name:'入门', sub:'微澜', base:EASY_BASE, moves:200},
+  {id:2, name:'初级', sub:'涟漪', base:NORMAL_BASE, moves:350},
   {id:3, name:'中级', sub:'暗流', base:CLASSIC, moves:160},
   {id:4, name:'高级', sub:'漩涡', base:CLASSIC, moves:300},
   {id:5, name:'专家', sub:'潮涌', base:CLASSIC, moves:600},
@@ -226,7 +226,17 @@ function enter(){
   document.getElementById('gameSeed').textContent='第'+curSeed+'局';
   steps=0; done=false;
   if(d.moves===0){pieces=clonePieces(d.base)}
-  else{puzzleSeed=curDiff*1000+curSeed; pieces=shufflePieces(clonePieces(d.base), d.moves, puzzleSeed)}
+  else{
+    var ok=false;
+    for(var trySeed=0;trySeed<50&&!ok;trySeed++){
+      puzzleSeed=curDiff*1000+curSeed+trySeed*37;
+      pieces=shufflePieces(clonePieces(d.base), d.moves, puzzleSeed);
+      // 验证：至少6个棋子不在原位
+      var moved=0;
+      for(var i=0;i<pieces.length;i++){if(pieces[i].r!==d.base[i].r||pieces[i].c!==d.base[i].c)moved++}
+      if(moved>=6)ok=true;
+    }
+  }
   renderBoard();
   document.getElementById('hint').textContent='拖动方块，将「自己」移至底部出口';
 }
